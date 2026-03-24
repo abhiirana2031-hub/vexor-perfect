@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: vexor-IT-solutions
+    env: node
+    plan: free
+    branch: main
+    buildCommand: npm install && npm run build
+    startCommand: npm run preview
+    staticSite:
+      source: dist
+    envVars:
+      - key: GMAIL_APP_PASSWORD
+        value: ctso nvbd jvug nffg

@@ -4,7 +4,19 @@ import { Head } from "@/components/Head";
 import AppRouter from "@/components/Router";
 import "@/styles/global.css";
 
-export const prerender = false;
+export async function getStaticPaths() {
+  return [
+    { params: { slug: undefined } },
+    { params: { slug: "admin" } },
+    { params: { slug: "contact" } },
+    { params: { slug: "services" } },
+    { params: { slug: "projects" } },
+    { params: { slug: "about" } },
+    { params: { slug: "services/detail" } },
+    { params: { slug: "projects/detail" } },
+    { params: { slug: "team-member/detail" } },
+  ];
+}
 ---
 
 <html lang="en" class="w-full h-full">

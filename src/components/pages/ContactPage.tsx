@@ -7,7 +7,8 @@ import { ThankYouDialog } from '@/components/ThankYouDialog';
 import { useToast } from '@/hooks/use-toast';
 import { motion } from 'framer-motion';
 import { Mail, MapPin, Phone, Send } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import emailjs from '@emailjs/browser';
 
 export default function ContactPage() {
   const { toast } = useToast();
@@ -20,6 +21,11 @@ export default function ContactPage() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showThankYou, setShowThankYou] = useState(false);
+
+  // Initialize EmailJS
+  useEffect(() => {
+    emailjs.init('4xnG8nB3VIWC5Rxw6');
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({
@@ -43,32 +49,23 @@ export default function ContactPage() {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData)
+      // Send email to admin
+      await emailjs.send('service_vexor', 'template_admin', {
+        to_email: 'vexoritsolutions@gmail.com',
+        from_name: formData.name,
+        from_email: formData.email,
+        phone: formData.phone,
+        subject: formData.subject,
+        message: formData.message
       });
 
-      const data = await response.json();
+      // Send confirmation email to user
+      await emailjs.send('service_vexor', 'template_user', {
+        to_email: formData.email,
+        from_name: formData.name,
+        subject: formData.subject
+      });
 
-      if (!response.ok) {
-        throw new Error(data.error || 'Failed to send message');
-      }
-
-      if (!data.emailSent) {
-        toast({
-          title: data.emailSkipped ? 'Message received' : 'Email could not be sent',
-          description:
-            data.emailSkipped ||
-            data.emailError ||
-            'Your message was saved; check server email configuration.',
-          variant: data.emailSkipped ? 'default' : 'destructive',
-        });
-      }
-
-      // Show thank you dialog
       setShowThankYou(true);
 
       // Reset form
@@ -82,9 +79,10 @@ export default function ContactPage() {
     } catch (error) {
       toast({
         title: 'Error',
-        description: error instanceof Error ? error.message : 'Failed to send message. Please try again.',
+        description: 'Failed to send message. Please try again.',
         variant: 'destructive'
       });
+      console.error('EmailJS error:', error);
     } finally {
       setIsSubmitting(false);
     }

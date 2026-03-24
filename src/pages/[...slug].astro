@@ -4,6 +4,8 @@ import { Head } from "@/components/Head";
 import AppRouter from "@/components/Router";
 import "@/styles/global.css";
 
+export const prerender = true;
+
 export async function getStaticPaths() {
   return [
     { params: { slug: undefined } },

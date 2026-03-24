@@ -1,0 +1,334 @@
+import Footer from '@/components/Footer';
+import Header from '@/components/Header';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { ThankYouDialog } from '@/components/ThankYouDialog';
+import { useToast } from '@/hooks/use-toast';
+import { motion } from 'framer-motion';
+import { Mail, MapPin, Phone, Send } from 'lucide-react';
+import { useState } from 'react';
+
+export default function ContactPage() {
+  const { toast } = useToast();
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    subject: '',
+    message: ''
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showThankYou, setShowThankYou] = useState(false);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!formData.name || !formData.email || !formData.message) {
+      toast({
+        title: 'Error',
+        description: 'Please fill in all required fields',
+        variant: 'destructive'
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to send message');
+      }
+
+      if (!data.emailSent) {
+        toast({
+          title: data.emailSkipped ? 'Message received' : 'Email could not be sent',
+          description:
+            data.emailSkipped ||
+            data.emailError ||
+            'Your message was saved; check server email configuration.',
+          variant: data.emailSkipped ? 'default' : 'destructive',
+        });
+      }
+
+      // Show thank you dialog
+      setShowThankYou(true);
+
+      // Reset form
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        subject: '',
+        message: ''
+      });
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: error instanceof Error ? error.message : 'Failed to send message. Please try again.',
+        variant: 'destructive'
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const contactInfo = [
+    {
+      icon: Mail,
+      title: 'Email',
+      content: 'vexoritsolution@gmail.com',
+      link: 'mailto:info@vexor-it.com'
+    },
+    {
+      icon: Phone,
+      title: 'Phone',
+      content: '+917599544335',
+      link: 'tel:+917599544335'
+    },
+    {
+      icon: MapPin,
+      title: 'Address',
+      content: 'Meerut (U.P)',
+      link: null
+    }
+  ];
+
+  return (
+    <div className="min-h-screen bg-background text-foreground">
+      <Header />
+
+      {/* Hero Section */}
+      <section className="relative w-full pt-32 pb-24 px-8 lg:px-16">
+        <div className="max-w-[100rem] mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center space-y-6"
+          >
+            <h1 className="font-heading text-6xl lg:text-8xl font-bold text-primary-foreground">
+              Get In <span className="text-secondary">Touch</span>
+            </h1>
+            <p className="font-paragraph text-xl lg:text-2xl text-foreground/70 max-w-4xl mx-auto leading-relaxed">
+              Have a project in mind? Let's discuss how we can help transform your business
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Contact Section */}
+      <section className="w-full pb-24">
+        <div className="max-w-[100rem] mx-auto px-8 lg:px-16">
+          <div className="grid lg:grid-cols-2 gap-16">
+            {/* Contact Form */}
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }}
+              className="bg-soft-shadow-gray/30 backdrop-blur-sm border border-secondary/20 rounded-3xl p-10 lg:p-12"
+            >
+              <h2 className="font-heading text-3xl font-bold text-primary-foreground mb-8">
+                Send Us a Message
+              </h2>
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div>
+                  <label htmlFor="name" className="font-paragraph text-sm font-semibold text-foreground mb-2 block">
+                    Full Name *
+                  </label>
+                  <Input
+                    id="name"
+                    name="name"
+                    type="text"
+                    value={formData.name}
+                    onChange={handleChange}
+                    required
+                    className="w-full bg-background/50 border-secondary/30 text-foreground focus:border-secondary rounded-lg px-4 py-6 font-paragraph"
+                    placeholder="John Doe"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="email" className="font-paragraph text-sm font-semibold text-foreground mb-2 block">
+                    Email Address *
+                  </label>
+                  <Input
+                    id="email"
+                    name="email"
+                    type="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
+                    className="w-full bg-background/50 border-secondary/30 text-foreground focus:border-secondary rounded-lg px-4 py-6 font-paragraph"
+                    placeholder="john@example.com"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="phone" className="font-paragraph text-sm font-semibold text-foreground mb-2 block">
+                    Phone Number
+                  </label>
+                  <Input
+                    id="phone"
+                    name="phone"
+                    type="tel"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    className="w-full bg-background/50 border-secondary/30 text-foreground focus:border-secondary rounded-lg px-4 py-6 font-paragraph"
+                    placeholder="+1 (234) 567-890"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="subject" className="font-paragraph text-sm font-semibold text-foreground mb-2 block">
+                    Subject
+                  </label>
+                  <Input
+                    id="subject"
+                    name="subject"
+                    type="text"
+                    value={formData.subject}
+                    onChange={handleChange}
+                    className="w-full bg-background/50 border-secondary/30 text-foreground focus:border-secondary rounded-lg px-4 py-6 font-paragraph"
+                    placeholder="Project Inquiry"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="message" className="font-paragraph text-sm font-semibold text-foreground mb-2 block">
+                    Message *
+                  </label>
+                  <Textarea
+                    id="message"
+                    name="message"
+                    value={formData.message}
+                    onChange={handleChange}
+                    required
+                    rows={6}
+                    className="w-full bg-background/50 border-secondary/30 text-foreground focus:border-secondary rounded-lg px-4 py-4 font-paragraph resize-none"
+                    placeholder="Tell us about your project..."
+                  />
+                </div>
+
+                <Button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/90 px-8 py-6 text-lg font-semibold rounded-lg transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isSubmitting ? (
+                    'Sending...'
+                  ) : (
+                    <>
+                      Send Message
+                      <Send className="ml-2 h-5 w-5" />
+                    </>
+                  )}
+                </Button>
+              </form>
+            </motion.div>
+
+            {/* Contact Info */}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }}
+              className="space-y-8"
+            >
+              <div className="bg-soft-shadow-gray/30 backdrop-blur-sm border border-secondary/20 rounded-3xl p-10 lg:p-12 space-y-8">
+                <h2 className="font-heading text-3xl font-bold text-primary-foreground">
+                  Contact Information
+                </h2>
+                <p className="font-paragraph text-lg text-foreground/70 leading-relaxed">
+                  Reach out to us through any of the following channels. We're here to help!
+                </p>
+
+                <div className="space-y-6">
+                  {contactInfo.map((info, idx) => (
+                    <div key={idx} className="flex items-start gap-4">
+                      <div className="w-12 h-12 bg-secondary/10 border border-secondary/30 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <info.icon className="h-6 w-6 text-secondary" />
+                      </div>
+                      <div>
+                        <h3 className="font-heading text-lg font-bold text-primary-foreground mb-1">
+                          {info.title}
+                        </h3>
+                        {info.link ? (
+                          <a
+                            href={info.link}
+                            className="font-paragraph text-foreground/70 hover:text-secondary transition-colors duration-300"
+                          >
+                            {info.content}
+                          </a>
+                        ) : (
+                          <p className="font-paragraph text-foreground/70">
+                            {info.content}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Business Hours */}
+              <div className="bg-soft-shadow-gray/30 backdrop-blur-sm border border-secondary/20 rounded-3xl p-10 lg:p-12 space-y-6">
+                <h2 className="font-heading text-2xl font-bold text-primary-foreground">
+                  Business Hours
+                </h2>
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="font-paragraph text-foreground/70">Monday - Friday</span>
+                    <span className="font-paragraph text-primary-foreground font-semibold">9:00 AM - 6:00 PM</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="font-paragraph text-foreground/70">Saturday</span>
+                    <span className="font-paragraph text-primary-foreground font-semibold">10:00 AM - 4:00 PM</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="font-paragraph text-foreground/70">Sunday</span>
+                    <span className="font-paragraph text-primary-foreground font-semibold">Closed</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* CTA */}
+              <div className="bg-gradient-to-br from-secondary/10 to-accent-teal/5 border border-secondary/30 rounded-3xl p-10 lg:p-12 space-y-6">
+                <h2 className="font-heading text-2xl font-bold text-primary-foreground">
+                  Ready to Start?
+                </h2>
+                <p className="font-paragraph text-foreground/70 leading-relaxed">
+                  Schedule a free consultation to discuss your project requirements and how we can help.
+                </p>
+                <Button className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/90 px-6 py-6 text-lg font-semibold rounded-lg transition-all duration-300">
+                  Schedule Consultation
+                </Button>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      <Footer />
+
+      {/* Thank You Dialog */}
+      <ThankYouDialog isOpen={showThankYou} onClose={() => setShowThankYou(false)} />
+    </div>
+  );
+}

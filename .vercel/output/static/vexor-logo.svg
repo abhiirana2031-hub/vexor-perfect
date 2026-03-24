@@ -1,0 +1,6 @@
+<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <!-- Checkmark -->
+  <g stroke="#00BFFF" stroke-width="12" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="40,110 90,160 160,50" />
+  </g>
+</svg>

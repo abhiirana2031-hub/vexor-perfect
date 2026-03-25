@@ -7,8 +7,7 @@ import { ThankYouDialog } from '@/components/ThankYouDialog';
 import { useToast } from '@/hooks/use-toast';
 import { motion } from 'framer-motion';
 import { Mail, MapPin, Phone, Send } from 'lucide-react';
-import { useState, useEffect } from 'react';
-import emailjs from '@emailjs/browser';
+import { useState } from 'react';
 
 export default function ContactPage() {
   const { toast } = useToast();
@@ -22,10 +21,7 @@ export default function ContactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showThankYou, setShowThankYou] = useState(false);
 
-  // Initialize EmailJS
-  useEffect(() => {
-    emailjs.init('4xnG8nB3VIWC5Rxw6');
-  }, []);
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({
@@ -49,22 +45,17 @@ export default function ContactPage() {
     setIsSubmitting(true);
 
     try {
-      // Send email to admin
-      await emailjs.send('service_vexor', 'template_admin', {
-        to_email: 'vexoritsolutions@gmail.com',
-        from_name: formData.name,
-        from_email: formData.email,
-        phone: formData.phone,
-        subject: formData.subject,
-        message: formData.message
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
       });
-
-      // Send confirmation email to user
-      await emailjs.send('service_vexor', 'template_user', {
-        to_email: formData.email,
-        from_name: formData.name,
-        subject: formData.subject
-      });
+      
+      if (!response.ok) {
+        throw new Error('Server returned an error');
+      }
 
       setShowThankYou(true);
 
@@ -82,7 +73,7 @@ export default function ContactPage() {
         description: 'Failed to send message. Please try again.',
         variant: 'destructive'
       });
-      console.error('EmailJS error:', error);
+      console.error('Contact API Error:', error);
     } finally {
       setIsSubmitting(false);
     }

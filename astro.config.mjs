@@ -6,7 +6,8 @@ import customErrorOverlayPlugin from "./vite-error-overlay-plugin.js";
 
 // https://astro.build/config
 export default defineConfig({
-  output: "static",
+  output: "server",
+
   integrations: [
     {
       name: "framewire",
@@ -25,6 +26,7 @@ export default defineConfig({
     tailwind(),
     react(),
   ],
+
   vite: {
     plugins: [customErrorOverlayPlugin()],
     cacheDir: 'node_modules/.cache/.vite',
@@ -43,16 +45,20 @@ export default defineConfig({
       ],
     },
   },
+
   devToolbar: {
     enabled: false,
   },
+
   image: {
     domains: ["static.wixstatic.com"],
   },
+
   server: {
     allowedHosts: true,
     host: true,
   },
+
   security: {
     checkOrigin: false
   }

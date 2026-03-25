@@ -1,159 +1,57 @@
-import type { APIRoute } from "astro";
-import { getMongoDb } from "@/lib/db/mongo";
-import { assertAllowedCollection } from "@/lib/db/collections";
-import type { CmsDoc } from "@/lib/db/cms-doc";
-import { serializeDocument } from "@/lib/db/serialize";
-
-export const prerender = false;
+import type { APIRoute } from 'astro';
+import { getMongoDb } from '@/lib/db/mongo';
 
 export const GET: APIRoute = async ({ params }) => {
-  const collection = params.collection ?? "";
-  const id = params.id ?? "";
-  try {
-    assertAllowedCollection(collection);
-  } catch {
-    return new Response(JSON.stringify({ error: "Invalid collection" }), {
-      status: 400,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
-
-  if (!id) {
-    return new Response(JSON.stringify({ error: "Missing id" }), {
-      status: 400,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
-
+  const { collection, id } = params;
+  if (!collection || !id) return new Response(null, { status: 400 });
+  
   try {
     const db = await getMongoDb();
-    const doc = await db.collection<CmsDoc>(collection).findOne({ _id: id });
-    if (!doc) {
-      return new Response(JSON.stringify({ error: "Not found" }), {
-        status: 404,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-    return new Response(JSON.stringify(serializeDocument(doc)), {
+    const item = await db.collection(collection).findOne({ _id: id });
+    if (!item) return new Response(null, { status: 404 });
+    return new Response(JSON.stringify(item), {
       status: 200,
-      headers: { "Content-Type": "application/json" },
+      headers: { 'Content-Type': 'application/json' }
     });
-  } catch (e) {
-    const message = e instanceof Error ? e.message : "Database error";
-    return new Response(JSON.stringify({ error: message }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+  } catch (err: any) {
+    return new Response(JSON.stringify({ error: err.message }), { status: 500 });
   }
 };
 
 export const PATCH: APIRoute = async ({ params, request }) => {
-  const collection = params.collection ?? "";
-  const id = params.id ?? "";
-  try {
-    assertAllowedCollection(collection);
-  } catch {
-    return new Response(JSON.stringify({ error: "Invalid collection" }), {
-      status: 400,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
-
-  if (!id) {
-    return new Response(JSON.stringify({ error: "Missing id" }), {
-      status: 400,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
-
-  let patch: Record<string, unknown>;
-  try {
-    patch = (await request.json()) as Record<string, unknown>;
-  } catch {
-    return new Response(JSON.stringify({ error: "Invalid JSON body" }), {
-      status: 400,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
-
-  delete patch._id;
-
-  const set: Record<string, unknown> = { ...patch, _updatedDate: new Date() };
-  for (const key of Object.keys(set)) {
-    const v = set[key];
-    if (
-      typeof v === "string" &&
-      (key.endsWith("Date") || key === "completionDate" || key === "datePosted")
-    ) {
-      const d = new Date(v);
-      if (!Number.isNaN(d.getTime())) set[key] = d;
-    }
-  }
-
+  const { collection, id } = params;
+  if (!collection || !id) return new Response(null, { status: 400 });
+  
   try {
     const db = await getMongoDb();
-    const coll = db.collection<CmsDoc>(collection);
-    const prev = await coll.findOne({ _id: id });
-    if (!prev) {
-      return new Response(JSON.stringify({ error: "Not found" }), {
-        status: 404,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-    await coll.updateOne({ _id: id }, { $set: set });
-    const next: CmsDoc = { ...prev, ...set, _id: id };
-    return new Response(JSON.stringify(serializeDocument(next)), {
+    const data = await request.json();
+    
+    // Remove _id from updates so we don't accidentally try to modify it
+    const updateData = { ...data };
+    delete updateData._id;
+
+    await db.collection(collection).updateOne({ _id: id }, { $set: updateData });
+    return new Response(JSON.stringify(data), {
       status: 200,
-      headers: { "Content-Type": "application/json" },
+      headers: { 'Content-Type': 'application/json' }
     });
-  } catch (e) {
-    const message = e instanceof Error ? e.message : "Database error";
-    return new Response(JSON.stringify({ error: message }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+  } catch (err: any) {
+    return new Response(JSON.stringify({ error: err.message }), { status: 500 });
   }
 };
 
 export const DELETE: APIRoute = async ({ params }) => {
-  const collection = params.collection ?? "";
-  const id = params.id ?? "";
-  try {
-    assertAllowedCollection(collection);
-  } catch {
-    return new Response(JSON.stringify({ error: "Invalid collection" }), {
-      status: 400,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
-
-  if (!id) {
-    return new Response(JSON.stringify({ error: "Missing id" }), {
-      status: 400,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
-
+  const { collection, id } = params;
+  if (!collection || !id) return new Response(null, { status: 400 });
+  
   try {
     const db = await getMongoDb();
-    const coll = db.collection<CmsDoc>(collection);
-    const prev = await coll.findOne({ _id: id });
-    if (!prev) {
-      return new Response(JSON.stringify({ error: "Not found" }), {
-        status: 404,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
-    await coll.deleteOne({ _id: id });
-    return new Response(JSON.stringify(serializeDocument(prev)), {
+    await db.collection(collection).deleteOne({ _id: id });
+    return new Response(JSON.stringify({ success: true, _id: id }), {
       status: 200,
-      headers: { "Content-Type": "application/json" },
+      headers: { 'Content-Type': 'application/json' }
     });
-  } catch (e) {
-    const message = e instanceof Error ? e.message : "Database error";
-    return new Response(JSON.stringify({ error: message }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+  } catch (err: any) {
+    return new Response(JSON.stringify({ error: err.message }), { status: 500 });
   }
 };

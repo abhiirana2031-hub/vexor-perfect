@@ -1,101 +1,51 @@
-import type { APIRoute } from "astro";
-import { getMongoDb } from "@/lib/db/mongo";
-import { assertAllowedCollection } from "@/lib/db/collections";
-import type { CmsDoc } from "@/lib/db/cms-doc";
-import { serializeDocument } from "@/lib/db/serialize";
-import { randomUUID } from "node:crypto";
+import type { APIRoute } from 'astro';
+import { getMongoDb } from '@/lib/db/mongo';
 
-export const prerender = false;
-
-export const GET: APIRoute = async ({ params, url }) => {
-  const collection = params.collection ?? "";
-  try {
-    assertAllowedCollection(collection);
-  } catch {
-    return new Response(JSON.stringify({ error: "Invalid collection" }), {
-      status: 400,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
-
-  const limit = Math.min(
-    Math.max(1, Number(url.searchParams.get("limit")) || 50),
-    1000,
-  );
-  const skip = Math.max(0, Number(url.searchParams.get("skip")) || 0);
+export const GET: APIRoute = async ({ params, request }) => {
+  const collection = params.collection;
+  if (!collection) return new Response(JSON.stringify({ error: "Missing collection" }), { status: 400 });
+  
+  const url = new URL(request.url);
+  const limit = parseInt(url.searchParams.get('limit') || '50');
+  const skip = parseInt(url.searchParams.get('skip') || '0');
 
   try {
     const db = await getMongoDb();
-    const coll = db.collection<CmsDoc>(collection);
-    const [items, totalCount] = await Promise.all([
-      coll.find({}).skip(skip).limit(limit).toArray(),
-      coll.countDocuments({}),
-    ]);
-    const hasNext = skip + limit < totalCount;
+    const items = await db.collection(collection).find({}).skip(skip).limit(limit).toArray();
+    const totalCount = await db.collection(collection).countDocuments();
 
-    return new Response(
-      JSON.stringify({
-        items: items.map((d) => serializeDocument(d)),
-        totalCount,
-        hasNext,
-        currentPage: Math.floor(skip / limit),
-        pageSize: limit,
-        nextSkip: hasNext ? skip + limit : null,
-      }),
-      { status: 200, headers: { "Content-Type": "application/json" } },
-    );
-  } catch (e) {
-    const message = e instanceof Error ? e.message : "Database error";
-    return new Response(JSON.stringify({ error: message }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
+    return new Response(JSON.stringify({
+      items,
+      totalCount,
+      hasNext: skip + items.length < totalCount,
+      currentPage: Math.floor(skip / limit),
+      pageSize: limit,
+      nextSkip: skip + items.length < totalCount ? skip + limit : null
+    }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' }
     });
+  } catch (err: any) {
+    return new Response(JSON.stringify({ error: err.message }), { status: 500 });
   }
 };
 
 export const POST: APIRoute = async ({ params, request }) => {
-  const collection = params.collection ?? "";
-  try {
-    assertAllowedCollection(collection);
-  } catch {
-    return new Response(JSON.stringify({ error: "Invalid collection" }), {
-      status: 400,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
-
-  let body: Record<string, unknown>;
-  try {
-    body = (await request.json()) as Record<string, unknown>;
-  } catch {
-    return new Response(JSON.stringify({ error: "Invalid JSON body" }), {
-      status: 400,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
-
-  const _id = typeof body._id === "string" ? body._id : randomUUID();
-  const now = new Date();
-  const doc: CmsDoc = {
-    ...body,
-    _id,
-    _createdDate: body._createdDate ? new Date(String(body._createdDate)) : now,
-    _updatedDate: now,
-  };
-
+  const collection = params.collection;
+  if (!collection) return new Response(JSON.stringify({ error: "Missing collection" }), { status: 400 });
+  
   try {
     const db = await getMongoDb();
-    const coll = db.collection<CmsDoc>(collection);
-    await coll.insertOne(doc);
-    return new Response(JSON.stringify(serializeDocument(doc)), {
+    const data = await request.json();
+    if (!data._id) {
+        data._id = crypto.randomUUID();
+    }
+    await db.collection(collection).insertOne(data);
+    return new Response(JSON.stringify(data), {
       status: 201,
-      headers: { "Content-Type": "application/json" },
+      headers: { 'Content-Type': 'application/json' }
     });
-  } catch (e) {
-    const message = e instanceof Error ? e.message : "Database error";
-    return new Response(JSON.stringify({ error: message }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+  } catch (err: any) {
+    return new Response(JSON.stringify({ error: err.message }), { status: 500 });
   }
 };

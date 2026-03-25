@@ -48,21 +48,38 @@ export default function ContactPage() {
     setIsSubmitting(true);
 
     try {
+      // Send main inquiry email to Vexora IT Solutions
       await emailjs.send('service_gec4utq', 'template_saa7kyw', {
         to_email: 'vexoritsolutions@gmail.com',
         from_name: formData.name,
+        name: formData.name,            // added alias
         from_email: formData.email,
+        email: formData.email,          // added alias
+        reply_to: formData.email,       // added alias
         phone: formData.phone,
+        phone_number: formData.phone,   // added alias
         subject: formData.subject,
         message: formData.message
       });
 
-      await emailjs.send('service_gec4utq', 'template_xty2v3w', {
-        to_email: formData.email,
-        from_name: formData.name,
-        subject: formData.subject
-      });
+      // Attempt to send auto-reply to the user's email
+      try {
+        await emailjs.send('service_gec4utq', 'template_xty2v3w', {
+          to_email: formData.email,
+          email: formData.email,        // added alias
+          user_email: formData.email,   // added alias
+          to_name: formData.name,       // added alias
+          from_name: formData.name,
+          name: formData.name,          // added alias
+          subject: formData.subject,
+          reply_to: 'vexoritsolutions@gmail.com'
+        });
+      } catch (autoReplyError) {
+        console.error('Auto-reply failed to send:', autoReplyError);
+        // Do not throw here so that the "Thank You" dialog can still appear!
+      }
 
+      // Show the success dialog regardless of whether the auto-reply succeeded
       setShowThankYou(true);
 
       // Reset form

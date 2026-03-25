@@ -9,10 +9,10 @@ export const POST: APIRoute = async ({ request }) => {
       return new Response(JSON.stringify({ error: "Missing required fields" }), { status: 400 });
     }
 
-    const EMAILJS_SERVICE_ID = (import.meta.env.EMAILJS_SERVICE_ID || process.env.EMAILJS_SERVICE_ID)?.trim() || 'service_vexor';
-    const EMAILJS_TEMPLATE_ADMIN = (import.meta.env.EMAILJS_TEMPLATE_ADMIN || process.env.EMAILJS_TEMPLATE_ADMIN)?.trim() || 'template_admin';
-    const EMAILJS_TEMPLATE_USER = (import.meta.env.EMAILJS_TEMPLATE_USER || process.env.EMAILJS_TEMPLATE_USER)?.trim() || 'template_user';
-    const EMAILJS_PUBLIC_KEY = (import.meta.env.EMAILJS_PUBLIC_KEY || process.env.EMAILJS_PUBLIC_KEY)?.trim() || '4xnG8nB3VIWC5Rxw6';
+    const EMAILJS_SERVICE_ID = (import.meta.env.EMAILJS_SERVICE_ID || process.env.EMAILJS_SERVICE_ID)?.trim() || 'service_gec4utq';
+    const EMAILJS_TEMPLATE_ADMIN = (import.meta.env.EMAILJS_TEMPLATE_ADMIN || process.env.EMAILJS_TEMPLATE_ADMIN)?.trim() || 'template_saa7kyw';
+    const EMAILJS_TEMPLATE_USER = (import.meta.env.EMAILJS_TEMPLATE_USER || process.env.EMAILJS_TEMPLATE_USER)?.trim() || 'template_xty2v3w';
+    const EMAILJS_PUBLIC_KEY = (import.meta.env.EMAILJS_PUBLIC_KEY || process.env.EMAILJS_PUBLIC_KEY)?.trim() || 'RU_MfNjqk66qHxpzu';
 
     const emailjsPayloadAdmin = {
       service_id: EMAILJS_SERVICE_ID,

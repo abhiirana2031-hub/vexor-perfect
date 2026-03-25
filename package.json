@@ -8,7 +8,8 @@
     "preview": "astro preview",
     "check": "npx astro check --js-only",
     "test:run": "vitest run",
-    "seed": "node scripts/seed-sample-data.mjs"
+    "seed": "node scripts/seed-sample-data.mjs",
+    "start": "HOST=0.0.0.0 node ./dist/server/entry.mjs"
   },
   "dependencies": {
     "@astrojs/check": "0.9.4",

@@ -7,7 +7,8 @@ import { ThankYouDialog } from '@/components/ThankYouDialog';
 import { useToast } from '@/hooks/use-toast';
 import { motion } from 'framer-motion';
 import { Mail, MapPin, Phone, Send } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import emailjs from '@emailjs/browser';
 
 export default function ContactPage() {
   const { toast } = useToast();
@@ -21,7 +22,9 @@ export default function ContactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showThankYou, setShowThankYou] = useState(false);
 
-
+  useEffect(() => {
+    emailjs.init({ publicKey: 'RU_MfNjqk66qHxpzu' });
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({
@@ -45,17 +48,20 @@ export default function ContactPage() {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(formData)
+      await emailjs.send('service_gec4utq', 'template_saa7kyw', {
+        to_email: 'vexoritsolutions@gmail.com',
+        from_name: formData.name,
+        from_email: formData.email,
+        phone: formData.phone,
+        subject: formData.subject,
+        message: formData.message
       });
-      
-      if (!response.ok) {
-        throw new Error('Server returned an error');
-      }
+
+      await emailjs.send('service_gec4utq', 'template_xty2v3w', {
+        to_email: formData.email,
+        from_name: formData.name,
+        subject: formData.subject
+      });
 
       setShowThankYou(true);
 

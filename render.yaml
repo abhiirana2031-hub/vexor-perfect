@@ -5,9 +5,7 @@ services:
     plan: free
     branch: main
     buildCommand: npm install && npm run build
-    startCommand: npm run preview
-    staticSite:
-      source: dist
+    startCommand: node ./dist/server/entry.mjs
     envVars:
       - key: GMAIL_APP_PASSWORD
         value: ctso nvbd jvug nffg

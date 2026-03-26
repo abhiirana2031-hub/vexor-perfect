@@ -144,18 +144,18 @@ export default function ContactPage() {
       <Header />
 
       {/* Hero Section */}
-      <section className="relative w-full pt-32 pb-24 px-8 lg:px-16">
+      <section className="relative w-full pt-28 md:pt-32 pb-16 md:pb-24 px-4 sm:px-8 lg:px-16">
         <div className="max-w-[100rem] mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-center space-y-6"
+            className="text-center space-y-4 md:space-y-6"
           >
-            <h1 className="font-heading text-6xl lg:text-8xl font-bold text-primary-foreground">
+            <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-bold text-primary-foreground">
               Get In <span className="text-secondary">Touch</span>
             </h1>
-            <p className="font-paragraph text-xl lg:text-2xl text-foreground/70 max-w-4xl mx-auto leading-relaxed">
+            <p className="font-paragraph text-lg sm:text-xl lg:text-2xl text-foreground/70 max-w-4xl mx-auto leading-relaxed px-4">
               Have a project in mind? Let's discuss how we can help transform your business
             </p>
           </motion.div>
@@ -163,20 +163,20 @@ export default function ContactPage() {
       </section>
 
       {/* Contact Section */}
-      <section className="w-full pb-24">
-        <div className="max-w-[100rem] mx-auto px-8 lg:px-16">
-          <div className="grid lg:grid-cols-2 gap-16">
+      <section className="w-full pb-16 md:pb-24">
+        <div className="max-w-[100rem] mx-auto px-4 sm:px-8 lg:px-16">
+          <div className="grid lg:grid-cols-2 gap-10 lg:gap-16">
             {/* Contact Form */}
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
-              className="bg-soft-shadow-gray/30 backdrop-blur-sm border border-secondary/20 rounded-3xl p-10 lg:p-12"
+              className="bg-soft-shadow-gray/30 backdrop-blur-sm border border-secondary/20 rounded-3xl p-6 sm:p-8 lg:p-12"
             >
-              <h2 className="font-heading text-3xl font-bold text-primary-foreground mb-8">
+              <h2 className="font-heading text-2xl sm:text-3xl font-bold text-primary-foreground mb-6 md:mb-8">
                 Send Us a Message
               </h2>
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
                 <div>
                   <label htmlFor="name" className="font-paragraph text-sm font-semibold text-foreground mb-2 block">
                     Full Name *
@@ -258,7 +258,7 @@ export default function ContactPage() {
                 <Button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/90 px-8 py-6 text-lg font-semibold rounded-lg transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/90 px-6 py-4 md:px-8 md:py-6 text-base md:text-lg font-semibold rounded-lg transition-all duration-300 hover:scale-[1.02] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSubmitting ? (
                     'Sending...'
@@ -277,35 +277,35 @@ export default function ContactPage() {
               initial={{ opacity: 0, x: 30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
-              className="space-y-8"
+              className="space-y-6 md:space-y-8"
             >
-              <div className="bg-soft-shadow-gray/30 backdrop-blur-sm border border-secondary/20 rounded-3xl p-10 lg:p-12 space-y-8">
-                <h2 className="font-heading text-3xl font-bold text-primary-foreground">
+              <div className="bg-soft-shadow-gray/30 backdrop-blur-sm border border-secondary/20 rounded-3xl p-6 sm:p-8 lg:p-12 space-y-6 md:space-y-8">
+                <h2 className="font-heading text-2xl sm:text-3xl font-bold text-primary-foreground">
                   Contact Information
                 </h2>
-                <p className="font-paragraph text-lg text-foreground/70 leading-relaxed">
+                <p className="font-paragraph text-base sm:text-lg text-foreground/70 leading-relaxed">
                   Reach out to us through any of the following channels. We're here to help!
                 </p>
 
                 <div className="space-y-6">
                   {contactInfo.map((info, idx) => (
                     <div key={idx} className="flex items-start gap-4">
-                      <div className="w-12 h-12 bg-secondary/10 border border-secondary/30 rounded-xl flex items-center justify-center flex-shrink-0">
-                        <info.icon className="h-6 w-6 text-secondary" />
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-secondary/10 border border-secondary/30 rounded-xl flex items-center justify-center flex-shrink-0">
+                        <info.icon className="h-5 w-5 sm:h-6 sm:w-6 text-secondary" />
                       </div>
                       <div>
-                        <h3 className="font-heading text-lg font-bold text-primary-foreground mb-1">
+                        <h3 className="font-heading text-base sm:text-lg font-bold text-primary-foreground mb-1">
                           {info.title}
                         </h3>
                         {info.link ? (
                           <a
                             href={info.link}
-                            className="font-paragraph text-foreground/70 hover:text-secondary transition-colors duration-300"
+                            className="font-paragraph text-sm sm:text-base text-foreground/70 hover:text-secondary transition-colors duration-300 break-all"
                           >
                             {info.content}
                           </a>
                         ) : (
-                          <p className="font-paragraph text-foreground/70">
+                          <p className="font-paragraph text-sm sm:text-base text-foreground/70 break-all">
                             {info.content}
                           </p>
                         )}
@@ -316,11 +316,11 @@ export default function ContactPage() {
               </div>
 
               {/* Business Hours */}
-              <div className="bg-soft-shadow-gray/30 backdrop-blur-sm border border-secondary/20 rounded-3xl p-10 lg:p-12 space-y-6">
-                <h2 className="font-heading text-2xl font-bold text-primary-foreground">
+              <div className="bg-soft-shadow-gray/30 backdrop-blur-sm border border-secondary/20 rounded-3xl p-6 sm:p-8 lg:p-12 space-y-6">
+                <h2 className="font-heading text-xl sm:text-2xl font-bold text-primary-foreground">
                   Business Hours
                 </h2>
-                <div className="space-y-3">
+                <div className="space-y-3 text-sm sm:text-base">
                   <div className="flex justify-between items-center">
                     <span className="font-paragraph text-foreground/70">Monday - Friday</span>
                     <span className="font-paragraph text-primary-foreground font-semibold">9:00 AM - 6:00 PM</span>
@@ -337,14 +337,14 @@ export default function ContactPage() {
               </div>
 
               {/* CTA */}
-              <div className="bg-gradient-to-br from-secondary/10 to-accent-teal/5 border border-secondary/30 rounded-3xl p-10 lg:p-12 space-y-6">
-                <h2 className="font-heading text-2xl font-bold text-primary-foreground">
+              <div className="bg-gradient-to-br from-secondary/10 to-accent-teal/5 border border-secondary/30 rounded-3xl p-6 sm:p-8 lg:p-12 space-y-6">
+                <h2 className="font-heading text-xl sm:text-2xl font-bold text-primary-foreground">
                   Ready to Start?
                 </h2>
-                <p className="font-paragraph text-foreground/70 leading-relaxed">
+                <p className="font-paragraph text-sm sm:text-base text-foreground/70 leading-relaxed">
                   Schedule a free consultation to discuss your project requirements and how we can help.
                 </p>
-                <Button className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/90 px-6 py-6 text-lg font-semibold rounded-lg transition-all duration-300">
+                <Button className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/90 px-6 py-4 md:py-6 text-base md:text-lg font-semibold rounded-lg transition-all duration-300">
                   Schedule Consultation
                 </Button>
               </div>

@@ -39,18 +39,18 @@ export default function ServicesPage() {
       <Header />
 
       {/* Hero Section */}
-      <section className="relative w-full pt-32 pb-24 px-8 lg:px-16">
+      <section className="relative w-full pt-28 md:pt-32 pb-16 md:pb-24 px-4 sm:px-8 lg:px-16">
         <div className="max-w-[100rem] mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-center space-y-6"
+            className="text-center space-y-4 md:space-y-6"
           >
-            <h1 className="font-heading text-6xl lg:text-8xl font-bold text-primary-foreground">
+            <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-bold text-primary-foreground">
               Our <span className="text-secondary">Services</span>
             </h1>
-            <p className="font-paragraph text-xl lg:text-2xl text-foreground/70 max-w-4xl mx-auto leading-relaxed">
+            <p className="font-paragraph text-lg sm:text-xl lg:text-2xl text-foreground/70 max-w-4xl mx-auto leading-relaxed px-4">
               Comprehensive technology solutions designed to accelerate your digital transformation
             </p>
           </motion.div>
@@ -58,9 +58,9 @@ export default function ServicesPage() {
       </section>
 
       {/* Filter Section */}
-      <section className="w-full pb-12">
-        <div className="max-w-[100rem] mx-auto px-8 lg:px-16">
-          <div className="flex justify-center gap-4">
+      <section className="w-full pb-8 md:pb-12">
+        <div className="max-w-[100rem] mx-auto px-4 sm:px-8 lg:px-16">
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Button
               onClick={() => setFilter('all')}
               className={`px-8 py-3 font-semibold rounded-lg transition-all duration-300 ${
@@ -86,8 +86,8 @@ export default function ServicesPage() {
       </section>
 
       {/* Services Grid */}
-      <section className="w-full pb-24">
-        <div className="max-w-[100rem] mx-auto px-8 lg:px-16">
+      <section className="w-full pb-16 md:pb-24">
+        <div className="max-w-[100rem] mx-auto px-4 sm:px-8 lg:px-16">
           <div className="min-h-[600px]">
             {isLoading ? null : filteredServices.length > 0 ? (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -117,11 +117,11 @@ export default function ServicesPage() {
                             )}
                           </div>
                         )}
-                        <div className="p-8 space-y-4 flex-1 flex flex-col">
-                          <h3 className="font-heading text-2xl font-bold text-primary-foreground group-hover:text-secondary transition-colors duration-300">
+                        <div className="p-6 sm:p-8 space-y-4 flex-1 flex flex-col">
+                          <h3 className="font-heading text-xl sm:text-2xl font-bold text-primary-foreground group-hover:text-secondary transition-colors duration-300">
                             {service.serviceName}
                           </h3>
-                          <p className="font-paragraph text-foreground/70 line-clamp-3 flex-1">
+                          <p className="font-paragraph text-sm sm:text-base text-foreground/70 line-clamp-3 flex-1">
                             {service.shortDescription}
                           </p>
                           <div className="flex items-center text-secondary font-semibold group-hover:translate-x-2 transition-transform duration-300 pt-4">

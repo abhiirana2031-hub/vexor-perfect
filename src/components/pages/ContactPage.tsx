@@ -9,6 +9,7 @@ import { motion } from 'framer-motion';
 import { Mail, MapPin, Phone, Send } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import emailjs from '@emailjs/browser';
+import { BaseCrudService } from '@/integrations';
 
 export default function ContactPage() {
   const { toast } = useToast();
@@ -77,6 +78,21 @@ export default function ContactPage() {
       } catch (autoReplyError) {
         console.error('Auto-reply failed to send:', autoReplyError);
         // Do not throw here so that the "Thank You" dialog can still appear!
+      }
+
+      // Save enquiry to database
+      try {
+        await BaseCrudService.create('enquiries', {
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          subject: formData.subject,
+          message: formData.message,
+          status: 'unseen',
+          createdAt: new Date().toISOString()
+        });
+      } catch (dbError) {
+        console.error('Failed to save enquiry to database:', dbError);
       }
 
       // Show the success dialog regardless of whether the auto-reply succeeded

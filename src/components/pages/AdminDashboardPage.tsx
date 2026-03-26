@@ -16,6 +16,7 @@ import Footer from '@/components/Footer';
 import { Trash2, Edit2, Plus, Upload, Lock, X } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import emailjs from '@emailjs/browser';
 
 // HARDCODED CREDENTIALS FOR TESTING ONLY - REMOVE BEFORE PRODUCTION
 const ADMIN_EMAIL = 'abhayrana8272@gmail.com';
@@ -52,6 +53,16 @@ export default function AdminDashboardPage() {
   const [loginError, setLoginError] = useState('');
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [enquiries, setEnquiries] = useState<any[]>([]);
+  const [enquiryFilter, setEnquiryFilter] = useState('all');
+  const [enquirySort, setEnquirySort] = useState('newest');
+  const [replyDialog, setReplyDialog] = useState<any>(null);
+  const [replyMessage, setReplyMessage] = useState('');
+  const [sendingReply, setSendingReply] = useState(false);
+
+  useEffect(() => {
+    emailjs.init({ publicKey: 'RU_MfNjqk66qHxpzu' });
+  }, []);
 
   // Check if user is admin (either authenticated member or hardcoded test login)
   const isAdmin = isAdminLoggedIn || (isAuthenticated && member?.profile?.nickname === 'admin');
@@ -117,16 +128,18 @@ export default function AdminDashboardPage() {
   const loadAllData = async () => {
     setIsLoading(true);
     try {
-      const [projectsRes, servicesRes, teamRes, testimonialsRes] = await Promise.all([
+      const [projectsRes, servicesRes, teamRes, testimonialsRes, enquiriesRes] = await Promise.all([
         BaseCrudService.getAll<Projects>('projects'),
         BaseCrudService.getAll<Services>('services'),
         BaseCrudService.getAll<TeamMembers>('teammembers'),
         BaseCrudService.getAll<Testimonials>('testimonials'),
+        BaseCrudService.getAll<any>('enquiries').catch(() => ({ items: [] }))
       ]);
       setProjects(projectsRes.items);
       setServices(servicesRes.items);
       setTeamMembers(teamRes.items);
       setTestimonials(testimonialsRes.items);
+      setEnquiries(enquiriesRes.items || []);
     } catch (error) {
       console.error('Error loading data:', error);
     } finally {
@@ -365,7 +378,7 @@ export default function AdminDashboardPage() {
           {/* Main Content Tabs */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 bg-soft-shadow-gray border border-secondary/20">
+              <TabsList className="grid w-full grid-cols-2 sm:grid-cols-5 bg-soft-shadow-gray border border-secondary/20">
                 <TabsTrigger value="projects" className="text-foreground data-[state=active]:text-secondary data-[state=active]:bg-background">
                   Projects
                 </TabsTrigger>
@@ -377,6 +390,9 @@ export default function AdminDashboardPage() {
                 </TabsTrigger>
                 <TabsTrigger value="team" className="text-foreground data-[state=active]:text-secondary data-[state=active]:bg-background">
                   Team Members
+                </TabsTrigger>
+                <TabsTrigger value="enquiries" className="text-foreground data-[state=active]:text-secondary data-[state=active]:bg-background">
+                  Enquiries
                 </TabsTrigger>
               </TabsList>
 
@@ -653,10 +669,199 @@ export default function AdminDashboardPage() {
                   </div>
                 )}
               </TabsContent>
+
+              {/* Enquiries Tab */}
+              <TabsContent value="enquiries" className="space-y-4 mt-6">
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
+                  <h2 className="font-heading text-2xl font-bold text-foreground">Contact Enquiries</h2>
+                  <div className="flex gap-4">
+                    <select
+                      value={enquiryFilter}
+                      onChange={(e) => setEnquiryFilter(e.target.value)}
+                      className="bg-soft-shadow-gray border border-secondary/20 text-foreground rounded-md px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-secondary"
+                    >
+                      <option value="all">All Status</option>
+                      <option value="unseen">Unseen</option>
+                      <option value="pending">Pending</option>
+                      <option value="replied">Replied</option>
+                    </select>
+                    <select
+                      value={enquirySort}
+                      onChange={(e) => setEnquirySort(e.target.value)}
+                      className="bg-soft-shadow-gray border border-secondary/20 text-foreground rounded-md px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-secondary"
+                    >
+                      <option value="newest">Newest First</option>
+                      <option value="oldest">Oldest First</option>
+                    </select>
+                  </div>
+                </div>
+                {isLoading ? (
+                  <LoadingSpinner />
+                ) : (
+                  <div className="grid gap-4">
+                    {enquiries
+                      .filter(eq => enquiryFilter === 'all' || eq.status === enquiryFilter)
+                      .sort((a, b) => {
+                        const dateA = new Date(a.createdAt || 0).getTime();
+                        const dateB = new Date(b.createdAt || 0).getTime();
+                        return enquirySort === 'newest' ? dateB - dateA : dateA - dateB;
+                      })
+                      .map((enquiry) => (
+                      <Card key={enquiry._id} className="bg-soft-shadow-gray border-secondary/20">
+                        <CardContent className="pt-6">
+                          <div className="flex flex-col md:flex-row justify-between gap-6">
+                            <div className="flex-1 space-y-2">
+                              <div className="flex items-center gap-3">
+                                <h3 className="font-heading text-lg font-bold text-foreground">{enquiry.name}</h3>
+                                <div className={`px-2 py-0.5 rounded text-xs font-semibold ${
+                                  enquiry.status === 'unseen' ? 'bg-destructive/20 text-destructive' :
+                                  enquiry.status === 'pending' ? 'bg-orange-500/20 text-orange-500' :
+                                  'bg-secondary/20 text-secondary'
+                                }`}>
+                                  {(enquiry.status || 'unseen').toUpperCase()}
+                                </div>
+                              </div>
+                              <div className="flex flex-wrap gap-4 text-sm text-foreground/70">
+                                <span>Email: {enquiry.email}</span>
+                                <span>Phone: {enquiry.phone || 'N/A'}</span>
+                                <span>Date: {new Date(enquiry.createdAt).toLocaleString()}</span>
+                              </div>
+                              <div className="mt-4">
+                                <p className="font-semibold text-foreground text-sm">Subject: {enquiry.subject}</p>
+                                <div className="mt-2 p-4 bg-background/50 rounded-lg text-foreground/80 font-paragraph text-sm whitespace-pre-wrap border border-secondary/10">
+                                  {enquiry.message}
+                                </div>
+                              </div>
+                            </div>
+                            <div className="flex flex-col gap-2 flex-shrink-0 w-full md:w-32">
+                              <Button 
+                                onClick={async () => {
+                                  // Mark as pending if unseen
+                                  if (enquiry.status === 'unseen') {
+                                    const updated = { ...enquiry, status: 'pending' };
+                                    await BaseCrudService.update('enquiries', updated);
+                                    setEnquiries(enquiries.map(e => e._id === enquiry._id ? updated : e));
+                                  }
+                                  setReplyDialog(enquiry);
+                                }}
+                                size="sm"
+                                disabled={enquiry.status === 'replied'}
+                                className="bg-secondary text-secondary-foreground hover:bg-secondary/90 w-full"
+                              >
+                                {enquiry.status === 'replied' ? 'Replied' : 'Reply'}
+                              </Button>
+                              <Button 
+                                onClick={async () => {
+                                  const updated = { ...enquiry, status: enquiry.status === 'pending' ? 'unseen' : 'pending' };
+                                  await BaseCrudService.update('enquiries', updated);
+                                  setEnquiries(enquiries.map(e => e._id === enquiry._id ? updated : e));
+                                }}
+                                size="sm"
+                                variant="outline"
+                                className="border-secondary/20 text-foreground hover:bg-secondary/10 w-full"
+                              >
+                                Mark {enquiry.status === 'pending' ? 'Unseen' : 'Pending'}
+                              </Button>
+                              <Button 
+                                onClick={async () => {
+                                  if(confirm('Delete this enquiry?')) {
+                                    await BaseCrudService.delete('enquiries', enquiry._id);
+                                    setEnquiries(enquiries.filter(e => e._id !== enquiry._id));
+                                  }
+                                }}
+                                size="sm"
+                                className="bg-destructive/10 text-destructive hover:bg-destructive/20 w-full"
+                              >
+                                Delete
+                              </Button>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                    {enquiries.length === 0 && (
+                      <p className="text-foreground/50 text-center py-8">No enquiries found.</p>
+                    )}
+                  </div>
+                )}
+              </TabsContent>
             </Tabs>
           </motion.div>
         </div>
       </div>
+
+      {/* Reply Dialog */}
+      <Dialog open={!!replyDialog} onOpenChange={(open) => !open && setReplyDialog(null)}>
+        <DialogContent className="bg-soft-shadow-gray border-secondary/20 max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="text-foreground">Reply to {replyDialog?.name}</DialogTitle>
+            <DialogDescription className="text-foreground/70">
+              Sending email to: {replyDialog?.email}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-foreground font-paragraph text-sm mb-2">Subject</label>
+              <Input
+                value={`Re: ${replyDialog?.subject}`}
+                disabled
+                className="bg-background/50 border-secondary/20 text-foreground"
+              />
+            </div>
+            <div>
+              <label className="block text-foreground font-paragraph text-sm mb-2">Message</label>
+              <Textarea
+                value={replyMessage}
+                onChange={(e) => setReplyMessage(e.target.value)}
+                rows={6}
+                className="bg-background border-secondary/20 text-foreground resize-none"
+                placeholder="Type your reply here..."
+              />
+            </div>
+            <div className="flex justify-end gap-3 pt-4">
+              <Button 
+                variant="outline" 
+                onClick={() => setReplyDialog(null)}
+                className="border-secondary/20 text-foreground hover:bg-secondary/10"
+              >
+                Cancel
+              </Button>
+              <Button 
+                onClick={async () => {
+                  if (!replyMessage.trim()) return alert('Message cannot be empty');
+                  setSendingReply(true);
+                  try {
+                    await emailjs.send('service_gec4utq', 'template_saa7kyw', {
+                      to_email: replyDialog.email,
+                      from_name: 'Vexora IT Solutions',
+                      name: 'Vexora IT Solutions',
+                      reply_to: 'vexoritsolutions@gmail.com',
+                      subject: `Re: ${replyDialog.subject}`,
+                      message: replyMessage
+                    });
+                    
+                    const updated = { ...replyDialog, status: 'replied' };
+                    await BaseCrudService.update('enquiries', updated);
+                    setEnquiries(enquiries.map(e => e._id === replyDialog._id ? updated : e));
+                    setReplyDialog(null);
+                    setReplyMessage('');
+                    alert('Reply sent successfully!');
+                  } catch (error) {
+                    console.error('Failed to send reply:', error);
+                    alert('Failed to send reply. Check console.');
+                  } finally {
+                    setSendingReply(false);
+                  }
+                }}
+                disabled={sendingReply}
+                className="bg-secondary text-secondary-foreground hover:bg-secondary/90"
+              >
+                {sendingReply ? 'Sending...' : 'Send Reply'}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Edit/Add Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>

@@ -49,19 +49,38 @@ export default function ContactPage() {
     setIsSubmitting(true);
 
     try {
+      // Save enquiry to database FIRST to guarantee we don't lose the message if email fails
+      try {
+        await BaseCrudService.create('enquiries', {
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          subject: formData.subject,
+          message: formData.message,
+          status: 'unseen',
+          createdAt: new Date().toISOString()
+        });
+      } catch (dbError) {
+        console.error('Failed to save enquiry to database:', dbError);
+      }
+
       // Send main inquiry email to Vexora IT Solutions
-      await emailjs.send('service_gec4utq', 'template_saa7kyw', {
-        to_email: 'vexoritsolutions@gmail.com',
-        from_name: formData.name,
-        name: formData.name,            // added alias
-        from_email: formData.email,
-        email: formData.email,          // added alias
-        reply_to: formData.email,       // added alias
-        phone: formData.phone,
-        phone_number: formData.phone,   // added alias
-        subject: formData.subject,
-        message: formData.message
-      });
+      try {
+        await emailjs.send('service_gec4utq', 'template_saa7kyw', {
+          to_email: 'vexoritsolutions@gmail.com',
+          from_name: formData.name,
+          name: formData.name,            // added alias
+          from_email: formData.email,
+          email: formData.email,          // added alias
+          reply_to: formData.email,       // added alias
+          phone: formData.phone,
+          phone_number: formData.phone,   // added alias
+          subject: formData.subject,
+          message: formData.message
+        });
+      } catch (emailError) {
+        console.error('Main inquiry email failed to send:', emailError);
+      }
 
       // Attempt to send auto-reply to the user's email
       try {
@@ -78,21 +97,6 @@ export default function ContactPage() {
       } catch (autoReplyError) {
         console.error('Auto-reply failed to send:', autoReplyError);
         // Do not throw here so that the "Thank You" dialog can still appear!
-      }
-
-      // Save enquiry to database
-      try {
-        await BaseCrudService.create('enquiries', {
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone,
-          subject: formData.subject,
-          message: formData.message,
-          status: 'unseen',
-          createdAt: new Date().toISOString()
-        });
-      } catch (dbError) {
-        console.error('Failed to save enquiry to database:', dbError);
       }
 
       // Show the success dialog regardless of whether the auto-reply succeeded

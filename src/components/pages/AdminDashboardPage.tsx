@@ -831,14 +831,20 @@ export default function AdminDashboardPage() {
                   if (!replyMessage.trim()) return alert('Message cannot be empty');
                   setSendingReply(true);
                   try {
-                    await emailjs.send('service_gec4utq', 'template_saa7kyw', {
-                      to_email: replyDialog.email,
-                      from_name: 'Vexora IT Solutions',
-                      name: 'Vexora IT Solutions',
-                      reply_to: 'vexoritsolutions@gmail.com',
-                      subject: `Re: ${replyDialog.subject}`,
-                      message: replyMessage
+                    const res = await fetch('/api/send-reply', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json' },
+                      body: JSON.stringify({
+                        to: replyDialog.email,
+                        subject: `Re: ${replyDialog.subject}`,
+                        message: replyMessage
+                      })
                     });
+
+                    if (!res.ok) {
+                      const errorData = await res.json().catch(() => ({}));
+                      throw new Error(errorData.error || 'Backend failed to send email');
+                    }
                     
                     const updated = { ...replyDialog, status: 'replied' };
                     await BaseCrudService.update('enquiries', updated);

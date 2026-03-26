@@ -325,9 +325,9 @@ export default function AdminDashboardPage() {
       <div className="pt-24 pb-20 px-4">
         <div className="max-w-[120rem] mx-auto">
           {/* Header Section */}
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
-            <h1 className="font-heading text-5xl font-bold text-foreground mb-2">Admin Dashboard</h1>
-            <p className="font-paragraph text-foreground/70">Manage your site content, users, and settings</p>
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-6 sm:mb-8 text-center md:text-left">
+            <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-2">Admin Dashboard</h1>
+            <p className="font-paragraph text-xs sm:text-base text-foreground/70">Manage your site content, users, and settings</p>
           </motion.div>
 
           {/* Logo and Settings Section */}
@@ -378,20 +378,20 @@ export default function AdminDashboardPage() {
           {/* Main Content Tabs */}
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="grid w-full grid-cols-2 sm:grid-cols-5 bg-soft-shadow-gray border border-secondary/20">
-                <TabsTrigger value="projects" className="text-foreground data-[state=active]:text-secondary data-[state=active]:bg-background">
+              <TabsList className="flex overflow-x-auto w-full mb-4 bg-soft-shadow-gray border border-secondary/20 no-scrollbar justify-start md:justify-center p-1 rounded-lg">
+                <TabsTrigger value="projects" className="whitespace-nowrap flex-shrink-0 text-foreground data-[state=active]:text-secondary data-[state=active]:bg-background px-4 sm:px-6">
                   Projects
                 </TabsTrigger>
-                <TabsTrigger value="services" className="text-foreground data-[state=active]:text-secondary data-[state=active]:bg-background">
+                <TabsTrigger value="services" className="whitespace-nowrap flex-shrink-0 text-foreground data-[state=active]:text-secondary data-[state=active]:bg-background px-4 sm:px-6">
                   Services
                 </TabsTrigger>
-                <TabsTrigger value="testimonials" className="text-foreground data-[state=active]:text-secondary data-[state=active]:bg-background">
+                <TabsTrigger value="testimonials" className="whitespace-nowrap flex-shrink-0 text-foreground data-[state=active]:text-secondary data-[state=active]:bg-background px-4 sm:px-6">
                   Testimonials
                 </TabsTrigger>
-                <TabsTrigger value="team" className="text-foreground data-[state=active]:text-secondary data-[state=active]:bg-background">
+                <TabsTrigger value="team" className="whitespace-nowrap flex-shrink-0 text-foreground data-[state=active]:text-secondary data-[state=active]:bg-background px-4 sm:px-6">
                   Team Members
                 </TabsTrigger>
-                <TabsTrigger value="enquiries" className="text-foreground data-[state=active]:text-secondary data-[state=active]:bg-background">
+                <TabsTrigger value="enquiries" className="whitespace-nowrap flex-shrink-0 text-foreground data-[state=active]:text-secondary data-[state=active]:bg-background px-4 sm:px-6">
                   Enquiries
                 </TabsTrigger>
               </TabsList>
@@ -415,19 +415,19 @@ export default function AdminDashboardPage() {
                     {projects.map((project) => (
                       <Card key={project._id} className="bg-soft-shadow-gray border-secondary/20">
                         <CardContent className="pt-6">
-                          <div className="flex gap-4">
+                          <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
                             {project.projectImage && (
-                              <div className="w-32 h-24 flex-shrink-0 rounded-lg overflow-hidden">
+                              <div className="w-full sm:w-32 h-40 sm:h-24 flex-shrink-0 rounded-lg overflow-hidden">
                                 <Image
                                   src={project.projectImage}
                                   alt={project.projectTitle}
-                                  width={128}
-                                  height={96}
+                                  width={300}
+                                  height={200}
                                   className="w-full h-full object-cover"
                                 />
                               </div>
                             )}
-                            <div className="flex-1 flex justify-between items-start">
+                            <div className="flex-1 flex flex-col sm:flex-row justify-between items-start gap-4">
                               <div>
                                 <h3 className="font-heading text-lg font-bold text-foreground">{project.projectTitle}</h3>
                                 <p className="font-paragraph text-foreground/70 mt-2">{project.projectDescription}</p>
@@ -477,19 +477,19 @@ export default function AdminDashboardPage() {
                     {services.map((service) => (
                       <Card key={service._id} className="bg-soft-shadow-gray border-secondary/20">
                         <CardContent className="pt-6">
-                          <div className="flex gap-4">
+                          <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
                             {service.serviceImage && (
-                              <div className="w-32 h-24 flex-shrink-0 rounded-lg overflow-hidden">
+                              <div className="w-full sm:w-32 h-40 sm:h-24 flex-shrink-0 rounded-lg overflow-hidden">
                                 <Image
                                   src={service.serviceImage}
                                   alt={service.serviceName}
-                                  width={128}
-                                  height={96}
+                                  width={300}
+                                  height={200}
                                   className="w-full h-full object-cover"
                                 />
                               </div>
                             )}
-                            <div className="flex-1 flex justify-between items-start">
+                            <div className="flex-1 flex flex-col sm:flex-row justify-between items-start gap-4">
                               <div>
                                 <h3 className="font-heading text-lg font-bold text-foreground">{service.serviceName}</h3>
                                 <p className="font-paragraph text-foreground/70 mt-2">{service.shortDescription}</p>
@@ -543,9 +543,9 @@ export default function AdminDashboardPage() {
                     {testimonials.map((t) => (
                       <Card key={t._id} className="bg-soft-shadow-gray border-secondary/20">
                         <CardContent className="pt-6">
-                          <div className="flex gap-4">
+                          <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 items-center sm:items-start text-center sm:text-left">
                             {t.clientImage && (
-                              <div className="w-20 h-20 flex-shrink-0 rounded-full overflow-hidden border border-secondary/20">
+                              <div className="w-20 h-20 flex-shrink-0 rounded-full overflow-hidden border border-secondary/20 mx-auto sm:mx-0">
                                 <Image
                                   src={t.clientImage}
                                   alt={t.clientName || 'Client'}
@@ -555,7 +555,7 @@ export default function AdminDashboardPage() {
                                 />
                               </div>
                             )}
-                            <div className="flex-1 flex justify-between items-start gap-4">
+                            <div className="flex-1 flex flex-col sm:flex-row justify-between items-center sm:items-start gap-4 w-full">
                               <div>
                                 <h3 className="font-heading text-lg font-bold text-foreground">
                                   {t.clientName}
@@ -619,9 +619,9 @@ export default function AdminDashboardPage() {
                     {teamMembers.map((member) => (
                       <Card key={member._id} className="bg-soft-shadow-gray border-secondary/20">
                         <CardContent className="pt-6">
-                          <div className="flex gap-4">
+                          <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 items-center sm:items-start text-center sm:text-left">
                             {member.profilePhoto && (
-                              <div className="w-24 h-24 flex-shrink-0 rounded-lg overflow-hidden">
+                              <div className="w-24 h-24 flex-shrink-0 rounded-lg overflow-hidden mx-auto sm:mx-0">
                                 <Image
                                   src={member.profilePhoto}
                                   alt={member.fullName}
@@ -631,7 +631,7 @@ export default function AdminDashboardPage() {
                                 />
                               </div>
                             )}
-                            <div className="flex-1 flex justify-between items-start">
+                            <div className="flex-1 flex flex-col sm:flex-row justify-between items-center sm:items-start gap-4 w-full">
                               <div>
                                 <h3 className="font-heading text-lg font-bold text-foreground">{member.fullName}</h3>
                                 <p className="font-paragraph text-secondary mt-1">{member.jobTitle}</p>
@@ -672,13 +672,13 @@ export default function AdminDashboardPage() {
 
               {/* Enquiries Tab */}
               <TabsContent value="enquiries" className="space-y-4 mt-6">
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
-                  <h2 className="font-heading text-2xl font-bold text-foreground">Contact Enquiries</h2>
-                  <div className="flex gap-4">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
+                  <h2 className="font-heading text-2xl font-bold text-foreground w-full md:w-auto">Contact Enquiries</h2>
+                  <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
                     <select
                       value={enquiryFilter}
                       onChange={(e) => setEnquiryFilter(e.target.value)}
-                      className="bg-soft-shadow-gray border border-secondary/20 text-foreground rounded-md px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-secondary"
+                      className="bg-soft-shadow-gray border border-secondary/20 text-foreground rounded-md px-3 py-3 sm:py-2 text-sm outline-none focus:ring-1 focus:ring-secondary w-full sm:w-auto"
                     >
                       <option value="all">All Status</option>
                       <option value="unseen">Unseen</option>
@@ -688,7 +688,7 @@ export default function AdminDashboardPage() {
                     <select
                       value={enquirySort}
                       onChange={(e) => setEnquirySort(e.target.value)}
-                      className="bg-soft-shadow-gray border border-secondary/20 text-foreground rounded-md px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-secondary"
+                      className="bg-soft-shadow-gray border border-secondary/20 text-foreground rounded-md px-3 py-3 sm:py-2 text-sm outline-none focus:ring-1 focus:ring-secondary w-full sm:w-auto"
                     >
                       <option value="newest">Newest First</option>
                       <option value="oldest">Oldest First</option>

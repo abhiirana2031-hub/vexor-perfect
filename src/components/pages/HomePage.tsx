@@ -164,7 +164,7 @@ export default function HomePage() {
       <Header />
 
       {/* --- HERO SECTION --- */}
-      <section ref={heroRef} className="relative w-full min-h-screen flex items-center justify-center overflow-hidden pt-16 sm:pt-20">
+      <section ref={heroRef} className="relative w-full min-h-screen flex items-center justify-center overflow-hidden pt-24 sm:pt-28 lg:pt-20">
         {/* Dynamic Background */}
         <div className="absolute inset-0 z-0">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(0,191,255,0.08),transparent_70%)]" />
@@ -513,7 +513,7 @@ export default function HomePage() {
 
                   {/* Project Details */}
                   <div className="w-full lg:w-2/5 space-y-4 sm:space-y-6">
-                    <div className="text-6xl sm:text-8xl font-heading font-bold text-white/5 select-none absolute -mt-12 sm:-mt-20 -ml-6 sm:-ml-10 z-0">
+                    <div className="text-6xl sm:text-8xl font-heading font-bold text-white/5 select-none absolute -mt-10 sm:-mt-20 -ml-2 sm:-ml-10 z-0">
                       0{idx + 1}
                     </div>
                     <div className="relative z-10">

@@ -24,7 +24,10 @@ export default function ContactPage() {
   const [showThankYou, setShowThankYou] = useState(false);
 
   useEffect(() => {
-    emailjs.init({ publicKey: 'RU_MfNjqk66qHxpzu' });
+    const publicKey = import.meta.env.PUBLIC_EMAILJS_PUBLIC_KEY;
+    if (publicKey) {
+      emailjs.init({ publicKey });
+    }
   }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -66,8 +69,17 @@ export default function ContactPage() {
 
       // Send main inquiry email to Vexora IT Solutions
       try {
-        await emailjs.send('service_gec4utq', 'template_saa7kyw', {
-          to_email: 'vexoritsolutions@gmail.com',
+        const serviceId = import.meta.env.PUBLIC_EMAILJS_SERVICE_ID;
+        const templateId = import.meta.env.PUBLIC_EMAILJS_TEMPLATE_ADMIN;
+        const mailTo = import.meta.env.PUBLIC_MAIL_TO;
+        
+        if (!serviceId || !templateId || !mailTo) {
+          console.error('EmailJS configuration missing. Please set environment variables.');
+          return;
+        }
+        
+        await emailjs.send(serviceId, templateId, {
+          to_email: mailTo,
           from_name: formData.name,
           name: formData.name,            // added alias
           from_email: formData.email,
@@ -84,7 +96,15 @@ export default function ContactPage() {
 
       // Attempt to send auto-reply to the user's email
       try {
-        await emailjs.send('service_gec4utq', 'template_xty2v3w', {
+        const serviceId = import.meta.env.PUBLIC_EMAILJS_SERVICE_ID;
+        const templateId = import.meta.env.PUBLIC_EMAILJS_TEMPLATE_USER;
+        
+        if (!serviceId || !templateId) {
+          console.error('EmailJS configuration missing for auto-reply. Please set environment variables.');
+          return;
+        }
+        
+        await emailjs.send(serviceId, templateId, {
           to_email: formData.email,
           email: formData.email,        // added alias
           user_email: formData.email,   // added alias

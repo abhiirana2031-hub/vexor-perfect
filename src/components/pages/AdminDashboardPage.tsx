@@ -18,9 +18,10 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import emailjs from '@emailjs/browser';
 
-// HARDCODED CREDENTIALS FOR TESTING ONLY - REMOVE BEFORE PRODUCTION
-const ADMIN_EMAIL = 'abhayrana8272@gmail.com';
-const ADMIN_PASSWORD = 'vexor@#005';
+// SECURITY WARNING: These should be handled via proper authentication (OAuth, JWT, Netlify Identity, etc.)
+// Moving to env vars as a temporary measure - DO NOT commit actual credentials
+const ADMIN_EMAIL = import.meta.env.PUBLIC_ADMIN_EMAIL || '';
+const ADMIN_PASSWORD = import.meta.env.PUBLIC_ADMIN_PASSWORD || '';
 
 // Utility function to convert file to base64
 const fileToBase64 = (file: File): Promise<string> => {
@@ -61,7 +62,10 @@ export default function AdminDashboardPage() {
   const [sendingReply, setSendingReply] = useState(false);
 
   useEffect(() => {
-    emailjs.init({ publicKey: 'RU_MfNjqk66qHxpzu' });
+    const publicKey = import.meta.env.PUBLIC_EMAILJS_PUBLIC_KEY;
+    if (publicKey) {
+      emailjs.init({ publicKey });
+    }
   }, []);
 
   // Check if user is admin (either authenticated member or hardcoded test login)

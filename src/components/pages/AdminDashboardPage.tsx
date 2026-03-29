@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useMember } from '@/integrations';
 import { BaseCrudService } from '@/integrations';
-import { Projects, Services, TeamMembers, Testimonials } from '@/entities';
+import { Projects, Services, TeamMembers, Testimonials, Blogs, UserProfiles } from '@/entities';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -23,6 +23,12 @@ import emailjs from '@emailjs/browser';
 const ADMIN_EMAIL = import.meta.env.PUBLIC_ADMIN_EMAIL || '';
 const ADMIN_PASSWORD = import.meta.env.PUBLIC_ADMIN_PASSWORD || '';
 
+console.log('📋 Admin Config Loaded:');
+console.log('ADMIN_EMAIL:', ADMIN_EMAIL);
+console.log('ADMIN_PASSWORD length:', ADMIN_PASSWORD.length);
+console.log('ADMIN_PASSWORD:', ADMIN_PASSWORD);
+console.log('Environment variables available:', Object.keys(import.meta.env).filter(k => k.includes('ADMIN')));
+
 // Utility function to convert file to base64
 const fileToBase64 = (file: File): Promise<string> => {
   return new Promise((resolve, reject) => {
@@ -41,6 +47,8 @@ export default function AdminDashboardPage() {
   const [services, setServices] = useState<Services[]>([]);
   const [teamMembers, setTeamMembers] = useState<TeamMembers[]>([]);
   const [testimonials, setTestimonials] = useState<Testimonials[]>([]);
+  const [blogs, setBlogs] = useState<Blogs[]>([]);
+  const [users, setUsers] = useState<UserProfiles[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [editingItem, setEditingItem] = useState<any>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -60,6 +68,15 @@ export default function AdminDashboardPage() {
   const [replyDialog, setReplyDialog] = useState<any>(null);
   const [replyMessage, setReplyMessage] = useState('');
   const [sendingReply, setSendingReply] = useState(false);
+  const [siteStats, setSiteStats] = useState<any>({
+    projectsCompleted: '500+',
+    happyClients: '200+',
+    teamMembers: '50+',
+    yearsExperience: '15+'
+  });
+  const [passwordChangeError, setPasswordChangeError] = useState('');
+  const [passwordChangeSuccess, setPasswordChangeSuccess] = useState('');
+  const [changingPassword, setChangingPassword] = useState(false);
 
   useEffect(() => {
     const publicKey = import.meta.env.PUBLIC_EMAILJS_PUBLIC_KEY;
@@ -80,11 +97,34 @@ export default function AdminDashboardPage() {
 
   const handleAdminLogin = () => {
     setLoginError('');
-    if (adminLoginForm.email === ADMIN_EMAIL && adminLoginForm.password === ADMIN_PASSWORD) {
+    const email = adminLoginForm.email.trim();
+    const password = adminLoginForm.password.trim();
+    const expectedEmail = ADMIN_EMAIL.trim();
+    const expectedPassword = ADMIN_PASSWORD.trim();
+    
+    console.log('=== LOGIN DEBUG ===');
+    console.log('Entered Email:', email);
+    console.log('Expected Email:', expectedEmail);
+    console.log('Email Match:', email === expectedEmail);
+    console.log('Entered Password:', password);
+    console.log('Expected Password:', expectedPassword);
+    console.log('Password Match:', password === expectedPassword);
+    console.log('Password Length Entered:', password.length);
+    console.log('Password Length Expected:', expectedPassword.length);
+    
+    if (email === expectedEmail && password === expectedPassword) {
+      console.log('✓ Login successful!');
       setIsAdminLoggedIn(true);
       setAdminLoginForm({ email: '', password: '' });
     } else {
-      setLoginError('Invalid email or password');
+      console.log('✗ Login failed');
+      if (email !== expectedEmail) {
+        setLoginError(`Invalid email. Expected: ${expectedEmail}, Got: ${email}`);
+      } else if (password !== expectedPassword) {
+        setLoginError(`Invalid password. Length mismatch or special characters issue.`);
+      } else {
+        setLoginError('Invalid email or password');
+      }
     }
   };
 
@@ -101,6 +141,8 @@ export default function AdminDashboardPage() {
         const imageField = 
           activeTab === 'projects' ? 'projectImage' :
           activeTab === 'services' ? 'serviceImage' :
+          activeTab === 'blogs' ? 'featuredImage' :
+          activeTab === 'users' ? 'profilePhoto' :
           activeTab === 'testimonials' ? 'clientImage' :
           'profilePhoto';
         
@@ -119,6 +161,8 @@ export default function AdminDashboardPage() {
     const imageField = 
       activeTab === 'projects' ? 'projectImage' :
       activeTab === 'services' ? 'serviceImage' :
+      activeTab === 'blogs' ? 'featuredImage' :
+      activeTab === 'users' ? 'profilePhoto' :
       activeTab === 'testimonials' ? 'clientImage' :
       'profilePhoto';
     setFormData({ ...formData, [imageField]: '' });
@@ -132,18 +176,26 @@ export default function AdminDashboardPage() {
   const loadAllData = async () => {
     setIsLoading(true);
     try {
-      const [projectsRes, servicesRes, teamRes, testimonialsRes, enquiriesRes] = await Promise.all([
+      const [projectsRes, servicesRes, teamRes, testimonialsRes, enquiriesRes, statsRes, blogsRes, usersRes] = await Promise.all([
         BaseCrudService.getAll<Projects>('projects'),
         BaseCrudService.getAll<Services>('services'),
         BaseCrudService.getAll<TeamMembers>('teammembers'),
         BaseCrudService.getAll<Testimonials>('testimonials'),
-        BaseCrudService.getAll<any>('enquiries').catch(() => ({ items: [] }))
+        BaseCrudService.getAll<any>('enquiries').catch(() => ({ items: [] })),
+        fetch('/api/sitestats').then(r => r.json()).catch(() => null),
+        BaseCrudService.getAll<Blogs>('blogs').catch(() => ({ items: [] })),
+        BaseCrudService.getAll<UserProfiles>('userprofiles').catch(() => ({ items: [] }))
       ]);
       setProjects(projectsRes.items);
       setServices(servicesRes.items);
       setTeamMembers(teamRes.items);
       setTestimonials(testimonialsRes.items);
       setEnquiries(enquiriesRes.items || []);
+      setBlogs(blogsRes.items || []);
+      setUsers(usersRes.items || []);
+      if (statsRes && !statsRes.error) {
+        setSiteStats(statsRes);
+      }
     } catch (error) {
       console.error('Error loading data:', error);
     } finally {
@@ -167,6 +219,8 @@ export default function AdminDashboardPage() {
     const imageField = 
       type === 'projects' ? 'projectImage' :
       type === 'services' ? 'serviceImage' :
+      type === 'blogs' ? 'featuredImage' :
+      type === 'users' ? 'profilePhoto' :
       type === 'testimonials' ? 'clientImage' :
       'profilePhoto';
     
@@ -187,15 +241,23 @@ export default function AdminDashboardPage() {
           ? 'projects'
           : type === 'services'
             ? 'services'
-            : type === 'testimonials'
-              ? 'testimonials'
-              : 'teammembers';
+            : type === 'blogs'
+              ? 'blogs'
+              : type === 'users'
+                ? 'userprofiles'
+                : type === 'testimonials'
+                  ? 'testimonials'
+                  : 'teammembers';
       await BaseCrudService.delete(collectionId, id);
       
       if (type === 'projects') {
         setProjects(projects.filter(p => p._id !== id));
       } else if (type === 'services') {
         setServices(services.filter(s => s._id !== id));
+      } else if (type === 'blogs') {
+        setBlogs(blogs.filter(b => b._id !== id));
+      } else if (type === 'users') {
+        setUsers(users.filter(u => u._id !== id));
       } else if (type === 'testimonials') {
         setTestimonials(testimonials.filter((t) => t._id !== id));
       } else {
@@ -214,9 +276,13 @@ export default function AdminDashboardPage() {
           ? 'projects'
           : activeTab === 'services'
             ? 'services'
-            : activeTab === 'testimonials'
-              ? 'testimonials'
-              : 'teammembers';
+            : activeTab === 'blogs'
+              ? 'blogs'
+              : activeTab === 'users'
+                ? 'userprofiles'
+                : activeTab === 'testimonials'
+                  ? 'testimonials'
+                  : 'teammembers';
       
       if (editingItem) {
         const saved = await BaseCrudService.update(collectionId, { ...formData, _id: editingItem._id });
@@ -224,6 +290,10 @@ export default function AdminDashboardPage() {
           setProjects(projects.map(p => p._id === editingItem._id ? (saved as Projects) : p));
         } else if (activeTab === 'services') {
           setServices(services.map(s => s._id === editingItem._id ? (saved as Services) : s));
+        } else if (activeTab === 'blogs') {
+          setBlogs(blogs.map(b => b._id === editingItem._id ? (saved as Blogs) : b));
+        } else if (activeTab === 'users') {
+          setUsers(users.map(u => u._id === editingItem._id ? (saved as UserProfiles) : u));
         } else if (activeTab === 'testimonials') {
           setTestimonials(testimonials.map((t) => t._id === editingItem._id ? (saved as Testimonials) : t));
         } else {
@@ -236,6 +306,10 @@ export default function AdminDashboardPage() {
           setProjects([...projects, created as Projects]);
         } else if (activeTab === 'services') {
           setServices([...services, created as Services]);
+        } else if (activeTab === 'blogs') {
+          setBlogs([...blogs, created as Blogs]);
+        } else if (activeTab === 'users') {
+          setUsers([...users, created as UserProfiles]);
         } else if (activeTab === 'testimonials') {
           setTestimonials([...testimonials, created as Testimonials]);
         } else {
@@ -261,15 +335,74 @@ export default function AdminDashboardPage() {
   };
 
   const handlePasswordChange = async () => {
-    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
-      alert('Passwords do not match');
+    setPasswordChangeError('');
+    setPasswordChangeSuccess('');
+    
+    if (!passwordForm.newPassword || !passwordForm.confirmPassword || !passwordForm.currentPassword) {
+      setPasswordChangeError('All fields are required');
       return;
     }
-    // In a real app, you'd call an API to change the password
-    console.log('Password change requested');
-    setPasswordDialog(false);
-    setPasswordForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
-    alert('Password changed successfully');
+
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      setPasswordChangeError('New passwords do not match');
+      return;
+    }
+
+    if (passwordForm.newPassword.length < 6) {
+      setPasswordChangeError('Password must be at least 6 characters long');
+      return;
+    }
+
+    setChangingPassword(true);
+    try {
+      const response = await fetch('/api/change-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: member?.profile?.email || adminLoginForm.email,
+          currentPassword: passwordForm.currentPassword,
+          newPassword: passwordForm.newPassword
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setPasswordChangeError(data.error || 'Failed to change password');
+        return;
+      }
+
+      setPasswordChangeSuccess('Password changed successfully!');
+      setPasswordDialog(false);
+      setPasswordForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
+    } catch (error) {
+      console.error('Error changing password:', error);
+      setPasswordChangeError('Failed to change password. Please try again.');
+    } finally {
+      setChangingPassword(false);
+    }
+  };
+
+  const handleSaveStats = async () => {
+    try {
+      const response = await fetch('/api/sitestats', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(siteStats)
+      });
+
+      if (!response.ok) {
+        alert('Failed to save stats');
+        return;
+      }
+
+      const updatedStats = await response.json();
+      setSiteStats(updatedStats);
+      alert('Stats updated successfully!');
+    } catch (error) {
+      console.error('Error saving stats:', error);
+      alert('Failed to save stats');
+    }
   };
 
   if (!isAdmin) {
@@ -389,6 +522,12 @@ export default function AdminDashboardPage() {
                 <TabsTrigger value="services" className="whitespace-nowrap flex-shrink-0 text-foreground data-[state=active]:text-secondary data-[state=active]:bg-background px-4 sm:px-6">
                   Services
                 </TabsTrigger>
+                <TabsTrigger value="blogs" className="whitespace-nowrap flex-shrink-0 text-foreground data-[state=active]:text-secondary data-[state=active]:bg-background px-4 sm:px-6">
+                  Blogs
+                </TabsTrigger>
+                <TabsTrigger value="users" className="whitespace-nowrap flex-shrink-0 text-foreground data-[state=active]:text-secondary data-[state=active]:bg-background px-4 sm:px-6">
+                  Users
+                </TabsTrigger>
                 <TabsTrigger value="testimonials" className="whitespace-nowrap flex-shrink-0 text-foreground data-[state=active]:text-secondary data-[state=active]:bg-background px-4 sm:px-6">
                   Testimonials
                 </TabsTrigger>
@@ -397,6 +536,9 @@ export default function AdminDashboardPage() {
                 </TabsTrigger>
                 <TabsTrigger value="enquiries" className="whitespace-nowrap flex-shrink-0 text-foreground data-[state=active]:text-secondary data-[state=active]:bg-background px-4 sm:px-6">
                   Enquiries
+                </TabsTrigger>
+                <TabsTrigger value="stats" className="whitespace-nowrap flex-shrink-0 text-foreground data-[state=active]:text-secondary data-[state=active]:bg-background px-4 sm:px-6">
+                  Site Stats
                 </TabsTrigger>
               </TabsList>
 
@@ -524,6 +666,142 @@ export default function AdminDashboardPage() {
                         </CardContent>
                       </Card>
                     ))}
+                  </div>
+                )}
+              </TabsContent>
+
+              {/* Blogs Tab */}
+              <TabsContent value="blogs" className="space-y-4 mt-6">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="font-heading text-2xl font-bold text-foreground">Blogs</h2>
+                  <Button 
+                    onClick={() => handleAddNew('blogs')}
+                    className="bg-secondary text-secondary-foreground hover:bg-secondary/90 flex items-center gap-2"
+                  >
+                    <Plus className="w-4 h-4" />
+                    Add Blog
+                  </Button>
+                </div>
+                {isLoading ? (
+                  <LoadingSpinner />
+                ) : (
+                  <div className="grid gap-4">
+                    {blogs.map((blog) => (
+                      <Card key={blog._id} className="bg-soft-shadow-gray border-secondary/20">
+                        <CardContent className="pt-6">
+                          <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
+                            {blog.featuredImage && (
+                              <div className="w-full sm:w-32 h-40 sm:h-24 flex-shrink-0 rounded-lg overflow-hidden">
+                                <Image
+                                  src={blog.featuredImage}
+                                  alt={blog.title}
+                                  width={300}
+                                  height={200}
+                                  className="w-full h-full object-cover"
+                                />
+                              </div>
+                            )}
+                            <div className="flex-1 flex flex-col sm:flex-row justify-between items-start gap-4">
+                              <div>
+                                <h3 className="font-heading text-lg font-bold text-foreground">{blog.title}</h3>
+                                <p className="font-paragraph text-foreground/70 mt-2">{blog.excerpt}</p>
+                                <div className="flex gap-2 mt-2 flex-wrap">
+                                  {blog.category && (
+                                    <span className="inline-block px-2 py-1 bg-secondary/20 text-secondary text-xs rounded">{blog.category}</span>
+                                  )}
+                                  {blog.isPublished ? (
+                                    <span className="inline-block px-2 py-1 bg-green-500/20 text-green-600 text-xs rounded">Published</span>
+                                  ) : (
+                                    <span className="inline-block px-2 py-1 bg-yellow-500/20 text-yellow-600 text-xs rounded">Draft</span>
+                                  )}
+                                  <span className="inline-block px-2 py-1 bg-foreground/10 text-foreground/60 text-xs rounded">{blog.views || 0} views</span>
+                                </div>
+                              </div>
+                              <div className="flex gap-2">
+                                <Button 
+                                  onClick={() => handleEdit(blog, 'blogs')}
+                                  size="sm"
+                                  className="bg-secondary/20 text-secondary hover:bg-secondary/30"
+                                >
+                                  <Edit2 className="w-4 h-4" />
+                                </Button>
+                                <Button 
+                                  onClick={() => setDeleteConfirm({ id: blog._id!, type: 'blogs' })}
+                                  size="sm"
+                                  className="bg-destructive/20 text-destructive hover:bg-destructive/30"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </Button>
+                              </div>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                )}
+              </TabsContent>
+
+              {/* Users Tab */}
+              <TabsContent value="users" className="space-y-4 mt-6">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="font-heading text-2xl font-bold text-foreground">Users</h2>
+                </div>
+                {isLoading ? (
+                  <LoadingSpinner />
+                ) : (
+                  <div className="grid gap-4">
+                    {users.length === 0 ? (
+                      <p className="text-foreground/70 font-paragraph text-center py-8">No users registered yet</p>
+                    ) : (
+                      users.map((user) => (
+                        <Card key={user._id} className="bg-soft-shadow-gray border-secondary/20">
+                          <CardContent className="pt-6">
+                            <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 items-start">
+                              {user.profilePhoto && (
+                                <div className="w-16 h-16 flex-shrink-0 rounded-full overflow-hidden border-2 border-secondary">
+                                  <Image
+                                    src={user.profilePhoto}
+                                    alt={user.fullName || 'User'}
+                                    width={80}
+                                    height={80}
+                                    className="w-full h-full object-cover"
+                                  />
+                                </div>
+                              )}
+                              <div className="flex-1">
+                                <h3 className="font-heading text-lg font-bold text-foreground">{user.fullName}</h3>
+                                <p className="font-paragraph text-foreground/70 mt-1 text-sm">
+                                  {user.email || user.phoneNumber}
+                                </p>
+                                {user.company && (
+                                  <p className="font-paragraph text-secondary text-sm mt-1">{user.jobTitle} at {user.company}</p>
+                                )}
+                                <p className="font-paragraph text-foreground/50 text-xs mt-2">
+                                  Joined: {new Date(user._createdDate || 0).toLocaleDateString()}
+                                </p>
+                              </div>
+                              <div className="flex gap-2">
+                                <Button 
+                                  onClick={() => handleEdit(user, 'users')}
+                                  size="sm"
+                                  className="bg-secondary/20 text-secondary hover:bg-secondary/30"
+                                >
+                                  <Edit2 className="w-4 h-4" />
+                                </Button>
+                                <Button 
+                                  onClick={() => setDeleteConfirm({ id: user._id!, type: 'users' })}
+                                  size="sm"
+                                  className="bg-destructive/20 text-destructive hover:bg-destructive/30"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </Button>
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))
+                    )}
                   </div>
                 )}
               </TabsContent>
@@ -789,6 +1067,65 @@ export default function AdminDashboardPage() {
                   </div>
                 )}
               </TabsContent>
+
+              {/* Site Stats Tab */}
+              <TabsContent value="stats" className="space-y-4 mt-6">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="font-heading text-2xl font-bold text-foreground">Site Statistics</h2>
+                </div>
+                <Card className="bg-soft-shadow-gray border-secondary/20">
+                  <CardHeader>
+                    <CardTitle className="text-foreground">Update Site Statistics</CardTitle>
+                    <CardDescription className="text-foreground/70">
+                      These statistics are displayed on the About page
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    <div>
+                      <label className="block text-foreground font-paragraph text-sm mb-2">Projects Completed</label>
+                      <Input
+                        value={siteStats.projectsCompleted || ''}
+                        onChange={(e) => setSiteStats({ ...siteStats, projectsCompleted: e.target.value })}
+                        className="bg-background border-secondary/20 text-foreground"
+                        placeholder="e.g., 500+"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-foreground font-paragraph text-sm mb-2">Happy Clients</label>
+                      <Input
+                        value={siteStats.happyClients || ''}
+                        onChange={(e) => setSiteStats({ ...siteStats, happyClients: e.target.value })}
+                        className="bg-background border-secondary/20 text-foreground"
+                        placeholder="e.g., 200+"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-foreground font-paragraph text-sm mb-2">Team Members</label>
+                      <Input
+                        value={siteStats.teamMembers || ''}
+                        onChange={(e) => setSiteStats({ ...siteStats, teamMembers: e.target.value })}
+                        className="bg-background border-secondary/20 text-foreground"
+                        placeholder="e.g., 50+"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-foreground font-paragraph text-sm mb-2">Years Experience</label>
+                      <Input
+                        value={siteStats.yearsExperience || ''}
+                        onChange={(e) => setSiteStats({ ...siteStats, yearsExperience: e.target.value })}
+                        className="bg-background border-secondary/20 text-foreground"
+                        placeholder="e.g., 15+"
+                      />
+                    </div>
+                    <Button 
+                      onClick={handleSaveStats}
+                      className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/90"
+                    >
+                      Save Statistics
+                    </Button>
+                  </CardContent>
+                </Card>
+              </TabsContent>
             </Tabs>
           </motion.div>
         </div>
@@ -883,9 +1220,13 @@ export default function AdminDashboardPage() {
                 ? 'Project'
                 : activeTab === 'services'
                   ? 'Service'
-                  : activeTab === 'testimonials'
-                    ? 'Testimonial'
-                    : 'Team Member'}
+                  : activeTab === 'blogs'
+                    ? 'Blog'
+                    : activeTab === 'users'
+                      ? 'User'
+                      : activeTab === 'testimonials'
+                        ? 'Testimonial'
+                        : 'Team Member'}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4 max-h-[70vh] overflow-y-auto">
@@ -896,9 +1237,13 @@ export default function AdminDashboardPage() {
                   ? 'Project Image'
                   : activeTab === 'services'
                     ? 'Service Image'
-                    : activeTab === 'testimonials'
-                      ? 'Client Photo'
-                      : 'Profile Photo'}
+                    : activeTab === 'blogs'
+                      ? 'Featured Image'
+                      : activeTab === 'users'
+                        ? 'Profile Photo'
+                        : activeTab === 'testimonials'
+                          ? 'Client Photo'
+                          : 'Profile Photo'}
               </label>
               {imagePreview && (
                 <div className="mb-4 relative">
@@ -984,6 +1329,66 @@ export default function AdminDashboardPage() {
                     value={formData.completionDate ? new Date(formData.completionDate).toISOString().split('T')[0] : ''}
                     onChange={(e) => setFormData({ ...formData, completionDate: e.target.value })}
                     className="bg-background border-secondary/20 text-foreground"
+                  />
+                </div>
+              </>
+            )}
+            {activeTab === 'users' && (
+              <>
+                <div>
+                  <label className="block text-foreground font-paragraph text-sm mb-2">Full Name</label>
+                  <Input
+                    value={formData.fullName || ''}
+                    onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                    className="bg-background border-secondary/20 text-foreground"
+                    placeholder="Enter full name"
+                  />
+                </div>
+                <div>
+                  <label className="block text-foreground font-paragraph text-sm mb-2">Email</label>
+                  <Input
+                    type="email"
+                    value={formData.email || ''}
+                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    className="bg-background border-secondary/20 text-foreground"
+                    placeholder="Enter email address"
+                  />
+                </div>
+                <div>
+                  <label className="block text-foreground font-paragraph text-sm mb-2">Phone Number</label>
+                  <Input
+                    value={formData.phoneNumber || ''}
+                    onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
+                    className="bg-background border-secondary/20 text-foreground"
+                    placeholder="Enter phone number"
+                  />
+                </div>
+                <div>
+                  <label className="block text-foreground font-paragraph text-sm mb-2">Password</label>
+                  <Input
+                    type="password"
+                    value={formData.password || ''}
+                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    className="bg-background border-secondary/20 text-foreground"
+                    placeholder="Enter password"
+                  />
+                </div>
+                <div>
+                  <label className="block text-foreground font-paragraph text-sm mb-2">Company</label>
+                  <Input
+                    value={formData.company || ''}
+                    onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+                    className="bg-background border-secondary/20 text-foreground"
+                    placeholder="Enter company name"
+                  />
+                </div>
+                <div>
+                  <label className="block text-foreground font-paragraph text-sm mb-2">Job Title</label>
+                  <Input
+                    value={formData.jobTitle || ''}
+                    onChange={(e) => setFormData({ ...formData, jobTitle: e.target.value })}
+                    className="bg-background border-secondary/20 text-foreground"
+                    placeholder="Enter job title"
                   />
                 </div>
               </>
@@ -1100,6 +1505,92 @@ export default function AdminDashboardPage() {
                     className="w-4 h-4"
                   />
                   <label className="text-foreground font-paragraph text-sm">Mark as Featured</label>
+                </div>
+              </>
+            )}
+            {activeTab === 'blogs' && (
+              <>
+                <div>
+                  <label className="block text-foreground font-paragraph text-sm mb-2">Blog Title</label>
+                  <Input
+                    value={formData.title || ''}
+                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    className="bg-background border-secondary/20 text-foreground"
+                    placeholder="Enter blog title"
+                  />
+                </div>
+                <div>
+                  <label className="block text-foreground font-paragraph text-sm mb-2">URL Slug</label>
+                  <Input
+                    value={formData.slug || ''}
+                    onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+                    className="bg-background border-secondary/20 text-foreground"
+                    placeholder="e.g., how-to-build-websites"
+                  />
+                </div>
+                <div>
+                  <label className="block text-foreground font-paragraph text-sm mb-2">Excerpt</label>
+                  <Input
+                    value={formData.excerpt || ''}
+                    onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
+                    className="bg-background border-secondary/20 text-foreground"
+                    placeholder="Short summary of the blog post"
+                  />
+                </div>
+                <div>
+                  <label className="block text-foreground font-paragraph text-sm mb-2">Content</label>
+                  <Textarea
+                    value={formData.content || ''}
+                    onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+                    className="bg-background border-secondary/20 text-foreground"
+                    placeholder="Enter blog content"
+                    rows={6}
+                  />
+                </div>
+                <div>
+                  <label className="block text-foreground font-paragraph text-sm mb-2">Author</label>
+                  <Input
+                    value={formData.author || ''}
+                    onChange={(e) => setFormData({ ...formData, author: e.target.value })}
+                    className="bg-background border-secondary/20 text-foreground"
+                    placeholder="Author name"
+                  />
+                </div>
+                <div>
+                  <label className="block text-foreground font-paragraph text-sm mb-2">Category</label>
+                  <Input
+                    value={formData.category || ''}
+                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                    className="bg-background border-secondary/20 text-foreground"
+                    placeholder="e.g., Technology, Business"
+                  />
+                </div>
+                <div>
+                  <label className="block text-foreground font-paragraph text-sm mb-2">Tags</label>
+                  <Input
+                    value={formData.tags?.join(', ') || ''}
+                    onChange={(e) => setFormData({ ...formData, tags: e.target.value.split(',').map(t => t.trim()) })}
+                    className="bg-background border-secondary/20 text-foreground"
+                    placeholder="e.g., web, development, design"
+                  />
+                </div>
+                <div>
+                  <label className="block text-foreground font-paragraph text-sm mb-2">Publish Date</label>
+                  <Input
+                    type="date"
+                    value={formData.publishDate ? new Date(formData.publishDate).toISOString().split('T')[0] : ''}
+                    onChange={(e) => setFormData({ ...formData, publishDate: e.target.value })}
+                    className="bg-background border-secondary/20 text-foreground"
+                  />
+                </div>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={formData.isPublished || false}
+                    onChange={(e) => setFormData({ ...formData, isPublished: e.target.checked })}
+                    className="w-4 h-4"
+                  />
+                  <label className="text-foreground font-paragraph text-sm">Published</label>
                 </div>
               </>
             )}
@@ -1227,6 +1718,16 @@ export default function AdminDashboardPage() {
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
+            {passwordChangeError && (
+              <div className="p-3 bg-destructive/20 border border-destructive/30 rounded-lg">
+                <p className="text-destructive text-sm font-paragraph">{passwordChangeError}</p>
+              </div>
+            )}
+            {passwordChangeSuccess && (
+              <div className="p-3 bg-accent-teal/20 border border-accent-teal/30 rounded-lg">
+                <p className="text-accent-teal text-sm font-paragraph">{passwordChangeSuccess}</p>
+              </div>
+            )}
             <div>
               <label className="block text-foreground font-paragraph text-sm mb-2">Current Password</label>
               <Input
@@ -1260,16 +1761,21 @@ export default function AdminDashboardPage() {
           </div>
           <div className="flex gap-2 justify-end">
             <Button 
-              onClick={() => setPasswordDialog(false)}
+              onClick={() => {
+                setPasswordDialog(false);
+                setPasswordChangeError('');
+                setPasswordChangeSuccess('');
+              }}
               className="bg-foreground/10 text-foreground hover:bg-foreground/20"
             >
               Cancel
             </Button>
             <Button 
               onClick={handlePasswordChange}
-              className="bg-secondary text-secondary-foreground hover:bg-secondary/90"
+              disabled={changingPassword}
+              className="bg-secondary text-secondary-foreground hover:bg-secondary/90 disabled:opacity-50"
             >
-              Change Password
+              {changingPassword ? 'Changing...' : 'Change Password'}
             </Button>
           </div>
         </DialogContent>

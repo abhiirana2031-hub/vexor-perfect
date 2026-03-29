@@ -12,11 +12,30 @@ import { useNavigate } from 'react-router-dom';
 export default function AboutPage() {
   const [teamMembers, setTeamMembers] = useState<TeamMembers[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [stats, setStats] = useState({
+    projectsCompleted: '500+',
+    happyClients: '200+',
+    teamMembers: '50+',
+    yearsExperience: '15+'
+  });
   const navigate = useNavigate();
 
   useEffect(() => {
     loadTeamMembers();
+    loadStats();
   }, []);
+
+  const loadStats = async () => {
+    try {
+      const response = await fetch('/api/sitestats');
+      if (response.ok) {
+        const data = await response.json();
+        setStats(data);
+      }
+    } catch (error) {
+      console.error('Error loading stats:', error);
+    }
+  };
 
   const loadTeamMembers = async () => {
     setIsLoading(true);
@@ -258,10 +277,10 @@ export default function AboutPage() {
         <div className="max-w-[100rem] mx-auto px-8 lg:px-16">
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
-              { number: '500+', label: 'Projects Completed' },
-              { number: '200+', label: 'Happy Clients' },
-              { number: '50+', label: 'Team Members' },
-              { number: '15+', label: 'Years Experience' }
+              { number: stats.projectsCompleted, label: 'Projects Completed' },
+              { number: stats.happyClients, label: 'Happy Clients' },
+              { number: stats.teamMembers, label: 'Team Members' },
+              { number: stats.yearsExperience, label: 'Years Experience' }
             ].map((stat, idx) => (
               <motion.div
                 key={idx}

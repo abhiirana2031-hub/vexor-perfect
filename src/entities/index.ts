@@ -25,6 +25,10 @@ export interface Projects {
   projectUrl?: string;
   /** @wixFieldType date */
   completionDate?: Date | string;
+  /** @wixFieldType text - User ID of the project creator */
+  userId?: string;
+  /** @wixFieldType text - Project status: active, completed, on-hold, etc */
+  projectStatus?: string;
 }
 
 
@@ -48,6 +52,101 @@ export interface Services {
   slug?: string;
   /** @wixFieldType boolean */
   isFeatured?: boolean;
+}
+
+
+/**
+ * Collection ID: blogs
+ * Interface for Blog Posts
+ */
+export interface Blogs {
+  _id: string;
+  _createdDate?: Date;
+  _updatedDate?: Date;
+  /** @wixFieldType text */
+  title?: string;
+  /** @wixFieldType text */
+  slug?: string;
+  /** @wixFieldType text */
+  excerpt?: string;
+  /** @wixFieldType text */
+  content?: string;
+  /** @wixFieldType image - Contains image URL, render with <Image> component, NOT as text */
+  featuredImage?: string;
+  /** @wixFieldType text */
+  author?: string;
+  /** @wixFieldType text */
+  category?: string;
+  /** @wixFieldType text */
+  tags?: string;
+  /** @wixFieldType date */
+  publishDate?: Date | string;
+  /** @wixFieldType boolean */
+  isPublished?: boolean;
+  /** @wixFieldType number */
+  views?: number;
+}
+
+
+/**
+ * Collection ID: userprofiles
+ * Interface for User Profiles
+ */
+export interface UserProfiles {
+  _id: string;
+  _createdDate?: Date;
+  _updatedDate?: Date;
+  /** @wixFieldType text */
+  email?: string;
+  /** @wixFieldType phone */
+  phoneNumber?: string;
+  /** @wixFieldType text */
+  fullName?: string;
+  /** @wixFieldType password */
+  passwordHash?: string;
+  /** @wixFieldType text */
+  bio?: string;
+  /** @wixFieldType image - Contains image URL, render with <Image> component, NOT as text */
+  profilePhoto?: string;
+  /** @wixFieldType text */
+  company?: string;
+  /** @wixFieldType text */
+  jobTitle?: string;
+  /** @wixFieldType url */
+  websiteUrl?: string;
+  /** @wixFieldType boolean */
+  isVerified?: boolean;
+  /** @wixFieldType text - Login method: email, phone, google */
+  loginMethod?: string;
+  /** @wixFieldType text - Google OAuth ID */
+  googleId?: string;
+}
+
+
+/**
+ * Collection ID: userTestimonials
+ * Interface for User-Submitted Testimonials
+ */
+export interface UserTestimonials {
+  _id: string;
+  _createdDate?: Date;
+  _updatedDate?: Date;
+  /** @wixFieldType text */
+  userId?: string;
+  /** @wixFieldType text */
+  clientName?: string;
+  /** @wixFieldType text */
+  reviewText?: string;
+  /** @wixFieldType text */
+  clientRoleCompany?: string;
+  /** @wixFieldType number */
+  rating?: number;
+  /** @wixFieldType image - Contains image URL, render with <Image> component, NOT as text */
+  clientImage?: string;
+  /** @wixFieldType boolean */
+  isApproved?: boolean;
+  /** @wixFieldType date */
+  dateSubmitted?: Date | string;
 }
 
 

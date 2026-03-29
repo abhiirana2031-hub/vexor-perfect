@@ -11,6 +11,9 @@ import ProjectDetailPage from '@/components/pages/ProjectDetailPage';
 import ContactPage from '@/components/pages/ContactPage';
 import AdminDashboardPage from '@/components/pages/AdminDashboardPage';
 import TeamMemberDetailPage from '@/components/pages/TeamMemberDetailPage';
+import UserProfilePage from '@/components/pages/UserProfilePage';
+import BlogsPage from '@/components/pages/BlogsPage';
+import BlogDetailPage from '@/components/pages/BlogDetailPage';
 
 // Layout component that includes ScrollToTop
 function Layout() {
@@ -85,10 +88,24 @@ const router = createBrowserRouter([
         },
       },
       {
-        path: "team/:id",
-        element: <TeamMemberDetailPage />,
+        path: "blogs",
+        element: <BlogsPage />,
         routeMetadata: {
-          pageIdentifier: 'team-member-detail',
+          pageIdentifier: 'blogs',
+        },
+      },
+      {
+        path: "blogs/:id",
+        element: <BlogDetailPage />,
+        routeMetadata: {
+          pageIdentifier: 'blog-detail',
+        },
+      },
+      {
+        path: "profile",
+        element: <UserProfilePage />,
+        routeMetadata: {
+          pageIdentifier: 'profile',
         },
       },
       {

@@ -184,16 +184,16 @@ export default function ServiceDetailPage() {
                         Our team is here to answer any questions you may have about this service.
                       </p>
                       <a
-                        href="mailto:info@vexor-it.com"
+                        href="mailto:vexoritsolution@gmail.com"
                         className="font-paragraph text-secondary hover:underline block"
                       >
-                        info@vexor-it.com
+                        vexoritsolution@gmail.com
                       </a>
                       <a
-                        href="tel:+1234567890"
+                        href="tel:+917599544335"
                         className="font-paragraph text-secondary hover:underline block"
                       >
-                        +1 (234) 567-890
+                        +91 75995 44335
                       </a>
                     </div>
                   </div>

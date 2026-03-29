@@ -272,10 +272,16 @@ export default function ProjectDetailPage() {
                         Have questions about this project or want to discuss a similar solution?
                       </p>
                       <a
-                        href="mailto:info@vexor-it.com"
+                        href="mailto:vexoritsolution@gmail.com"
                         className="font-paragraph text-secondary hover:underline block"
                       >
-                        info@vexor-it.com
+                        vexoritsolution@gmail.com
+                      </a>
+                      <a
+                        href="tel:+917599544335"
+                        className="font-paragraph text-secondary hover:underline block"
+                      >
+                        +91 75995 44335
                       </a>
                     </div>
                   </div>

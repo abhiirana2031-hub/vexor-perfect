@@ -1,16 +1,24 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Search, Bell, Moon, Sun, User, Command } from 'lucide-react';
+import { Search, Bell, Moon, Sun, User, Command, Menu } from 'lucide-react';
 
 interface TopbarProps {
   member: any;
+  onToggleSidebar?: () => void;
 }
 
-export const Topbar = ({ member }: TopbarProps) => {
+export const Topbar = ({ member, onToggleSidebar }: TopbarProps) => {
   return (
-    <div className="h-20 bg-background/50 backdrop-blur-xl border-b border-white/5 px-8 flex items-center justify-between relative z-20">
+    <div className="h-20 bg-background/50 backdrop-blur-xl border-b border-white/5 px-4 lg:px-8 flex items-center justify-between relative z-20 gap-4">
+      {/* Mobile Toggle */}
+      {onToggleSidebar && (
+        <button onClick={onToggleSidebar} className="p-2 rounded-xl text-foreground/40 hover:text-secondary lg:hidden flex-shrink-0 transition-colors">
+           <Menu className="w-5 h-5" />
+        </button>
+      )}
+
       {/* Search Bar - Glass Style */}
-      <div className="flex-1 max-w-xl">
+      <div className="flex-1 max-w-xl hidden sm:block">
         <div className="relative group">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-foreground/20 group-focus-within:text-secondary group-focus-within:shadow-neon-cyan transition-all" />
           <input 

@@ -56,6 +56,7 @@ export default function AdminDashboardPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [adminLoginForm, setAdminLoginForm] = useState({ email: '', password: '' });
   const [loginError, setLoginError] = useState('');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleEdit = (item: any) => {
     setSelectedItem(item);
@@ -175,15 +176,34 @@ export default function AdminDashboardPage() {
 
   return (
     <div className="flex h-screen bg-[#03050a] text-foreground selection:bg-secondary/30 overflow-hidden font-paragraph">
-      {/* LEFT SIDEBAR */}
-      <aside className="w-80 flex-shrink-0 hidden lg:block">
+      {/* LEFT SIDEBAR - Desktop */}
+      <aside className="w-80 flex-shrink-0 hidden lg:block z-40 relative">
         <Sidebar onSetActiveTab={setActiveTab} activeTab={activeTab} />
       </aside>
 
+      {/* LEFT SIDEBAR - Mobile (Drawer) */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <>
+            <motion.div 
+               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+               onClick={() => setIsMobileMenuOpen(false)}
+               className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden" 
+            />
+            <motion.aside 
+               initial={{ x: '-100%' }} animate={{ x: 0 }} exit={{ x: '-100%' }} transition={{ type: "spring", damping: 25, stiffness: 200 }}
+               className="fixed inset-y-0 left-0 w-80 z-50 lg:hidden border-r border-white/5 bg-[#03050a]"
+            >
+               <Sidebar onSetActiveTab={(tab) => { setActiveTab(tab); setIsMobileMenuOpen(false); }} activeTab={activeTab} />
+            </motion.aside>
+          </>
+        )}
+      </AnimatePresence>
+
       {/* MAIN CONTENT AREA */}
-      <main className="flex-1 flex flex-col min-w-0 relative h-full">
+      <main className="flex-1 flex flex-col min-w-0 relative h-full w-full">
         {/* TOPBAR */}
-        <Topbar member={member} />
+        <Topbar member={member} onToggleSidebar={() => setIsMobileMenuOpen(true)} />
 
         {/* CONTENT SCROLL AREA */}
         <div className="flex-1 overflow-y-auto overflow-x-hidden p-8 lg:p-12 no-scrollbar">
@@ -302,7 +322,7 @@ export default function AdminDashboardPage() {
         setIsDialogOpen(open);
         if (!open) setSelectedItem(null);
       }}>
-        <DialogContent className="glass-card border-white/5 bg-[#05070d]/90 max-w-2xl max-h-[90vh] overflow-y-auto no-scrollbar">
+        <DialogContent className="glass-card border-white/5 bg-[#05070d]/90 w-[95vw] md:w-full md:max-w-2xl max-h-[90vh] overflow-y-auto no-scrollbar mx-auto">
           <DialogHeader>
             <DialogTitle className="text-2xl font-black tracking-tighter uppercase">
               {selectedItem ? 'Update Node' : 'Initialize Node'}

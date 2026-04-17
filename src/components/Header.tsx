@@ -73,197 +73,95 @@ export default function Header() {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-secondary/20">
-      <div className="max-w-[100rem] mx-auto px-4 sm:px-6 md:px-8 lg:px-12">
-        <div className="flex items-center justify-between h-16 sm:h-20">
-          {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2 sm:space-x-3 group">
-            <Image
-              src="/vexor-logo.png"
-              alt="Vexor Logo"
-              width={40}
-              height={40}
-              className="w-8 sm:w-10 h-8 sm:h-10 group-hover:scale-110 transition-transform duration-300"
-            />
-            <span className="font-heading text-lg sm:text-2xl font-bold text-primary-foreground group-hover:text-secondary transition-colors duration-300">VEXOR</span>
-          </Link>
-
-          {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center space-x-8">
-            {navLinks.map((link) => (
-              <Link
-                key={link.path}
-                to={link.path}
-                className={`font-paragraph text-base font-medium transition-colors duration-300 relative group ${
-                  isActive(link.path) ? 'text-secondary' : 'text-foreground hover:text-secondary'
-                }`}
-              >
-                {link.label}
-                <span
-                  className={`absolute -bottom-1 left-0 h-0.5 bg-secondary transition-all duration-300 ${
-                    isActive(link.path) ? 'w-full' : 'w-0 group-hover:w-full'
-                  }`}
-                />
-              </Link>
-            ))}
-          </nav>
-
-          {/* CTA Button - Desktop */}
-          <div className="hidden lg:flex items-center space-x-4">
-            {currentUser ? (
-              <div className="relative">
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  onClick={() => setShowProfileMenu(!showProfileMenu)}
-                  className="flex items-center space-x-2 p-2 rounded-lg hover:bg-soft-shadow-gray transition-colors duration-300"
-                >
-                  {currentUser.profilePhoto ? (
-                    <Image
-                      src={currentUser.profilePhoto}
-                      alt={currentUser.fullName}
-                      width={32}
-                      height={32}
-                      className="w-8 h-8 rounded-full object-cover border-2 border-secondary"
-                    />
-                  ) : (
-                    <div className="w-8 h-8 rounded-full bg-secondary text-white flex items-center justify-center text-sm font-bold">
-                      {currentUser.fullName.charAt(0).toUpperCase()}
-                    </div>
-                  )}
-                  <div className="flex flex-col items-start">
-                    <span className="text-xs font-semibold text-foreground">{currentUser.fullName.split(' ')[0]}</span>
-                    <span className="text-xs text-foreground/60">Profile</span>
-                  </div>
-                </motion.button>
-                
-                <AnimatePresence>
-                  {showProfileMenu && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -10 }}
-                      className="absolute right-0 mt-2 w-48 bg-soft-shadow-gray border border-secondary/20 rounded-lg shadow-lg z-50"
-                    >
-                      <Link
-                        to="/profile"
-                        onClick={() => setShowProfileMenu(false)}
-                        className="block px-4 py-2 text-foreground hover:bg-background/50 rounded-t-lg transition-colors"
-                      >
-                        View Profile
-                      </Link>
-                      <button
-                        onClick={() => {
-                          localStorage.removeItem('currentUser');
-                          window.dispatchEvent(new Event('userUpdated'));
-                          setCurrentUser(null);
-                          setShowProfileMenu(false);
-                          navigate('/');
-                        }}
-                        className="w-full text-left px-4 py-2 text-destructive hover:bg-background/50 rounded-b-lg transition-colors flex items-center gap-2"
-                      >
-                        <LogOut className="w-4 h-4" />
-                        Logout
-                      </button>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            ) : (
-              <Link to="/profile">
-                <Button className="bg-secondary text-secondary-foreground hover:bg-secondary/90 px-6 py-2 sm:py-3 font-semibold rounded-lg transition-all duration-300 hover:scale-105 text-sm lg:text-base">
-                  Get Started
-                </Button>
-              </Link>
-            )}
+    <header className="fixed top-6 left-0 right-0 z-50 flex justify-center px-4">
+      <motion.div 
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className="glass-effect !rounded-full px-8 py-3 flex items-center gap-12 border-white/10 shadow-soft-depth max-w-fit"
+      >
+        {/* Logo */}
+        <Link to="/" className="flex items-center gap-3 group">
+          <div className="w-8 h-8 rounded-xl bg-secondary/10 border border-secondary/30 flex items-center justify-center overflow-hidden">
+            <img src="/vexor-logo.png" alt="Vexor Logo" className="w-5 h-5 object-contain" />
           </div>
+          <span className="font-heading text-xl font-black tracking-tighter text-foreground group-hover:text-secondary transition-colors">
+            VEXOR <span className="text-secondary opacity-60 font-medium">IT SOLUTIONS</span>
+          </span>
+        </Link>
 
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="lg:hidden text-foreground hover:text-secondary transition-colors duration-300"
-            aria-label="Toggle menu"
-          >
-            {isMenuOpen ? <X className="h-5 sm:h-6 w-5 sm:w-6" /> : <Menu className="h-5 sm:h-6 w-5 sm:w-6" />}
-          </button>
+        {/* Desktop Navigation */}
+        <nav className="hidden lg:flex items-center gap-8">
+          {navLinks.map((link) => (
+            <Link
+              key={link.path}
+              to={link.path}
+              className={`text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 relative group ${
+                isActive(link.path) ? 'text-secondary' : 'text-foreground/40 hover:text-foreground'
+              }`}
+            >
+              {link.label}
+              {isActive(link.path) && (
+                <motion.div layoutId="nav-pill-active" className="absolute -bottom-1 left-0 right-0 h-px bg-secondary shadow-neon-cyan" />
+              )}
+            </Link>
+          ))}
+        </nav>
+
+        {/* Action Button */}
+        <div className="hidden lg:flex items-center">
+           <Link to="/profile">
+              <button className="px-6 py-2 rounded-full bg-secondary text-black text-[10px] font-black uppercase tracking-widest hover:bg-white hover:shadow-neon-cyan transition-all duration-500">
+                Get Started
+              </button>
+           </Link>
         </div>
-      </div>
-      {/* Mobile Navigation */}
-      <AnimatePresence>
-        {isMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
-            className="lg:hidden bg-soft-shadow-gray/95 backdrop-blur-lg border-t border-secondary/20"
-          >
-            <nav className="px-4 sm:px-6 py-4 sm:py-6 space-y-3 sm:space-y-4">
+
+        {/* Mobile Menu Toggle */}
+        <button
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          className="lg:hidden w-10 h-10 rounded-full glass-effect flex items-center justify-center text-foreground/40 hover:text-secondary transition-all border-white/10"
+        >
+          {isMenuOpen ? <X size={18} /> : <Menu size={18} />}
+        </button>
+
+        {/* Mobile Menu Overlay */}
+        <AnimatePresence>
+          {isMenuOpen && (
+            <motion.div
+              initial={{ opacity: 0, y: -20, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -20, scale: 0.95 }}
+              transition={{ duration: 0.3, ease: "easeOut" }}
+              className="absolute top-20 left-0 right-0 glass-effect !rounded-[2rem] p-8 border-white/10 shadow-soft-depth flex flex-col gap-6 lg:hidden"
+            >
               {navLinks.map((link) => (
                 <Link
                   key={link.path}
                   to={link.path}
                   onClick={() => setIsMenuOpen(false)}
-                  className={`block font-paragraph text-base sm:text-lg font-medium py-2 transition-colors duration-300 ${
-                    isActive(link.path) ? 'text-secondary' : 'text-foreground hover:text-secondary'
+                  className={`text-sm font-black uppercase tracking-[0.3em] transition-all ${
+                    isActive(link.path) ? 'text-secondary translate-x-4' : 'text-foreground/40 hover:text-foreground'
                   }`}
                 >
-                  {link.label}
+                  <div className="flex items-center gap-4">
+                    {isActive(link.path) && <div className="w-2 h-2 rounded-full bg-secondary shadow-neon-cyan" />}
+                    {link.label}
+                  </div>
                 </Link>
               ))}
               
-              {/* Mobile Profile Section */}
-              <div className="border-t border-secondary/20 pt-4 mt-4">
-                {currentUser ? (
-                  <>
-                    <Link
-                      to="/profile"
-                      onClick={() => setIsMenuOpen(false)}
-                      className="flex items-center space-x-3 p-3 rounded-lg hover:bg-background/50 transition-colors"
-                    >
-                      {currentUser.profilePhoto ? (
-                        <Image
-                          src={currentUser.profilePhoto}
-                          alt={currentUser.fullName}
-                          width={40}
-                          height={40}
-                          className="w-10 h-10 rounded-full object-cover border-2 border-secondary"
-                        />
-                      ) : (
-                        <div className="w-10 h-10 rounded-full bg-secondary text-white flex items-center justify-center font-bold">
-                          {currentUser.fullName.charAt(0).toUpperCase()}
-                        </div>
-                      )}
-                      <div className="flex flex-col">
-                        <span className="font-semibold text-foreground">{currentUser.fullName}</span>
-                        <span className="text-xs text-foreground/60">View Profile</span>
-                      </div>
-                    </Link>
-                    <button
-                      onClick={() => {
-                        localStorage.removeItem('currentUser');
-                        window.dispatchEvent(new Event('userUpdated'));
-                        setCurrentUser(null);
-                        setIsMenuOpen(false);
-                        navigate('/');
-                      }}
-                      className="w-full text-left px-3 py-2 text-destructive hover:bg-background/50 rounded-lg transition-colors flex items-center gap-2 mt-2"
-                    >
-                      <LogOut className="w-4 h-4" />
-                      Logout
-                    </button>
-                  </>
-                ) : (
-                  <Link to="/profile" onClick={() => setIsMenuOpen(false)}>
-                    <Button className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/90 px-4 sm:px-6 py-2 sm:py-3 font-semibold rounded-lg transition-all duration-300 text-sm sm:text-base">
-                      Get Started
-                    </Button>
-                  </Link>
-                )}
+              <div className="pt-6 border-t border-white/5">
+                <Link to="/contact" onClick={() => setIsMenuOpen(false)}>
+                  <button className="w-full py-4 rounded-xl bg-secondary text-black text-[10px] font-black uppercase tracking-widest">
+                    Initialize Protocol
+                  </button>
+                </Link>
               </div>
-            </nav>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
     </header>
   );
 }

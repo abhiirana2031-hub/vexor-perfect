@@ -3,10 +3,9 @@ import Header from '@/components/Header';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { ThankYouDialog } from '@/components/ThankYouDialog';
 import { useToast } from '@/hooks/use-toast';
 import { motion } from 'framer-motion';
-import { Mail, MapPin, Phone, Send } from 'lucide-react';
+import { Mail, MapPin, Phone, Send, Sparkles } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import emailjs from '@emailjs/browser';
 import { BaseCrudService } from '@/integrations';
@@ -21,7 +20,6 @@ export default function ContactPage() {
     message: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showThankYou, setShowThankYou] = useState(false);
 
   useEffect(() => {
     const publicKey = import.meta.env.PUBLIC_EMAILJS_PUBLIC_KEY;
@@ -119,8 +117,11 @@ export default function ContactPage() {
         // Do not throw here so that the "Thank You" dialog can still appear!
       }
 
-      // Show the success dialog regardless of whether the auto-reply succeeded
-      setShowThankYou(true);
+      // Show success toast
+      toast({
+        title: 'Success',
+        description: 'Message sent successfully! We\'ll get back to you soon.',
+      });
 
       // Reset form
       setFormData({
@@ -168,21 +169,19 @@ export default function ContactPage() {
       <Header />
 
       {/* Hero Section */}
-      <section className="relative w-full pt-28 md:pt-32 pb-16 md:pb-24 px-4 sm:px-8 lg:px-16">
-        <div className="max-w-[100rem] mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center space-y-4 md:space-y-6"
-          >
-            <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-bold text-primary-foreground">
-              Get In <span className="text-secondary">Touch</span>
-            </h1>
-            <p className="font-paragraph text-lg sm:text-xl lg:text-2xl text-foreground/70 max-w-4xl mx-auto leading-relaxed px-4">
-              Have a project in mind? Let's discuss how we can help transform your business
-            </p>
-          </motion.div>
+      <section className="relative w-full min-h-[60vh] flex items-center justify-center pt-24 pb-16 px-4 md:px-8 lg:px-16 overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(0,217,255,0.08),transparent_70%)]" />
+        <div className="text-center space-y-8">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-secondary/10 to-neon-cyan/10 border border-secondary/20 mb-4">
+            <Sparkles className="w-3 h-3 text-secondary animate-pulse" />
+            <span className="text-xs font-paragraph font-bold tracking-widest uppercase text-secondary">Let's Connect</span>
+          </div>
+          <h1 className="font-heading text-5xl md:text-7xl lg:text-8xl font-bold leading-tight">
+            Get In <span className="bg-gradient-neon bg-clip-text text-transparent animate-glow-pulse">Touch</span>
+          </h1>
+          <p className="font-paragraph text-lg md:text-xl lg:text-2xl text-foreground/70 max-w-4xl mx-auto leading-relaxed">
+            Have a project in mind? Let's discuss how we can help transform your business
+          </p>
         </div>
       </section>
 
@@ -195,8 +194,10 @@ export default function ContactPage() {
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6 }}
-              className="bg-soft-shadow-gray/30 backdrop-blur-sm border border-secondary/20 rounded-3xl p-6 sm:p-8 lg:p-12"
+              className="relative bg-background/80 backdrop-blur-xl border border-secondary/20 rounded-3xl p-6 sm:p-8 lg:p-12 overflow-hidden group"
             >
+              <div className="absolute -inset-[1px] bg-gradient-neon rounded-3xl opacity-0 group-hover:opacity-20 blur transition-all duration-500" />
+              <div className="relative z-10">
               <h2 className="font-heading text-2xl sm:text-3xl font-bold text-primary-foreground mb-6 md:mb-8">
                 Send Us a Message
               </h2>
@@ -294,6 +295,7 @@ export default function ContactPage() {
                   )}
                 </Button>
               </form>
+              </div>
             </motion.div>
 
             {/* Contact Info */}
@@ -378,9 +380,6 @@ export default function ContactPage() {
       </section>
 
       <Footer />
-
-      {/* Thank You Dialog */}
-      <ThankYouDialog isOpen={showThankYou} onClose={() => setShowThankYou(false)} />
     </div>
   );
 }

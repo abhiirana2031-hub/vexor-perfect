@@ -5,9 +5,8 @@ import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { TeamMembers } from '@/entities';
 import { BaseCrudService } from '@/integrations';
 import { motion } from 'framer-motion';
-import { Award, Eye, Target, Users } from 'lucide-react';
+import { Award, Eye, Target, Users, Sparkles } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 export default function AboutPage() {
   const [teamMembers, setTeamMembers] = useState<TeamMembers[]>([]);
@@ -18,7 +17,6 @@ export default function AboutPage() {
     teamMembers: '50+',
     yearsExperience: '15+'
   });
-  const navigate = useNavigate();
 
   useEffect(() => {
     loadTeamMembers();
@@ -79,21 +77,19 @@ export default function AboutPage() {
     <div className="min-h-screen bg-background text-foreground">
       <Header />
       {/* Hero Section */}
-      <section className="relative w-full pt-32 pb-24 px-8 lg:px-16">
-        <div className="max-w-[100rem] mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center space-y-6 mb-16"
-          >
-            <h1 className="font-heading text-6xl lg:text-8xl font-bold text-primary-foreground">
-              About <span className="text-secondary">VEXOR</span>
-            </h1>
-            <p className="font-paragraph text-xl lg:text-2xl text-foreground/70 max-w-4xl mx-auto leading-relaxed">
-              Pioneering the future of technology with precision, power, and unwavering commitment to progress
-            </p>
-          </motion.div>
+      <section className="relative w-full min-h-[60vh] flex items-center justify-center pt-24 pb-16 px-4 md:px-8 lg:px-16 overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(0,217,255,0.08),transparent_70%)]" />
+        <div className="text-center space-y-8">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-secondary/10 to-neon-cyan/10 border border-secondary/20 mb-4">
+            <Sparkles className="w-3 h-3 text-secondary animate-pulse" />
+            <span className="text-xs font-paragraph font-bold tracking-widest uppercase text-secondary">About Us</span>
+          </div>
+          <h1 className="font-heading text-5xl md:text-7xl lg:text-8xl font-bold leading-tight">
+            About <span className="bg-gradient-neon bg-clip-text text-transparent animate-glow-pulse">VEXOR</span>
+          </h1>
+          <p className="font-paragraph text-lg md:text-xl lg:text-2xl text-foreground/70 max-w-4xl mx-auto leading-relaxed">
+            Pioneering the future of technology with precision, power, and unwavering commitment to progress
+          </p>
         </div>
       </section>
       {/* Mission & Vision */}
@@ -216,50 +212,60 @@ export default function AboutPage() {
                     whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.5, delay: idx * 0.1 }}
-                    onClick={() => navigate(`/team/${member._id}`)}
-                    className="group bg-soft-shadow-gray/50 backdrop-blur-sm border border-secondary/20 rounded-2xl overflow-hidden hover:border-secondary/50 transition-all duration-300 hover:shadow-xl hover:shadow-secondary/10 cursor-pointer"
+                    className="cursor-pointer"
+                    onClick={(e: any) => {
+                      if ((e.target as any).closest('a')) return;
+                      window.location.href = `/team/${member._id}`;
+                    }}
                   >
-                    {member.profilePhoto && (
-                      <div className="relative h-80 overflow-hidden">
-                        <Image
-                          src={member.profilePhoto}
-                          alt={member.fullName || 'Team Member'}
-                          width={400}
-                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-soft-shadow-gray via-transparent to-transparent opacity-80" />
+                    <div className="group block h-full no-underline">
+                      <div className="h-full bg-background/80 backdrop-blur-xl border border-secondary/20 rounded-2xl overflow-hidden hover:border-secondary/50 transition-all duration-300 hover:shadow-glow-lg">
+                        <div className="absolute -inset-[1px] bg-gradient-neon rounded-2xl opacity-0 group-hover:opacity-30 blur transition-all duration-500" />
+                        {member.profilePhoto && (
+                          <div className="relative h-80 overflow-hidden">
+                            <Image
+                              src={member.profilePhoto}
+                              alt={member.fullName || 'Team Member'}
+                              width={400}
+                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-soft-shadow-gray via-transparent to-transparent opacity-80" />
+                          </div>
+                        )}
+                        <div className="relative z-10 p-6 space-y-3">
+                          <h3 className="font-heading text-xl font-bold text-primary-foreground group-hover:text-secondary transition-colors duration-300">
+                            {member.fullName}
+                          </h3>
+                          <p className="font-paragraph text-secondary font-semibold">
+                            {member.jobTitle}
+                          </p>
+                          {member.bio && (
+                            <p className="font-paragraph text-sm text-foreground/70 line-clamp-3">
+                              {member.bio}
+                            </p>
+                          )}
+                          {member.email && (
+                            <a
+                              href={`mailto:${member.email}`}
+                              className="font-paragraph text-sm text-secondary hover:underline block no-underline"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              {member.email}
+                            </a>
+                          )}
+                          {member.linkedInUrl && (
+                            <a
+                              href={member.linkedInUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center text-secondary hover:text-secondary/80 transition-colors duration-300 no-underline"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <span className="font-paragraph text-sm">LinkedIn Profile</span>
+                            </a>
+                          )}
+                        </div>
                       </div>
-                    )}
-                    <div className="p-6 space-y-3">
-                      <h3 className="font-heading text-xl font-bold text-primary-foreground group-hover:text-secondary transition-colors duration-300">
-                        {member.fullName}
-                      </h3>
-                      <p className="font-paragraph text-secondary font-semibold">
-                        {member.jobTitle}
-                      </p>
-                      {member.bio && (
-                        <p className="font-paragraph text-sm text-foreground/70 line-clamp-3">
-                          {member.bio}
-                        </p>
-                      )}
-                      {member.email && (
-                        <a
-                          href={`mailto:${member.email}`}
-                          className="font-paragraph text-sm text-secondary hover:underline block"
-                        >
-                          {member.email}
-                        </a>
-                      )}
-                      {member.linkedInUrl && (
-                        <a
-                          href={member.linkedInUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center text-secondary hover:text-secondary/80 transition-colors duration-300"
-                        >
-                          <span className="font-paragraph text-sm">LinkedIn Profile</span>
-                        </a>
-                      )}
                     </div>
                   </motion.div>
                 ))}

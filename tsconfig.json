@@ -1,11 +1,13 @@
 {
   "extends": "astro/tsconfigs/base",
   "compilerOptions": {
+    "ignoreDeprecations": "6.0",
     "jsx": "react-jsx",
     "jsxImportSource": "react",
     "rootDir": ".",
     "baseUrl": ".",
     "incremental": true,
+    "moduleResolution": "bundler",
     "tsBuildInfoFile": "node_modules/.cache/tsbuildinfo",
     "noUnusedLocals": false,
     "noUnusedParameters": false,

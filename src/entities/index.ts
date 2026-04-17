@@ -23,6 +23,8 @@ export interface Projects {
   clientName?: string;
   /** @wixFieldType url */
   projectUrl?: string;
+  /** @wixFieldType url */
+  repoUrl?: string;
   /** @wixFieldType date */
   completionDate?: Date | string;
   /** @wixFieldType text - User ID of the project creator */

@@ -11,12 +11,15 @@ export async function getStaticPaths() {
     { params: { slug: undefined } },
     { params: { slug: "admin" } },
     { params: { slug: "contact" } },
+    { params: { slug: "blogs" } },
+    { params: { slug: "blog/detail" } },
     { params: { slug: "services" } },
-    { params: { slug: "projects" } },
-    { params: { slug: "about" } },
     { params: { slug: "services/detail" } },
+    { params: { slug: "projects" } },
     { params: { slug: "projects/detail" } },
-    { params: { slug: "team-member/detail" } },
+    { params: { slug: "about" } },
+    { params: { slug: "team/detail" } },
+    { params: { slug: "profile" } },
   ];
 }
 ---

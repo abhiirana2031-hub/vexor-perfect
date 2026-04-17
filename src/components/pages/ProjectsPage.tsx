@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ChevronRight, Calendar, ExternalLink } from 'lucide-react';
+import { ArrowRight, Sparkles } from 'lucide-react';
 import { BaseCrudService } from '@/integrations';
 import { Projects } from '@/entities';
 import { Image } from '@/components/ui/image';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
 
 export default function ProjectsPage() {
   const [projects, setProjects] = useState<Projects[]>([]);
@@ -20,18 +21,13 @@ export default function ProjectsPage() {
     setIsLoading(true);
     try {
       const result = await BaseCrudService.getAll<Projects>('projects');
-      setProjects(result.items);
+      setProjects(result.items || []);
     } catch (error) {
       console.error('Error loading projects:', error);
+      setProjects([]);
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const formatDate = (date: Date | string | undefined) => {
-    if (!date) return '';
-    const d = new Date(date);
-    return d.toLocaleDateString('en-US', { year: 'numeric', month: 'long' });
   };
 
   return (
@@ -39,109 +35,100 @@ export default function ProjectsPage() {
       <Header />
 
       {/* Hero Section */}
-      <section className="relative w-full pt-32 pb-24 px-8 lg:px-16">
-        <div className="max-w-[100rem] mx-auto">
+      <section className="relative w-full min-h-[60vh] flex items-center justify-center pt-24 pb-16 px-4 md:px-8 lg:px-16 overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(0,217,255,0.08),transparent_70%)]" />
+        
+        <div className="relative z-10 max-w-[100rem] w-full">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-center space-y-6"
+            className="text-center space-y-4 md:space-y-6"
           >
-            <h1 className="font-heading text-6xl lg:text-8xl font-bold text-primary-foreground">
-              Our <span className="text-secondary">Projects</span>
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-secondary/10 to-neon-cyan/10 border border-secondary/20 mb-4">
+              <Sparkles className="w-3 h-3 text-secondary animate-pulse" />
+              <span className="text-xs font-paragraph font-bold tracking-widest uppercase text-secondary">Our Work</span>
+            </div>
+            <h1 className="font-heading text-5xl md:text-7xl lg:text-8xl font-bold leading-tight">
+              Our <span className="bg-gradient-neon bg-clip-text text-transparent animate-glow-pulse">Projects</span>
             </h1>
-            <p className="font-paragraph text-xl lg:text-2xl text-foreground/70 max-w-4xl mx-auto leading-relaxed">
-              Showcasing our latest innovations and successful implementations across industries
+            <p className="font-paragraph text-lg md:text-xl text-foreground/70 max-w-3xl mx-auto leading-relaxed">
+              Showcasing successful implementations across diverse industries
             </p>
           </motion.div>
         </div>
       </section>
 
       {/* Projects Grid */}
-      <section className="w-full pb-24">
-        <div className="max-w-[100rem] mx-auto px-8 lg:px-16">
-          <div className="min-h-[600px]">
-            {isLoading ? null : projects.length > 0 ? (
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {projects.map((project, idx) => (
-                  <motion.div
-                    key={project._id}
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    whileInView={{ opacity: 1, scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: idx * 0.1 }}
-                  >
-                    <Link to={`/projects/${project._id}`}>
-                      <div className="group bg-soft-shadow-gray/30 backdrop-blur-sm border border-secondary/20 rounded-2xl overflow-hidden hover:border-secondary/50 transition-all duration-300 hover:shadow-xl hover:shadow-secondary/20 h-full flex flex-col">
-                        {project.projectImage && (
-                          <div className="relative h-72 overflow-hidden">
-                            <Image
-                              src={project.projectImage}
-                              alt={project.projectTitle || 'Project'}
-                              width={400}
-                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-soft-shadow-gray to-transparent opacity-80" />
+      <section className="w-full py-16 md:py-24 px-4 md:px-8 lg:px-16">
+        <div className="max-w-[100rem] mx-auto">
+          {isLoading ? (
+            <div className="flex justify-center py-32">
+              <LoadingSpinner />
+            </div>
+          ) : projects.length > 0 ? (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+              {projects.map((project, idx) => (
+                <motion.div
+                  key={project._id}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: idx * 0.1 }}
+                >
+                  <Link to={`/projects/${project._id}`}>
+                    <div className="group relative bg-background/80 backdrop-blur-xl border border-secondary/20 rounded-2xl overflow-hidden hover:border-secondary/50 transition-all duration-300 hover:shadow-glow-lg flex flex-col h-full">
+                      <div className="absolute -inset-[1px] bg-gradient-neon rounded-2xl opacity-0 group-hover:opacity-30 blur transition-all duration-500" />
+                      <div className="relative h-48 overflow-hidden z-0 bg-gradient-to-br from-secondary/20 via-neon-cyan/10 to-neon-purple/20">
+                        {project.projectImage ? (
+                          <Image
+                            src={project.projectImage}
+                            alt={project.projectTitle || 'Project'}
+                            width={400}
+                            height={200}
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-secondary/30 to-neon-cyan/20">
+                            <div className="text-center">
+                              <div className="w-16 h-16 mx-auto mb-2 rounded-lg bg-gradient-neon/20 flex items-center justify-center">
+                                <Sparkles className="w-8 h-8 text-secondary" />
+                              </div>
+                              <p className="text-xs text-secondary/60 font-semibold">Project</p>
+                            </div>
                           </div>
                         )}
-                        <div className="p-8 space-y-4 flex-1 flex flex-col">
-                          <h3 className="font-heading text-2xl font-bold text-primary-foreground group-hover:text-secondary transition-colors duration-300">
-                            {project.projectTitle}
-                          </h3>
-                          <p className="font-paragraph text-foreground/70 line-clamp-3 flex-1">
+                        <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent opacity-60" />
+                      </div>
+                      <div className="relative z-10 p-6 md:p-8 flex flex-col flex-1">
+                        <h3 className="font-heading text-2xl font-bold text-foreground mb-2 group-hover:text-secondary transition-colors duration-300 line-clamp-2">
+                          {project.projectTitle}
+                        </h3>
+                        {project.projectDescription && (
+                          <p className="font-paragraph text-foreground/70 text-sm mb-4 flex-1 line-clamp-2">
                             {project.projectDescription}
                           </p>
-                          
-                          {project.clientName && (
-                            <div className="flex items-center gap-2 text-sm">
-                              <span className="font-paragraph text-foreground/60">Client:</span>
-                              <span className="font-paragraph text-secondary font-semibold">
-                                {project.clientName}
-                              </span>
-                            </div>
-                          )}
-
-                          {project.completionDate && (
-                            <div className="flex items-center gap-2 text-sm text-foreground/60">
-                              <Calendar className="h-4 w-4" />
-                              <span className="font-paragraph">{formatDate(project.completionDate)}</span>
-                            </div>
-                          )}
-
-                          {project.technologiesUsed && (
-                            <div className="flex flex-wrap gap-2">
-                              {project.technologiesUsed.split(',').slice(0, 3).map((tech, i) => (
-                                <span
-                                  key={i}
-                                  className="px-3 py-1 bg-secondary/10 border border-secondary/30 rounded-lg text-xs font-paragraph text-secondary font-semibold"
-                                >
-                                  {tech.trim()}
-                                </span>
-                              ))}
-                            </div>
-                          )}
-
-                          <div className="flex items-center justify-between pt-4">
-                            <div className="flex items-center text-secondary font-semibold group-hover:translate-x-2 transition-transform duration-300">
-                              <span className="font-paragraph">View Details</span>
-                              <ChevronRight className="ml-1 h-5 w-5" />
-                            </div>
-                            {project.projectUrl && (
-                              <ExternalLink className="h-5 w-5 text-secondary opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                            )}
+                        )}
+                        {project.clientName && (
+                          <div className="text-xs text-secondary/70 mb-4">
+                            <span className="font-semibold">{project.clientName}</span>
                           </div>
+                        )}
+                        <div className="flex items-center gap-2 text-secondary group-hover:gap-3 transition-all duration-300 mt-auto">
+                          <span className="font-paragraph font-semibold">View Project</span>
+                          <ArrowRight className="w-4 h-4" />
                         </div>
                       </div>
-                    </Link>
-                  </motion.div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-20">
-                <p className="font-paragraph text-xl text-foreground/50">No projects available</p>
-              </div>
-            )}
-          </div>
+                    </div>
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-32">
+              <p className="font-paragraph text-xl text-foreground/50">No projects available at the moment</p>
+            </div>
+          )}
         </div>
       </section>
 

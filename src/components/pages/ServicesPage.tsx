@@ -1,18 +1,17 @@
 import { useEffect, useState } from 'react';
+import { Sparkles, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ChevronRight } from 'lucide-react';
 import { BaseCrudService } from '@/integrations';
 import { Services } from '@/entities';
 import { Image } from '@/components/ui/image';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
-import { Button } from '@/components/ui/button';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
 
 export default function ServicesPage() {
   const [services, setServices] = useState<Services[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [filter, setFilter] = useState<'all' | 'featured'>('all');
 
   useEffect(() => {
     loadServices();
@@ -22,126 +21,107 @@ export default function ServicesPage() {
     setIsLoading(true);
     try {
       const result = await BaseCrudService.getAll<Services>('services');
-      setServices(result.items);
+      setServices(result.items || []);
     } catch (error) {
       console.error('Error loading services:', error);
+      setServices([]);
     } finally {
       setIsLoading(false);
     }
   };
-
-  const filteredServices = filter === 'featured' 
-    ? services.filter(s => s.isFeatured) 
-    : services;
 
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Header />
 
       {/* Hero Section */}
-      <section className="relative w-full pt-28 md:pt-32 pb-16 md:pb-24 px-4 sm:px-8 lg:px-16">
-        <div className="max-w-[100rem] mx-auto">
+      <section className="relative w-full min-h-[60vh] flex items-center justify-center pt-24 pb-16 px-4 md:px-8 lg:px-16 overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(0,217,255,0.08),transparent_70%)]" />
+        
+        <div className="relative z-10 max-w-[100rem] w-full">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             className="text-center space-y-4 md:space-y-6"
           >
-            <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-8xl font-bold text-primary-foreground">
-              Our <span className="text-secondary">Services</span>
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-secondary/10 to-neon-cyan/10 border border-secondary/20 mb-4">
+              <Sparkles className="w-3 h-3 text-secondary animate-pulse" />
+              <span className="text-xs font-paragraph font-bold tracking-widest uppercase text-secondary">
+                Our Services
+              </span>
+            </div>
+            
+            <h1 className="font-heading text-5xl md:text-7xl lg:text-8xl font-bold leading-tight">
+              Our <span className="bg-gradient-neon bg-clip-text text-transparent animate-glow-pulse">Services</span>
             </h1>
-            <p className="font-paragraph text-lg sm:text-xl lg:text-2xl text-foreground/70 max-w-4xl mx-auto leading-relaxed px-4">
-              Comprehensive technology solutions designed to accelerate your digital transformation
+            
+            <p className="font-paragraph text-lg md:text-xl text-foreground/70 max-w-3xl mx-auto leading-relaxed">
+              Cutting-edge technology solutions engineered for transformation and growth
             </p>
           </motion.div>
         </div>
       </section>
 
-      {/* Filter Section */}
-      <section className="w-full pb-8 md:pb-12">
-        <div className="max-w-[100rem] mx-auto px-4 sm:px-8 lg:px-16">
-          <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <Button
-              onClick={() => setFilter('all')}
-              className={`px-8 py-3 font-semibold rounded-lg transition-all duration-300 ${
-                filter === 'all'
-                  ? 'bg-secondary text-secondary-foreground'
-                  : 'bg-transparent border-2 border-secondary text-secondary hover:bg-secondary hover:text-secondary-foreground'
-              }`}
-            >
-              All Services
-            </Button>
-            <Button
-              onClick={() => setFilter('featured')}
-              className={`px-8 py-3 font-semibold rounded-lg transition-all duration-300 ${
-                filter === 'featured'
-                  ? 'bg-secondary text-secondary-foreground'
-                  : 'bg-transparent border-2 border-secondary text-secondary hover:bg-secondary hover:text-secondary-foreground'
-              }`}
-            >
-              Featured
-            </Button>
-          </div>
-        </div>
-      </section>
-
       {/* Services Grid */}
-      <section className="w-full pb-16 md:pb-24">
-        <div className="max-w-[100rem] mx-auto px-4 sm:px-8 lg:px-16">
-          <div className="min-h-[600px]">
-            {isLoading ? null : filteredServices.length > 0 ? (
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {filteredServices.map((service, idx) => (
-                  <motion.div
-                    key={service._id}
-                    initial={{ opacity: 0, y: 30 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.5, delay: idx * 0.1 }}
-                  >
-                    <Link to={`/services/${service.slug || service._id}`}>
-                      <div className="group bg-soft-shadow-gray/30 backdrop-blur-sm border border-secondary/20 rounded-2xl overflow-hidden hover:border-secondary/50 transition-all duration-300 hover:shadow-xl hover:shadow-secondary/20 h-full flex flex-col">
-                        {service.serviceImage && (
-                          <div className="relative h-64 overflow-hidden">
-                            <Image
-                              src={service.serviceImage}
-                              alt={service.serviceName || 'Service'}
-                              width={400}
-                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-soft-shadow-gray to-transparent opacity-60" />
-                            {service.isFeatured && (
-                              <div className="absolute top-4 right-4 bg-secondary text-secondary-foreground px-4 py-2 rounded-lg font-paragraph text-sm font-semibold">
-                                Featured
-                              </div>
-                            )}
-                          </div>
-                        )}
-                        <div className="p-6 sm:p-8 space-y-4 flex-1 flex flex-col">
-                          <h3 className="font-heading text-xl sm:text-2xl font-bold text-primary-foreground group-hover:text-secondary transition-colors duration-300">
-                            {service.serviceName}
-                          </h3>
-                          <p className="font-paragraph text-sm sm:text-base text-foreground/70 line-clamp-3 flex-1">
-                            {service.shortDescription}
+      <section className="w-full py-16 md:py-24 px-4 md:px-8 lg:px-16">
+        <div className="max-w-[100rem] mx-auto">
+          {isLoading ? (
+            <div className="flex justify-center py-32">
+              <LoadingSpinner />
+            </div>
+          ) : services.length > 0 ? (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+              {services.map((service, idx) => (
+                <motion.div
+                  key={service._id}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: idx * 0.1 }}
+                >
+                  <Link to={`/services/${service._id}`}>
+                    <div className="group relative bg-background/80 backdrop-blur-xl border border-secondary/20 rounded-2xl overflow-hidden hover:border-secondary/50 transition-all duration-300 hover:shadow-glow-lg h-full flex flex-col p-6 md:p-8">
+                      {/* Hover Gradient Background */}
+                      <div className="absolute -inset-[1px] bg-gradient-neon rounded-2xl opacity-0 group-hover:opacity-30 blur transition-all duration-500" />
+                      
+                      <div className="relative z-10 flex flex-col h-full">
+                        {/* Icon */}
+                        <div className="w-14 h-14 rounded-xl bg-secondary/10 border border-secondary/30 flex items-center justify-center mb-4 group-hover:bg-secondary/20 transition-all">
+                          {service.icon ? (
+                            <Image src={service.icon} alt="" width={32} height={32} className="w-8 h-8" />
+                          ) : (
+                            <Sparkles className="w-8 h-8 text-secondary" />
+                          )}
+                        </div>
+
+                        {/* Content */}
+                        <h3 className="font-heading text-2xl font-bold text-foreground mb-3 group-hover:text-secondary transition-colors duration-300">
+                          {service.serviceName}
+                        </h3>
+                        
+                        {service.serviceDescription && (
+                          <p className="font-paragraph text-foreground/70 text-sm md:text-base flex-1 mb-4">
+                            {service.serviceDescription.substring(0, 100)}...
                           </p>
-                          <div className="flex items-center text-secondary font-semibold group-hover:translate-x-2 transition-transform duration-300 pt-4">
-                            <span className="font-paragraph">Learn More</span>
-                            <ChevronRight className="ml-1 h-5 w-5" />
-                          </div>
+                        )}
+
+                        {/* CTA */}
+                        <div className="flex items-center gap-2 text-secondary group-hover:gap-3 transition-all duration-300 mt-auto">
+                          <span className="font-paragraph font-semibold">Learn More</span>
+                          <ArrowRight className="w-4 h-4" />
                         </div>
                       </div>
-                    </Link>
-                  </motion.div>
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-20">
-                <p className="font-paragraph text-xl text-foreground/50">
-                  {filter === 'featured' ? 'No featured services available' : 'No services available'}
-                </p>
-              </div>
-            )}
-          </div>
+                    </div>
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-32">
+              <p className="font-paragraph text-xl text-foreground/50">No services available at the moment</p>
+            </div>
+          )}
         </div>
       </section>
 

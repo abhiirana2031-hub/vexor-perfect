@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { BaseCrudService } from '@/integrations';
 import { UserProfiles, UserTestimonials, Projects } from '@/entities';
@@ -25,7 +24,6 @@ const fileToBase64 = (file: File): Promise<string> => {
 };
 
 export default function UserProfilePage() {
-  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<'login' | 'register' | 'profile' | 'testimonial' | 'projects'>('login');
   const [isLoading, setIsLoading] = useState(false);
   const [currentUser, setCurrentUser] = useState<UserProfiles | null>(null);

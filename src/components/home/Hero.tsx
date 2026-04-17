@@ -1,4 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Terminal as TerminalIcon, ShieldCheck, Activity, ChevronRight } from 'lucide-react';
 
@@ -89,6 +90,24 @@ const TerminalWindow = () => {
 
 export const Hero = () => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
+
+  const handleGetStarted = () => {
+    const userStr = localStorage.getItem('currentUser');
+    if (userStr) {
+      try {
+        const user = JSON.parse(userStr);
+        const ADMIN_EMAIL = import.meta.env.PUBLIC_ADMIN_EMAIL || 'abhayrana8272@gmail.com';
+        if (user.email === ADMIN_EMAIL) {
+          navigate('/admin');
+          return;
+        }
+      } catch (e) {
+        console.error('Error parsing user data:', e);
+      }
+    }
+    navigate('/profile');
+  };
   
   return (
     <section 
@@ -164,12 +183,18 @@ export const Hero = () => {
               transition={{ duration: 0.8, delay: 0.4 }}
               className="flex flex-col md:flex-row items-stretch md:items-center gap-6 md:gap-8 pt-4 md:pt-8"
             >
-              <button className="w-full md:w-auto px-10 py-5 rounded-2xl bg-secondary text-black text-sm font-black uppercase tracking-[0.2em] hover:bg-white hover:shadow-neon-cyan transition-all duration-500 group flex items-center justify-center gap-4">
+              <button 
+                onClick={handleGetStarted}
+                className="w-full md:w-auto px-10 py-5 rounded-2xl bg-secondary text-black text-sm font-black uppercase tracking-[0.2em] hover:bg-white hover:shadow-neon-cyan transition-all duration-500 group flex items-center justify-center gap-4 relative z-20"
+              >
                 Get Started
                 <ChevronRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
               </button>
               
-              <button className="w-full md:w-auto px-10 py-5 rounded-2xl border border-white/10 text-foreground/60 text-sm font-black uppercase tracking-[0.2em] hover:bg-white/[0.02] hover:border-white/20 transition-all duration-500">
+              <button 
+                onClick={() => navigate('/services')}
+                className="w-full md:w-auto px-10 py-5 rounded-2xl border border-white/10 text-foreground/60 text-sm font-black uppercase tracking-[0.2em] hover:bg-white/[0.02] hover:border-white/20 transition-all duration-500 relative z-20"
+              >
                 View Services
               </button>
             </motion.div>

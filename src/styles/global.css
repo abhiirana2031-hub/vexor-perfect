@@ -99,6 +99,19 @@
 /* Smooth Navigation */
 html {
   scroll-behavior: smooth;
+  font-size: 85%; /* Global scaling to 85% */
+}
+
+@media (min-width: 1024px) {
+  html {
+    font-size: 85%; /* Specifically ensure 85% on desktop */
+  }
+}
+
+@media (max-width: 768px) {
+  html {
+    font-size: 80%; /* Slightly smaller on mobile to ensure content fits */
+  }
 }
 
 /* Animations Helper */

@@ -78,15 +78,15 @@ export default function Header() {
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
-        className="glass-effect !rounded-full px-8 py-3 flex items-center gap-12 border-white/10 shadow-soft-depth max-w-fit"
+        className="glass-effect !rounded-full px-6 md:px-8 py-3 flex items-center justify-between lg:justify-start gap-4 md:gap-12 border-white/10 shadow-soft-depth w-full max-w-[95%] lg:max-w-fit"
       >
         {/* Logo */}
-        <Link to="/" className="flex items-center gap-3 group">
-          <div className="w-8 h-8 rounded-xl bg-secondary/10 border border-secondary/30 flex items-center justify-center overflow-hidden">
+        <Link to="/" className="flex items-center gap-2 md:gap-3 group shrink-0">
+          <div className="w-8 h-8 rounded-xl bg-secondary/10 border border-secondary/30 flex items-center justify-center overflow-hidden shrink-0">
             <img src="/vexor-logo.png" alt="Vexor Logo" className="w-5 h-5 object-contain" />
           </div>
-          <span className="font-heading text-xl font-black tracking-tighter text-foreground group-hover:text-secondary transition-colors">
-            VEXOR <span className="text-secondary opacity-60 font-medium">IT SOLUTIONS</span>
+          <span className="font-heading text-lg md:text-xl font-black tracking-tighter text-foreground group-hover:text-secondary transition-colors whitespace-nowrap">
+            VEXOR <span className="text-secondary opacity-60 font-medium hidden sm:inline">IT SOLUTIONS</span>
           </span>
         </Link>
 
@@ -110,11 +110,23 @@ export default function Header() {
 
         {/* Action Button */}
         <div className="hidden lg:flex items-center">
-           <Link to="/profile">
-              <button className="px-6 py-2 rounded-full bg-secondary text-black text-[10px] font-black uppercase tracking-widest hover:bg-white hover:shadow-neon-cyan transition-all duration-500">
-                Get Started
-              </button>
-           </Link>
+          <button 
+            onClick={() => {
+              const userStr = localStorage.getItem('currentUser');
+              if (userStr) {
+                const user = JSON.parse(userStr);
+                const ADMIN_EMAIL = import.meta.env.PUBLIC_ADMIN_EMAIL || 'abhayrana8272@gmail.com';
+                if (user.email === ADMIN_EMAIL) {
+                  navigate('/admin');
+                  return;
+                }
+              }
+              navigate('/profile');
+            }}
+            className="px-6 py-2 rounded-full bg-secondary text-black text-[10px] font-black uppercase tracking-widest hover:bg-white hover:shadow-neon-cyan transition-all duration-500"
+          >
+            Get Started
+          </button>
         </div>
 
         {/* Mobile Menu Toggle */}
@@ -152,11 +164,24 @@ export default function Header() {
               ))}
               
               <div className="pt-6 border-t border-white/5">
-                <Link to="/contact" onClick={() => setIsMenuOpen(false)}>
-                  <button className="w-full py-4 rounded-xl bg-secondary text-black text-[10px] font-black uppercase tracking-widest">
-                    Initialize Protocol
-                  </button>
-                </Link>
+                <button 
+                  onClick={() => {
+                    setIsMenuOpen(false);
+                    const userStr = localStorage.getItem('currentUser');
+                    if (userStr) {
+                      const user = JSON.parse(userStr);
+                      const ADMIN_EMAIL = import.meta.env.PUBLIC_ADMIN_EMAIL || 'abhayrana8272@gmail.com';
+                      if (user.email === ADMIN_EMAIL) {
+                        navigate('/admin');
+                        return;
+                      }
+                    }
+                    navigate('/profile');
+                  }}
+                  className="w-full py-4 rounded-xl bg-secondary text-black text-[10px] font-black uppercase tracking-widest"
+                >
+                  Initialize Protocol
+                </button>
               </div>
             </motion.div>
           )}

@@ -40,7 +40,8 @@ export interface PaginatedResult<T> {
 }
 
 function cmsApiRoot(): string {
-  const base = import.meta.env.BASE_URL || "/";
+  // If PUBLIC_API_URL is available, use it (crucial for Android APK to hit the live cloud DB)
+  const base = import.meta.env.PUBLIC_API_URL || import.meta.env.BASE_URL || "/";
   const root = base.endsWith("/") ? base : `${base}/`;
   return `${root}api/cms`;
 }

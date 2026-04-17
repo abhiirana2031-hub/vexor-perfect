@@ -4,6 +4,7 @@ import tailwind from "@astrojs/tailwind";
 import react from "@astrojs/react";
 import customErrorOverlayPlugin from "./vite-error-overlay-plugin.js";
 import node from "@astrojs/node";
+import AstroPWA from "@vite-pwa/astro";
 
 // https://astro.build/config
 export default defineConfig({
@@ -26,6 +27,37 @@ export default defineConfig({
     },
     tailwind(),
     react(),
+    AstroPWA({
+      registerType: 'autoUpdate',
+      manifest: {
+        name: 'Vexor IT Solutions',
+        short_name: 'Vexor',
+        description: 'Vexor IT Solutions - Transform Your Business',
+        theme_color: '#000000',
+        background_color: '#000000',
+        display: 'standalone',
+        start_url: '/',
+        icons: [
+          {
+            src: 'icons/icon-192.png',
+            sizes: '192x192',
+            type: 'image/png',
+          },
+          {
+            src: 'icons/icon-512.png',
+            sizes: '512x512',
+            type: 'image/png',
+          },
+        ],
+      },
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,svg,png,ico,txt,webp}'],
+        navigateFallback: '/',
+      },
+      devOptions: {
+        enabled: true,
+      },
+    }),
   ],
 
   vite: {

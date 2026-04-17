@@ -3,6 +3,7 @@
 import { Head } from "@/components/Head";
 import AppRouter from "@/components/Router";
 import "@/styles/global.css";
+import { pwaInfo } from 'virtual:pwa-info';
 
 export const prerender = true;
 
@@ -27,8 +28,10 @@ export async function getStaticPaths() {
 <html lang="en" class="w-full h-full">
   <head>
     <Head />
+    {pwaInfo && <Fragment set:html={pwaInfo.webManifest.linkTag} />}
     <meta charset="utf-8" />
     <title>Vexor IT Solutions - Transform Your Business</title>
+    <meta name="theme-color" content="#000000" />
   </head>
   <body class="w-full h-full overflow-x-hidden">
     <div id="root" class="w-full h-full">

@@ -102,6 +102,13 @@ const router = createBrowserRouter([
         },
       },
       {
+        path: "team/:id",
+        element: <TeamMemberDetailPage />,
+        routeMetadata: {
+          pageIdentifier: 'team-member-detail',
+        },
+      },
+      {
         path: "profile",
         element: <UserProfilePage />,
         routeMetadata: {

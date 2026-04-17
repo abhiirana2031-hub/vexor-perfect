@@ -338,23 +338,23 @@ export default function UserProfilePage() {
     <div className="min-h-screen bg-background text-foreground">
       <Header />
 
-      <div className="pt-32 pb-20">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 md:px-8 lg:px-12">
+      <div className="pt-24 sm:pt-28 md:pt-32 pb-12 sm:pb-16 md:pb-20">
+        <div className="max-w-4xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-12 text-center"
+            className="mb-6 sm:mb-8 md:mb-12 text-center"
           >
-            <h1 className="font-heading text-5xl font-bold text-foreground mb-4">
+            <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl font-bold text-foreground mb-2 sm:mb-4">
               {currentUser ? 'My Profile' : 'User Account'}
             </h1>
-            <p className="font-paragraph text-lg text-foreground/70">
+            <p className="font-paragraph text-sm sm:text-base md:text-lg text-foreground/70">
               {currentUser ? 'Manage your profile and share your experience' : 'Login or register to share your testimonials'}
             </p>
           </motion.div>
 
           {!currentUser ? (
-            <div className="max-w-md mx-auto">
+            <div className="max-w-sm mx-auto">
               {/* Login Tab */}
               {activeTab === 'login' && (
                 <motion.div
@@ -648,27 +648,27 @@ export default function UserProfilePage() {
               )}
             </div>
           ) : (
-            <div className="grid lg:grid-cols-3 gap-8">
+            <div className="grid md:grid-cols-3 gap-4 md:gap-8">
               {/* Profile Sidebar */}
               <motion.div
                 initial={{ opacity: 0, x: -30 }}
                 animate={{ opacity: 1, x: 0 }}
-                className="lg:col-span-1"
+                className="md:col-span-1"
               >
-                <Card className="bg-soft-shadow-gray border-secondary/20 sticky top-32">
-                  <CardContent className="pt-6 text-center">
+                <Card className="bg-soft-shadow-gray border-secondary/20 md:sticky md:top-28">
+                  <CardContent className="pt-4 sm:pt-6 text-center">
                     {profileImage ? (
-                      <div className="relative mb-4">
+                      <div className="relative mb-3 sm:mb-4">
                         <Image
                           src={profileImage}
                           alt={currentUser.fullName || 'Profile'}
                           width={200}
                           height={200}
-                          className="w-32 h-32 rounded-full mx-auto object-cover border-4 border-secondary"
+                          className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-full mx-auto object-cover border-4 border-secondary"
                         />
                       </div>
                     ) : (
-                      <div className="w-32 h-32 rounded-full mx-auto bg-secondary/20 border-4 border-secondary flex items-center justify-center mb-4">
+                      <div className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-full mx-auto bg-secondary/20 border-4 border-secondary flex items-center justify-center mb-3 sm:mb-4">
                         <span className="text-4xl">👤</span>
                       </div>
                     )}

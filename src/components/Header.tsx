@@ -78,7 +78,7 @@ export default function Header() {
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
-        className="glass-effect !rounded-full px-6 md:px-8 py-3 flex items-center justify-between lg:justify-start gap-4 md:gap-12 border-white/10 shadow-soft-depth w-full max-w-[95%] lg:max-w-fit"
+        className="glass-effect !rounded-full px-6 md:px-8 py-3 flex items-center justify-between lg:justify-start gap-4 md:gap-12 border-black/5 shadow-soft-depth w-full max-w-[95%] lg:max-w-fit"
       >
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2 md:gap-3 group shrink-0">
@@ -145,7 +145,7 @@ export default function Header() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -20, scale: 0.95 }}
               transition={{ duration: 0.3, ease: "easeOut" }}
-              className="absolute top-20 left-0 right-0 glass-effect !rounded-[2rem] p-8 border-white/10 shadow-soft-depth flex flex-col gap-6 lg:hidden"
+              className="absolute top-[calc(100%+1rem)] left-0 right-0 glass-effect !rounded-[2rem] p-8 border-black/5 shadow-soft-depth flex flex-col gap-6 lg:hidden z-50 bg-white/95"
             >
               {navLinks.map((link) => (
                 <Link
@@ -153,17 +153,17 @@ export default function Header() {
                   to={link.path}
                   onClick={() => setIsMenuOpen(false)}
                   className={`text-sm font-black uppercase tracking-[0.3em] transition-all ${
-                    isActive(link.path) ? 'text-secondary translate-x-4' : 'text-foreground/40 hover:text-foreground'
+                    isActive(link.path) ? 'text-secondary translate-x-4' : 'text-foreground/60 hover:text-foreground'
                   }`}
                 >
                   <div className="flex items-center gap-4">
-                    {isActive(link.path) && <div className="w-2 h-2 rounded-full bg-secondary shadow-neon-cyan" />}
+                    {isActive(link.path) && <div className="w-2 h-2 rounded-full bg-secondary shadow-soft-depth" />}
                     {link.label}
                   </div>
                 </Link>
               ))}
               
-              <div className="pt-6 border-t border-white/5">
+              <div className="pt-6 border-t border-black/5">
                 <button 
                   onClick={() => {
                     setIsMenuOpen(false);
@@ -178,7 +178,7 @@ export default function Header() {
                     }
                     navigate('/profile');
                   }}
-                  className="w-full py-4 rounded-xl bg-secondary text-black text-[10px] font-black uppercase tracking-widest"
+                  className="w-full py-4 rounded-xl bg-secondary text-black text-[10px] font-black uppercase tracking-widest shadow-soft-depth"
                 >
                   Initialize Protocol
                 </button>

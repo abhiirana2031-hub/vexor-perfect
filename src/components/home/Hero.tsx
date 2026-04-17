@@ -112,7 +112,7 @@ export const Hero = () => {
   return (
     <section 
       ref={containerRef}
-      className="relative min-h-screen flex items-center overflow-hidden bg-[#03050a] pt-32 pb-20"
+      className="relative min-h-screen flex items-center overflow-hidden bg-[#fcfcfd] pt-32 pb-20"
     >
       {/* Background Orbital Lines (Matches screenshot) */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-20">
@@ -157,7 +157,7 @@ export const Hero = () => {
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 1, ease: "easeOut" }}
-                className="font-heading text-4xl sm:text-6xl md:text-8xl lg:text-[7.5rem] font-black text-foreground leading-[0.9] tracking-tighter"
+                className="font-heading text-4xl sm:text-6xl md:text-8xl lg:text-[7.5rem] font-black text-[#1a1c23] leading-[0.9] tracking-tighter"
               >
                 Building <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-secondary via-white to-secondary animate-text-shimmer bg-[length:200%_auto] shadow-neon-cyan/20">
@@ -170,7 +170,7 @@ export const Hero = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 1, delay: 0.2 }}
-                className="font-paragraph text-lg md:text-xl text-foreground/40 max-w-xl leading-relaxed font-medium"
+                className="font-paragraph text-lg md:text-xl text-black/40 max-w-xl leading-relaxed font-medium"
               >
                 Empowering businesses with cutting-edge AI, high-performance web systems, and futuristic digital experiences. Innovation is our core essence.
               </motion.p>
@@ -203,7 +203,7 @@ export const Hero = () => {
           {/* Right: Terminal */}
           <div className="relative flex justify-center lg:justify-end">
              {/* Floating Ambient Effects behind terminal */}
-             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-secondary/5 blur-[120px] rounded-full -z-10 animate-mesh-panning" />
+             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-secondary/10 blur-[120px] rounded-full -z-10 animate-mesh-panning" />
              <TerminalWindow />
           </div>
 

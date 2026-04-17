@@ -134,6 +134,26 @@ export default function UserProfilePage() {
 
     setIsLoading(true);
     try {
+      // Admin Bypass
+      const ADMIN_EMAIL = import.meta.env.PUBLIC_ADMIN_EMAIL || 'abhayrana8272@gmail.com';
+      const ADMIN_PASSWORD = import.meta.env.PUBLIC_ADMIN_PASSWORD || 'vexor@#005';
+
+      if (loginForm.email === ADMIN_EMAIL && loginForm.password === ADMIN_PASSWORD) {
+        const adminUser: UserProfiles = {
+          _id: 'admin-root',
+          fullName: 'Vexor Administrator',
+          email: ADMIN_EMAIL,
+          role: 'admin',
+          _createdDate: new Date()
+        };
+        setCurrentUser(adminUser);
+        localStorage.setItem('currentUser', JSON.stringify(adminUser));
+        window.dispatchEvent(new Event('userUpdated'));
+        setActiveTab('profile');
+        setIsLoading(false);
+        return;
+      }
+
       const users = await BaseCrudService.getAll<UserProfiles>('userprofiles');
       const user = loginForm.usePhone
         ? users.items.find(u => u.phoneNumber === loginForm.phoneNumber)

@@ -35,7 +35,7 @@ const menuItems = [
 
 export const Sidebar = ({ onSetActiveTab, activeTab }: SidebarProps) => {
   return (
-    <div className="h-full bg-background border-r border-white/5 flex flex-col relative preserve-3d">
+    <div className="h-full bg-[#f8f9fa] border-r border-black/5 flex flex-col relative preserve-3d">
       {/* Logo Section */}
       <div className="p-8 pb-12">
         <div className="flex items-center gap-4">
@@ -43,7 +43,7 @@ export const Sidebar = ({ onSetActiveTab, activeTab }: SidebarProps) => {
             <img src="/vexor-logo.png" alt="Vexor Logo" className="w-7 h-7 object-contain" />
           </div>
           <div>
-            <h1 className="font-heading font-black text-xl tracking-tighter text-foreground">VEXOR</h1>
+            <h1 className="font-heading font-black text-xl tracking-tighter text-[#1a1c20]">VEXOR</h1>
             <p className="text-[8px] font-black uppercase tracking-[0.4em] text-secondary">Control_Panel v2.4</p>
           </div>
         </div>
@@ -57,8 +57,8 @@ export const Sidebar = ({ onSetActiveTab, activeTab }: SidebarProps) => {
             onClick={() => onSetActiveTab(item.id)}
             className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl transition-all duration-500 group relative overflow-hidden ${
               activeTab === item.id 
-              ? 'text-secondary bg-secondary/5' 
-              : 'text-foreground/40 hover:text-foreground hover:bg-white/[0.02]'
+              ? 'text-secondary bg-secondary/10' 
+              : 'text-[#1a1c20]/40 hover:text-foreground hover:bg-black/[0.02]'
             }`}
           >
             <item.icon className={`w-5 h-5 ${activeTab === item.id ? 'text-secondary animate-pulse' : ''}`} />
@@ -82,7 +82,7 @@ export const Sidebar = ({ onSetActiveTab, activeTab }: SidebarProps) => {
       </nav>
 
       {/* Footer / Logout */}
-      <div className="p-4 border-t border-white/5">
+      <div className="p-4 border-t border-black/5">
         <button 
            onClick={() => window.location.href = '/'}
            className="w-full flex items-center gap-4 px-6 py-4 rounded-2xl text-destructive/40 hover:text-destructive hover:bg-destructive/5 transition-all duration-500 font-black uppercase tracking-widest text-[10px]"

@@ -118,9 +118,9 @@ export default function AdminDashboardPage() {
 
   if (!isAdmin) {
     return (
-      <div className="min-h-screen bg-[#f8f9fa] flex items-center justify-center p-4 overflow-hidden relative">
+      <div className="min-h-screen bg-[#03050a] flex items-center justify-center p-4 overflow-hidden relative">
          {/* Cyber Ambience */}
-         <div className="absolute inset-0 cyber-grid opacity-20" />
+         <div className="absolute inset-0 cyber-grid opacity-10" />
          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-secondary/10 blur-[150px] " />
          
          <motion.div 
@@ -128,7 +128,7 @@ export default function AdminDashboardPage() {
            animate={{ opacity: 1, scale: 1 }}
            className="w-full max-w-md relative z-10"
          >
-           <div className="glass-card p-12 space-y-10 border-black/5 bg-white/90 shadow-soft-depth">
+           <div className="glass-card p-12 space-y-10 border-white/5">
               <div className="text-center space-y-4">
                  <div className="w-16 h-16 rounded-2xl bg-secondary/10 border border-secondary/20 flex items-center justify-center mx-auto mb-6">
                     <div className="w-4 h-4 bg-secondary shadow-neon-cyan animate-pulse" />
@@ -145,7 +145,7 @@ export default function AdminDashboardPage() {
                       placeholder="Admin Email"
                       value={adminLoginForm.email}
                       onChange={(e) => setAdminLoginForm({...adminLoginForm, email: e.target.value})}
-                      className="w-full bg-black/[0.02] border border-black/10 rounded-2xl px-6 py-4 focus:border-secondary/40 outline-none transition-all text-sm font-medium"
+                      className="w-full bg-white/[0.02] border border-white/10 rounded-2xl px-6 py-4 focus:border-secondary/40 outline-none transition-all text-sm font-medium"
                     />
                  </div>
                  <div className="space-y-2">
@@ -155,7 +155,7 @@ export default function AdminDashboardPage() {
                       placeholder="Admin Password"
                       value={adminLoginForm.password}
                       onChange={(e) => setAdminLoginForm({...adminLoginForm, password: e.target.value})}
-                      className="w-full bg-black/[0.02] border border-black/10 rounded-2xl px-6 py-4 focus:border-secondary/40 outline-none transition-all text-sm font-medium"
+                      className="w-full bg-white/[0.02] border border-white/10 rounded-2xl px-6 py-4 focus:border-secondary/40 outline-none transition-all text-sm font-medium"
                     />
                  </div>
                  {loginError && <p className="text-[10px] text-destructive font-black uppercase tracking-widest text-center">{loginError}</p>}
@@ -175,7 +175,7 @@ export default function AdminDashboardPage() {
   }
 
   return (
-    <div className="flex h-screen bg-[#fcfcfd] text-[#1a1c20] selection:bg-secondary/20 overflow-hidden font-paragraph">
+    <div className="flex h-screen bg-[#03050a] text-foreground selection:bg-secondary/30 overflow-hidden font-paragraph">
       {/* LEFT SIDEBAR - Desktop */}
       <aside className="w-80 flex-shrink-0 hidden lg:block z-40 relative">
         <Sidebar onSetActiveTab={setActiveTab} activeTab={activeTab} />
@@ -192,7 +192,7 @@ export default function AdminDashboardPage() {
             />
             <motion.aside 
                initial={{ x: '-100%' }} animate={{ x: 0 }} exit={{ x: '-100%' }} transition={{ type: "spring", damping: 25, stiffness: 200 }}
-               className="fixed inset-y-0 left-0 w-80 z-50 lg:hidden border-r border-black/5 bg-white"
+               className="fixed inset-y-0 left-0 w-80 z-50 lg:hidden border-r border-white/5 bg-[#03050a]"
             >
                <Sidebar onSetActiveTab={(tab) => { setActiveTab(tab); setIsMobileMenuOpen(false); }} activeTab={activeTab} />
             </motion.aside>
@@ -322,7 +322,7 @@ export default function AdminDashboardPage() {
         setIsDialogOpen(open);
         if (!open) setSelectedItem(null);
       }}>
-        <DialogContent className="glass-card border-black/5 bg-white/95 w-[95vw] md:w-full md:max-w-2xl max-h-[90vh] overflow-y-auto no-scrollbar mx-auto">
+        <DialogContent className="glass-card border-white/5 bg-[#05070d]/90 w-[95vw] md:w-full md:max-w-2xl max-h-[90vh] overflow-y-auto no-scrollbar mx-auto">
           <DialogHeader>
             <DialogTitle className="text-2xl font-black tracking-tighter uppercase">
               {selectedItem ? 'Update Node' : 'Initialize Node'}

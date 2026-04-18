@@ -21,7 +21,14 @@ export default function ScannerView() {
     if (isScanning && !scannedUser) {
       scanner = new Html5QrcodeScanner(
         "reader",
-        { fps: 10, qrbox: { width: 250, height: 250 } },
+        { 
+          fps: 10, 
+          qrbox: { width: 280, height: 280 },
+          aspectRatio: 1.0,
+          videoConstraints: {
+            facingMode: "environment"
+          }
+        },
         /* verbose= */ false
       );
 
@@ -36,16 +43,20 @@ export default function ScannerView() {
   }, [isScanning, scannedUser]);
 
   async function onScanSuccess(decodedText: string) {
+    console.log("Neural Scanned Token:", decodedText);
     try {
       const data = JSON.parse(decodedText);
+      console.log("Decoded Neural Data:", data);
       if (data.type === 'user_id' && data.id) {
         setScannedResult(data.id);
         setIsScanning(false);
         fetchUserProfile(data.id);
       } else {
+        console.warn("Invalid protocol structure:", data);
         setError("Invalid QR Code protocol. Only Vexora Neural IDs are supported.");
       }
     } catch (e) {
+      console.error("Neural Decryption Error:", e);
       setError("Failed to decrypt neural token. Ensure you're scanning a valid Digital ID.");
     }
   }

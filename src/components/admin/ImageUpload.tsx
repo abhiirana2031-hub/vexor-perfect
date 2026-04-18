@@ -41,7 +41,12 @@ export const ImageUpload = ({ value, onChange, label = "Upload Image" }: ImageUp
 
       const data = await res.json();
       if (data.url) {
-        onChange(data.url); // Inform parent form of the new local uploaded URL
+        let finalUrl = data.url;
+        const apiBase = import.meta.env.PUBLIC_API_URL;
+        if (finalUrl.startsWith('/') && apiBase) {
+           finalUrl = `${apiBase.replace(/\/$/, '')}${finalUrl}`;
+        }
+        onChange(finalUrl); // Inform parent form of the new absolute/local uploaded URL
       }
     } catch (err) {
       console.error(err);

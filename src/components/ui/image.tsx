@@ -162,12 +162,21 @@ export const Image = forwardRef<HTMLImageElement, ImageProps>(
       return <div data-empty-image ref={ref} {...props} />
     }
 
+    // Resolve relative URLs against the public API root if configured
+    let resolvedSrc = src;
+    if (src.startsWith('/') && !src.startsWith('//')) {
+      const baseUrl = import.meta.env.PUBLIC_API_URL || "";
+      if (baseUrl) {
+        resolvedSrc = `${baseUrl.replace(/\/$/, '')}${src}`;
+      }
+    }
+
     const imageProps = { ...props, onError: () => setImgSrc(FALLBACK_IMAGE_URL) }
-    const imageData = getImageData(imgSrc, additionalImgProps)
+    const imageData = getImageData(resolvedSrc, additionalImgProps)
 
     if (!imageData) {
-      const isErrorUrl = imgSrc === FALLBACK_IMAGE_URL
-      return <img ref={ref} src={imgSrc} {...imageProps} data-error-image={isErrorUrl} />
+      const isErrorUrl = resolvedSrc === FALLBACK_IMAGE_URL
+      return <img ref={ref} src={resolvedSrc} {...imageProps} data-error-image={isErrorUrl} />
     }
 
     return <WixImage ref={ref} data={imageData} {...imageProps} />

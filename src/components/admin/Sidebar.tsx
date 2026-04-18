@@ -14,7 +14,8 @@ import {
   ChevronRight,
   TrendingUp,
   FileText,
-  QrCode
+  QrCode,
+  Shield
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 

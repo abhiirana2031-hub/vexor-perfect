@@ -73,7 +73,13 @@ export default function AdminDashboardPage() {
     let idToUpdate = selectedItem?._id;
     
     // Save the primary item
-    const success = await saveItem(activeTab, data, idToUpdate);
+    const collectionMap: Record<string, string> = {
+      'users': 'userprofiles',
+      'team': 'teammembers',
+    };
+    const collectionId = collectionMap[activeTab] || activeTab;
+
+    const success = await saveItem(collectionId, data, idToUpdate);
     
     // Cross-Collection logic for Neural Profiles mapping to Projects
     if (success && activeTab === 'users' && assignedProjectIds) {

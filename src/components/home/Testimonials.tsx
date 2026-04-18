@@ -55,7 +55,7 @@ export const Testimonials = ({ testimonials, isLoading }: TestimonialsProps) => 
                         src={testimonial.clientImage || 'https://static.wixstatic.com/media/47e7bb_a0d934450b2c4f1ab21d4c235925a4f3~mv2.png?originWidth=128&originHeight=128'}
                         alt={testimonial.clientName || 'Client'}
                         width={100}
-                        className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700"
+                        className="w-full h-full object-cover transition-all duration-700"
                      />
                   </div>
                   <div>

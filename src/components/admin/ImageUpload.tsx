@@ -28,8 +28,11 @@ export const ImageUpload = ({ value, onChange, label = "Upload Image" }: ImageUp
     const formData = new FormData();
     formData.append('file', file);
 
+    const base = import.meta.env.PUBLIC_API_URL || import.meta.env.BASE_URL || "/";
+    const uploadUrl = base.endsWith("/") ? `${base}api/upload` : `${base}/api/upload`;
+
     try {
-      const res = await fetch('/api/upload', {
+      const res = await fetch(uploadUrl, {
         method: 'POST',
         body: formData,
       });

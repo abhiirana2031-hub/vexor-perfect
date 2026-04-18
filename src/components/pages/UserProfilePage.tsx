@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { BaseCrudService } from '@/integrations';
 import { UserProfiles, UserTestimonials, Projects } from '@/entities';
+import { QRCodeCanvas } from 'qrcode.react';
+import { Shield, QrCode, Key, EyeOff, Eye } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -24,7 +26,7 @@ const fileToBase64 = (file: File): Promise<string> => {
 };
 
 export default function UserProfilePage() {
-  const [activeTab, setActiveTab] = useState<'login' | 'register' | 'profile' | 'testimonial' | 'projects'>('login');
+  const [activeTab, setActiveTab] = useState<'login' | 'register' | 'profile' | 'testimonial' | 'projects' | 'security'>('login');
   const [isLoading, setIsLoading] = useState(false);
   const [currentUser, setCurrentUser] = useState<UserProfiles | null>(null);
   const [profileImage, setProfileImage] = useState<string | null>(null);
@@ -57,6 +59,14 @@ export default function UserProfilePage() {
     websiteUrl: '',
     phoneNumber: ''
   });
+
+  // Password change state
+  const [passwordForm, setPasswordForm] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  });
+  const [showPassword, setShowPassword] = useState(false);
 
   // Testimonial form
   const [testimonialForm, setTestimonialForm] = useState({
@@ -293,6 +303,38 @@ export default function UserProfilePage() {
     } catch (error) {
       console.error('Error updating profile:', error);
       alert('Failed to update profile');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleChangePassword = async () => {
+    if (!currentUser) return;
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+      alert('Passwords do not match');
+      return;
+    }
+    if (passwordForm.newPassword.length < 6) {
+      alert('Password must be at least 6 characters');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const updated: UserProfiles = {
+        ...currentUser,
+        passwordHash: passwordForm.newPassword,
+        _updatedDate: new Date()
+      };
+
+      await BaseCrudService.update('userprofiles', updated);
+      setCurrentUser(updated);
+      localStorage.setItem('currentUser', JSON.stringify(updated));
+      alert('Password updated successfully!');
+      setPasswordForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
+    } catch (error) {
+      console.error('Error updating password:', error);
+      alert('Failed to update password');
     } finally {
       setIsLoading(false);
     }
@@ -751,6 +793,17 @@ export default function UserProfilePage() {
                         My Projects
                       </button>
                       <button
+                        onClick={() => setActiveTab('security')}
+                        className={`px-4 py-2 rounded-lg transition-colors text-sm font-semibold flex items-center gap-2 ${
+                          activeTab === 'security'
+                            ? 'bg-secondary text-secondary-foreground'
+                            : 'bg-background border border-secondary/20 text-foreground'
+                        }`}
+                      >
+                        <Shield className="w-4 h-4" />
+                        Security & ID
+                      </button>
+                      <button
                         onClick={() => setShowTestimonialDialog(true)}
                         className="px-4 py-2 rounded-lg bg-background border border-secondary/20 text-foreground hover:bg-background/50 transition-colors text-sm font-semibold ml-auto flex items-center gap-2"
                       >
@@ -964,6 +1017,99 @@ export default function UserProfilePage() {
                             </div>
                           </>
                         )}
+                      </div>
+                    )}
+
+                    {activeTab === 'security' && (
+                      <div className="space-y-12 pb-12">
+                        {/* QR Identity Section */}
+                        <div className="text-center space-y-6">
+                           <div className="inline-flex items-center gap-3 px-6 py-2 rounded-full border border-secondary/20 bg-secondary/5 mb-4">
+                              <QrCode className="w-4 h-4 text-secondary" />
+                              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-secondary">Neural Identity Token</span>
+                           </div>
+                           <h3 className="font-heading text-2xl font-black tracking-tighter">Your Digital ID</h3>
+                           <p className="font-paragraph text-sm text-foreground/40 max-w-md mx-auto">
+                              Present this identifier to any Vexora Administrator for instant profile synchronization and physical access verification.
+                           </p>
+                           
+                           <div className="p-8 bg-white rounded-[2rem] inline-block shadow-2xl border-4 border-secondary/20 relative group">
+                              <QRCodeCanvas 
+                                value={JSON.stringify({ type: 'user_id', id: currentUser._id })}
+                                size={200}
+                                level="H"
+                                includeMargin={false}
+                                imageSettings={{
+                                   src: "/vexor-logo.svg",
+                                   x: undefined,
+                                   y: undefined,
+                                   height: 48,
+                                   width: 48,
+                                   excavate: true,
+                                }}
+                              />
+                              <div className="absolute inset-0 bg-secondary/10 opacity-0 group-hover:opacity-100 transition-opacity rounded-[1.5rem] flex items-center justify-center pointer-events-none">
+                                 <Shield className="w-8 h-8 text-secondary" />
+                              </div>
+                           </div>
+                           <div className="pt-4">
+                              <p className="text-[10px] font-black uppercase text-foreground/20 tracking-widest font-mono">Token ID: {currentUser._id}</p>
+                           </div>
+                        </div>
+
+                        <div className="h-px bg-white/5" />
+
+                        {/* Password Change Section */}
+                        <div className="space-y-8">
+                           <div className="flex items-center gap-4">
+                              <div className="p-3 bg-secondary/10 border border-secondary/30 rounded-xl">
+                                 <Key className="w-5 h-5 text-secondary" />
+                              </div>
+                              <div>
+                                 <h4 className="font-heading text-xl font-bold">Protocol Update</h4>
+                                 <p className="text-[10px] font-black uppercase tracking-widest text-foreground/30">Reset Neural Encryption Key</p>
+                              </div>
+                           </div>
+
+                           <div className="grid sm:grid-cols-2 gap-6">
+                              <div className="sm:col-span-2">
+                                 <label className="block text-[9px] font-black uppercase tracking-widest text-foreground/40 mb-3 pl-4 border-l border-secondary">New Transmission Key</label>
+                                 <div className="relative">
+                                    <Input 
+                                      type={showPassword ? "text" : "password"}
+                                      value={passwordForm.newPassword}
+                                      onChange={(e) => setPasswordForm({...passwordForm, newPassword: e.target.value})}
+                                      className="bg-background border-white/5 h-14 pr-12"
+                                      placeholder="••••••••"
+                                    />
+                                    <button 
+                                      onClick={() => setShowPassword(!showPassword)}
+                                      className="absolute right-4 top-1/2 -translate-y-1/2 text-foreground/20 hover:text-secondary transition-colors"
+                                    >
+                                      {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                                    </button>
+                                 </div>
+                              </div>
+                              <div className="sm:col-span-2">
+                                 <label className="block text-[9px] font-black uppercase tracking-widest text-foreground/40 mb-3 pl-4 border-l border-secondary">Confirm Initialization</label>
+                                 <Input 
+                                   type="password"
+                                   value={passwordForm.confirmPassword}
+                                   onChange={(e) => setPasswordForm({...passwordForm, confirmPassword: e.target.value})}
+                                   className="bg-background border-white/5 h-14"
+                                   placeholder="••••••••"
+                                 />
+                              </div>
+                           </div>
+
+                           <Button 
+                             onClick={handleChangePassword}
+                             disabled={isLoading}
+                             className="w-full h-14 bg-secondary text-secondary-foreground font-black uppercase tracking-widest text-xs"
+                           >
+                              {isLoading ? 'Updating Protocol...' : 'Overwrite Encryption Key'}
+                           </Button>
+                        </div>
                       </div>
                     )}
                   </CardContent>

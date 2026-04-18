@@ -50,7 +50,7 @@ export const Services = ({ services, isLoading }: ServicesProps) => {
                           src={service.serviceImage}
                           alt={service.serviceName || 'Service'}
                           width={800}
-                          className="w-full h-full object-cover grayscale opacity-40 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-1000 group-hover:scale-110"
+                          className="w-full h-full object-cover opacity-90 transition-all duration-1000 group-hover:scale-110"
                         />
                       ) : (
                         <div className="w-full h-full bg-white/[0.02]" />

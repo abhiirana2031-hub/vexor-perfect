@@ -179,7 +179,7 @@ export default function ProjectDetailPage() {
                              src={image}
                              alt={title}
                              width={1200}
-                             className="w-full h-full object-cover grayscale opacity-60 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-105 transition-all duration-[1.5s]"
+                             className="w-full h-full object-cover opacity-100 group-hover:scale-105 transition-all duration-[1.5s]"
                           />
                        ) : (
                           <div className="w-full h-full flex items-center justify-center bg-white/[0.02]">

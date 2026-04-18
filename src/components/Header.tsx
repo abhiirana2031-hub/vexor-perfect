@@ -78,7 +78,7 @@ export default function Header() {
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
-        className="glass-effect !rounded-full px-6 md:px-8 py-3 flex items-center justify-between lg:justify-start gap-4 md:gap-12 border-white/10 shadow-soft-depth w-full max-w-[95%] lg:max-w-fit"
+        className="glass-effect !rounded-full px-6 md:px-8 py-3 flex items-center justify-between lg:justify-start gap-4 md:gap-12 border-white/10 shadow-soft-depth w-full max-w-[95%] lg:max-w-[90%]"
       >
         {/* Logo */}
         <Link to="/" className="flex items-center gap-2 md:gap-3 group shrink-0">

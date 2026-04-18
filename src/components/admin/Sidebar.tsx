@@ -33,6 +33,7 @@ const menuItems = [
   { id: 'team', label: 'Squad Matrix', icon: Star },
   { id: 'enquiries', label: 'Incoming Signals', icon: Mail },
   { id: 'scanner', label: 'Neural Scanner', icon: QrCode },
+  { id: 'logs', label: 'Neural Logs', icon: Shield },
 ];
 
 export const Sidebar = ({ onSetActiveTab, activeTab }: SidebarProps) => {

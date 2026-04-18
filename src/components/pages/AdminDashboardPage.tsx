@@ -21,6 +21,7 @@ import { UserManager } from '@/components/admin/TabViews/UserManager';
 import { UserForm } from '@/components/admin/Dialogs/UserForm';
 import { TestimonialManager } from '@/components/admin/TabViews/TestimonialManager';
 import { TestimonialForm } from '@/components/admin/Dialogs/TestimonialForm';
+import { AuditLogManager } from '@/components/admin/TabViews/AuditLogManager';
 import ScannerView from '@/components/admin/TabViews/ScannerView';
 import { BaseCrudService } from '@/integrations';
 
@@ -44,11 +45,10 @@ export default function AdminDashboardPage() {
     blogs,
     users,
     enquiries,
-    siteStats,
-    deleteItem,
-    saveItem,
     refreshData,
-    member
+    member,
+    auditLogs,
+    setActiveAdminUser
   } = useAdminData();
 
   const [activeTab, setActiveTab] = useState('stats');
@@ -111,15 +111,42 @@ export default function AdminDashboardPage() {
     setIsSaving(false);
   };
 
-  // Handle Admin Login (Mocked logic from original file)
-  const handleAdminLogin = () => {
+  // Handle Admin Login (RBAC Logic)
+  const handleAdminLogin = async () => {
     const ADMIN_EMAIL = import.meta.env.PUBLIC_ADMIN_EMAIL || 'abhayrana8272@gmail.com';
     const ADMIN_PASSWORD = import.meta.env.PUBLIC_ADMIN_PASSWORD || 'vexor@#005';
     
+    // 1. Check Root Admin (Hardcoded)
     if (adminLoginForm.email === ADMIN_EMAIL && adminLoginForm.password === ADMIN_PASSWORD) {
       setIsAdminLoggedIn(true);
-    } else {
-      setLoginError('Invalid transmission credentials.');
+      setActiveAdminUser({
+        _id: 'root-admin',
+        fullName: 'Root Administrator',
+        email: ADMIN_EMAIL,
+        role: 'admin'
+      } as any);
+      return;
+    } 
+
+    // 2. Check Database for Delegates
+    setIsSaving(true);
+    try {
+       const userRes = await BaseCrudService.getAll<UserProfiles>('userprofiles');
+       const user = userRes.items.find(u => u.email === adminLoginForm.email && u.passwordHash === adminLoginForm.password);
+       
+       if (user && user.role === 'admin') {
+          setIsAdminLoggedIn(true);
+          setActiveAdminUser(user);
+       } else if (user) {
+          setLoginError('Insufficient neural clearance. Admin role required.');
+       } else {
+          setLoginError('Invalid transmission credentials.');
+       }
+    } catch (err) {
+       console.error('Login synchronization error:', err);
+       setLoginError('Neural link failure. Try again.');
+    } finally {
+       setIsSaving(false);
     }
   };
 
@@ -311,8 +338,12 @@ export default function AdminDashboardPage() {
                     <ScannerView />
                   )}
 
+                  {activeTab === 'logs' && (
+                    <AuditLogManager logs={auditLogs} />
+                  )}
+
                   {/* Placeholder for other tabs */}
-                  {!['stats', 'projects', 'services', 'blogs', 'enquiries', 'team', 'users', 'testimonials', 'scanner'].includes(activeTab) && (
+                  {!['stats', 'projects', 'services', 'blogs', 'enquiries', 'team', 'users', 'testimonials', 'scanner', 'logs'].includes(activeTab) && (
                     <div className="glass-card p-20 text-center opacity-20 font-black uppercase tracking-[0.5em] text-xs">
                        View Node: {activeTab.toUpperCase()} Offline
                     </div>

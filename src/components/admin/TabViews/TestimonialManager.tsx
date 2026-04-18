@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, Edit2, Trash2, Quote, Star } from 'lucide-react';
+import { Image } from '@/components/ui/image';
 import { Testimonials as TestimonialType } from '@/entities';
 
 interface TestimonialManagerProps {
@@ -44,7 +45,7 @@ export const TestimonialManager = ({ testimonials, onAddNew, onEdit, onDelete }:
               <div className="flex justify-between items-start mb-6 border-b border-white/5 pb-6">
                 <div className="flex items-center gap-4">
                   {item.clientPhoto ? (
-                     <img src={item.clientPhoto} alt={item.clientName} className="w-14 h-14 rounded-[1rem] object-cover border border-white/10" />
+                     <Image src={item.clientPhoto} alt={item.clientName} className="w-14 h-14 rounded-[1rem] object-cover border border-white/10" />
                   ) : (
                      <div className="w-14 h-14 rounded-[1rem] bg-white/[0.03] border border-white/10 flex items-center justify-center">
                         <Quote className="w-6 h-6 text-secondary/40" />

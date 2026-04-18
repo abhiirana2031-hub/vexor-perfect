@@ -2,6 +2,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Trash2, UserCircle, Activity } from 'lucide-react';
 import { UserProfiles as UserType } from '@/entities';
+import { Image } from '@/components/ui/image';
 
 interface UserManagerProps {
   users: UserType[];
@@ -36,13 +37,13 @@ export const UserManager = ({ users, onDelete, onEdit }: UserManagerProps) => {
                  transition={{ delay: idx * 0.05 }}
                  className="glass-card flex p-6 gap-6 items-center border-white/5 group relative overflow-hidden"
                >
-                 <div className="w-16 h-16 rounded-full bg-white/[0.03] border border-white/10 flex items-center justify-center shrink-0 group-hover:border-secondary/40 transition-colors overflow-hidden">
-                    {user.profilePhoto ? (
-                       <img src={user.profilePhoto} alt="profile" className="w-full h-full object-cover transition-all opacity-100" />
-                    ) : (
-                       <UserCircle className="w-8 h-8 text-foreground/40 group-hover:text-secondary" />
-                    )}
-                 </div>
+                  <div className="w-16 h-16 rounded-full bg-white/[0.03] border border-white/10 flex items-center justify-center shrink-0 group-hover:border-secondary/40 transition-colors overflow-hidden relative">
+                     {user.profilePhoto ? (
+                        <Image src={user.profilePhoto} alt="profile" className="w-full h-full object-cover transition-all opacity-100" />
+                     ) : (
+                        <UserCircle className="w-8 h-8 text-foreground/40 group-hover:text-secondary" />
+                     )}
+                  </div>
 
                  <div className="flex-1 space-y-1 overflow-hidden">
                     <h3 className="font-heading text-lg font-black tracking-tight text-foreground truncate">{name}</h3>

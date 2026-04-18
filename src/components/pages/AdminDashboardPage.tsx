@@ -24,6 +24,7 @@ import { TestimonialForm } from '@/components/admin/Dialogs/TestimonialForm';
 import { AuditLogManager } from '@/components/admin/TabViews/AuditLogManager';
 import ScannerView from '@/components/admin/TabViews/ScannerView';
 import { BaseCrudService } from '@/integrations';
+import { UserProfiles } from '@/entities';
 
 // Original UI (Simplified for reuse or placeholders)
 import { Card, CardContent } from '@/components/ui/card';
@@ -80,21 +81,20 @@ export default function AdminDashboardPage() {
     };
     const collectionId = collectionMap[activeTab] || activeTab;
 
-    const success = await saveItem(collectionId, data, idToUpdate);
+    const savedRecord = await saveItem(collectionId, data, idToUpdate);
     
     // Cross-Collection logic for Neural Profiles mapping to Projects
-    if (success && activeTab === 'users' && assignedProjectIds) {
-       // We must update the `userId` field on every project.
-       // Note: In a production app with thousands of projects, this should be done via a custom backend API.
-       // Since this is a CMS, we update the matched projects.
+    if (savedRecord && activeTab === 'users' && assignedProjectIds) {
+       // Use the actual ID from the saved record (essential for new users)
+       const userId = savedRecord._id;
        try {
            const allProjs = await BaseCrudService.getAll<any>('projects');
            for (const proj of allProjs.items) {
                const shouldOwn = assignedProjectIds.includes(proj._id);
-               const currentlyOwns = proj.userId === idToUpdate;
+               const currentlyOwns = proj.userId === userId;
                
                if (shouldOwn && !currentlyOwns) {
-                   await BaseCrudService.update('projects', { ...proj, userId: idToUpdate });
+                   await BaseCrudService.update('projects', { ...proj, userId: userId });
                } else if (!shouldOwn && currentlyOwns) {
                    await BaseCrudService.update('projects', { ...proj, userId: null });
                }
@@ -104,7 +104,7 @@ export default function AdminDashboardPage() {
        }
     }
     
-    if (success) {
+    if (savedRecord) {
       setIsDialogOpen(false);
       setSelectedItem(null);
     }

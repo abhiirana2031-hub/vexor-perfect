@@ -72,7 +72,7 @@ export default function AdminDashboardPage() {
 
   const handleSave = async (data: any, assignedProjectIds?: string[]) => {
     setIsSaving(true);
-    let idToUpdate = selectedItem?._id;
+    const idToUpdate = selectedItem?._id;
     
     // Save the primary item
     const collectionMap: Record<string, string> = {
@@ -81,34 +81,41 @@ export default function AdminDashboardPage() {
     };
     const collectionId = collectionMap[activeTab] || activeTab;
 
-    const savedRecord = await saveItem(collectionId, data, idToUpdate);
-    
-    // Cross-Collection logic for Neural Profiles mapping to Projects
-    if (savedRecord && activeTab === 'users' && assignedProjectIds) {
-       // Use the actual ID from the saved record (essential for new users)
-       const userId = savedRecord._id;
-       try {
-           const allProjs = await BaseCrudService.getAll<any>('projects');
-           for (const proj of allProjs.items) {
-               const shouldOwn = assignedProjectIds.includes(proj._id);
-               const currentlyOwns = proj.userId === userId;
-               
-               if (shouldOwn && !currentlyOwns) {
-                   await BaseCrudService.update('projects', { ...proj, userId: userId });
-               } else if (!shouldOwn && currentlyOwns) {
-                   await BaseCrudService.update('projects', { ...proj, userId: null });
-               }
-           }
-       } catch (err) {
-           console.error('Failed to sync project assignments', err);
-       }
+    try {
+      const savedRecord = await saveItem(collectionId, data, idToUpdate);
+      
+      // Cross-Collection logic for Neural Profiles mapping to Projects
+      if (savedRecord && activeTab === 'users' && assignedProjectIds) {
+         // Use the actual ID from the saved record (essential for new users)
+         const userId = savedRecord._id;
+         try {
+             const allProjs = await BaseCrudService.getAll<any>('projects');
+             const syncTasks = allProjs.items.map(async (proj) => {
+                 const shouldOwn = assignedProjectIds.includes(proj._id);
+                 const currentlyOwns = proj.userId === userId;
+                 
+                 if (shouldOwn && !currentlyOwns) {
+                     return BaseCrudService.update('projects', { ...proj, userId: userId });
+                 } else if (!shouldOwn && currentlyOwns) {
+                     return BaseCrudService.update('projects', { ...proj, userId: null });
+                 }
+                 return Promise.resolve();
+             });
+             await Promise.all(syncTasks);
+         } catch (err) {
+             console.error('Failed to sync project assignments', err);
+         }
+      }
+      
+      if (savedRecord) {
+        setIsDialogOpen(false);
+        setSelectedItem(null);
+      }
+    } catch (err) {
+      console.error('Core Dashboard Save Failure:', err);
+    } finally {
+      setIsSaving(false);
     }
-    
-    if (savedRecord) {
-      setIsDialogOpen(false);
-      setSelectedItem(null);
-    }
-    setIsSaving(false);
   };
 
   // Handle Admin Login (RBAC Logic)

@@ -33,7 +33,7 @@ export const useAdminData = () => {
   const loadAllData = async () => {
     setIsLoading(true);
     try {
-      const [pRes, sRes, tRes, testRes, eRes, statRes, bRes, uRes] = await Promise.all([
+      const [pRes, sRes, tRes, testRes, eRes, statRes, bRes, uRes, aRes] = await Promise.all([
         BaseCrudService.getAll<Projects>('projects'),
         BaseCrudService.getAll<Services>('services'),
         BaseCrudService.getAll<TeamMembers>('teammembers'),

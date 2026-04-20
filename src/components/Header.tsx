@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, LogOut } from 'lucide-react';
+import { Menu, X, LogOut, User } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Image } from '@/components/ui/image';
@@ -108,14 +108,32 @@ export default function Header() {
           ))}
         </nav>
 
-        {/* Action Button */}
+        {/* Action Button / User Profile */}
         <div className="hidden lg:flex items-center">
-          <button 
-            onClick={() => navigate('/profile')}
-            className="px-6 py-2 rounded-full bg-secondary text-black text-[10px] font-black uppercase tracking-widest hover:bg-white hover:shadow-neon-cyan transition-all duration-500"
-          >
-            Get Started
-          </button>
+          {currentUser ? (
+            <Link to="/profile" className="flex items-center gap-3 group">
+              <div className="flex flex-col items-end">
+                <span className="text-[9px] font-black uppercase tracking-widest text-foreground/40 group-hover:text-secondary transition-colors">Authenticated User</span>
+                <span className="text-[11px] font-black text-foreground truncate max-w-[120px] uppercase tracking-tighter">{currentUser.fullName}</span>
+              </div>
+              <div className="w-10 h-10 rounded-full border-2 border-secondary/20 group-hover:border-secondary shadow-soft-depth transition-all p-0.5 overflow-hidden">
+                {currentUser.profilePhoto ? (
+                  <img src={currentUser.profilePhoto} alt="profile" className="w-full h-full object-cover rounded-full" />
+                ) : (
+                  <div className="w-full h-full bg-secondary/10 flex items-center justify-center rounded-full text-secondary">
+                     <User size={16} />
+                  </div>
+                )}
+              </div>
+            </Link>
+          ) : (
+            <button 
+              onClick={() => navigate('/profile')}
+              className="px-6 py-2 rounded-full bg-secondary text-black text-[10px] font-black uppercase tracking-widest hover:bg-white hover:shadow-neon-cyan transition-all duration-500"
+            >
+              Get Started
+            </button>
+          )}
         </div>
 
         {/* Mobile Menu Toggle */}
@@ -156,11 +174,11 @@ export default function Header() {
                 <button 
                   onClick={() => {
                     setIsMenuOpen(false);
-                    navigate('/profile');
+                    navigate('/contact');
                   }}
                   className="w-full py-4 rounded-xl bg-secondary text-black text-[10px] font-black uppercase tracking-widest shadow-neon-cyan"
                 >
-                  Initialize Protocol
+                  Get Started
                 </button>
               </div>
             </motion.div>

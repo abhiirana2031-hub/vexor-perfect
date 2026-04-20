@@ -1,11 +1,9 @@
 import type { APIRoute } from 'astro';
-import fs from 'node:fs/promises';
-import path from 'node:path';
+import { getMongoDb } from '@/lib/db/mongo';
+import { Binary } from 'mongodb';
 
-// Define the API route for handling file uploads over POST
 export const POST: APIRoute = async ({ request }) => {
   try {
-    // Parse the multipart form data
     const data = await request.formData();
     const file = data.get('file') as File;
     
@@ -20,29 +18,32 @@ export const POST: APIRoute = async ({ request }) => {
     const arrayBuffer = await file.arrayBuffer();
     const buffer = Buffer.from(arrayBuffer);
 
-    // Generate unique secure filename
-    const ext = file.name.split('.').pop();
-    const uniqueName = `nodearchive-${Date.now()}.${ext}`;
-    
-    // Resolve upload directory (Save to public so it's statically served)
-    const uploadDir = path.join(process.cwd(), 'public', 'uploads');
-    
-    // Ensure directory exists
-    await fs.mkdir(uploadDir, { recursive: true });
-    
-    const filePath = path.join(uploadDir, uniqueName);
-    
-    // Write binary down to disk
-    await fs.writeFile(filePath, buffer);
+    // Get DB and Collection
+    const db = await getMongoDb();
+    const collection = db.collection('app_uploads');
 
-    // Return the relative URL string that can be stored in the CMS
-    return new Response(JSON.stringify({ url: `/uploads/${uniqueName}` }), {
+    // Prepare document
+    const fileId = crypto.randomUUID();
+    const uploadDoc = {
+      _id: fileId,
+      filename: file.name,
+      contentType: file.type || 'application/octet-stream',
+      data: new Binary(buffer),
+      size: file.size,
+      uploadedAt: new Date(),
+    };
+
+    // Save to MongoDB
+    await collection.insertOne(uploadDoc);
+
+    // Return the relative URL string that points to our new serve route
+    return new Response(JSON.stringify({ url: `/api/files/${fileId}` }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' }
     });
 
   } catch (err) {
-    console.error('File compilation error:', err);
+    console.error('File storage error:', err);
     return new Response(JSON.stringify({ error: 'System error during file processing' }), { 
       status: 500,
       headers: { 'Content-Type': 'application/json' }

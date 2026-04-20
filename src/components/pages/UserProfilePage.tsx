@@ -117,11 +117,31 @@ export default function UserProfilePage() {
     if (file) {
       setUploadingImage(true);
       try {
-        const base64 = await fileToBase64(file);
-        setProfileImage(base64);
+        const formData = new FormData();
+        formData.append('file', file);
+        
+        const base = import.meta.env.PUBLIC_API_URL || import.meta.env.BASE_URL || "/";
+        const uploadUrl = base.endsWith("/") ? `${base}api/upload` : `${base}/api/upload`;
+        
+        const res = await fetch(uploadUrl, {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!res.ok) throw new Error('Failed to upload via API.');
+
+        const data = await res.json();
+        if (data.url) {
+          let finalUrl = data.url;
+          const apiBase = import.meta.env.PUBLIC_API_URL;
+          if (finalUrl.startsWith('/') && apiBase) {
+             finalUrl = `${apiBase.replace(/\/$/, '')}${finalUrl}`;
+          }
+          setProfileImage(finalUrl);
+        }
       } catch (error) {
         console.error('Error uploading image:', error);
-        alert('Failed to upload image');
+        alert('Failed to upload image. Matrix transfer failed.');
       } finally {
         setUploadingImage(false);
       }

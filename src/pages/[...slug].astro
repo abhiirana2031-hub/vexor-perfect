@@ -5,22 +5,7 @@ import AppRouter from "@/components/Router";
 import "@/styles/global.css";
 import { pwaInfo } from 'virtual:pwa-info';
 
-export async function getStaticPaths() {
-  return [
-    { params: { slug: undefined } },
-    { params: { slug: "admin" } },
-    { params: { slug: "contact" } },
-    { params: { slug: "blogs" } },
-    { params: { slug: "blog/detail" } },
-    { params: { slug: "services" } },
-    { params: { slug: "services/detail" } },
-    { params: { slug: "projects" } },
-    { params: { slug: "projects/detail" } },
-    { params: { slug: "about" } },
-    { params: { slug: "team/detail" } },
-    { params: { slug: "profile" } },
-  ];
-}
+export const prerender = false;
 ---
 
 <html lang="en" class="w-full h-full">

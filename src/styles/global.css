@@ -97,41 +97,33 @@
   @apply bg-white/10 rounded-full hover:bg-secondary/40 transition-colors;
 }
 
-/* Smooth Navigation */
+/* Global Layout Modernization */
 html {
   scroll-behavior: smooth;
-  font-size: 85%; /* Original scaling */
+  font-size: 80%; /* Updated global scaling to 80% as requested */
+  overflow-x: hidden;
 }
 
-@media (min-width: 1024px) {
-  /* Global Page Constraints - 70% width centered */
-  main, footer, .page-container, section, .min-h-screen > div:not(header) {
-    max-width: 70% !important;
-    margin-left: auto !important;
-    margin-right: auto !important;
-    width: 100% !important;
-    position: relative;
-  }
+body {
+  overflow-x: hidden;
+  height: 100%;
 }
 
 @media (min-width: 1024px) {
   html {
-    font-size: 85%; /* Specifically ensure 85% on desktop */
+    font-size: 80%; 
   }
 }
 
 @media (max-width: 768px) {
   html {
-    font-size: 80%; /* Slightly smaller on mobile to ensure content fits */
+    font-size: 80%; 
   }
 }
 
-/* Header Override - 90% width centered */
-@media (min-width: 1024px) {
-  header > div {
-    max-width: 90% !important;
-    width: 90% !important;
-  }
+/* Ensure no sliding on mobile and desktop */
+.overflow-x-hidden {
+  overflow-x: hidden !important;
 }
 
 /* Animations Helper */

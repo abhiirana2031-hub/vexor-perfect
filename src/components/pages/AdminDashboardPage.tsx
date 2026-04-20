@@ -246,9 +246,8 @@ export default function AdminDashboardPage() {
         {/* TOPBAR */}
         <Topbar member={member} onToggleSidebar={() => setIsMobileMenuOpen(true)} />
 
-        {/* CONTENT SCROLL AREA */}
         <div className="flex-1 overflow-y-auto overflow-x-hidden p-8 lg:p-12 no-scrollbar">
-          <div className="max-w-7xl mx-auto space-y-12 pb-24">
+          <div className="lg:max-w-[80vw] mx-auto space-y-12 pb-24">
             
             {/* View Orchestrator */}
             <AnimatePresence mode="wait">

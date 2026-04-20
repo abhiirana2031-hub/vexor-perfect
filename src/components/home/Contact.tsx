@@ -1,8 +1,25 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Zap, Send, Mail, Phone, Globe } from 'lucide-react';
+import { ThankYouDialog } from '@/components/ThankYouDialog';
 
 export const Contact = () => {
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [formData, setFormData] = useState({
+    identity: '',
+    freqAlias: '',
+    payloadData: ''
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Simulate API transmission
+    console.log('Transmitting signal...', formData);
+    setIsSubmitted(true);
+    // Reset form
+    setFormData({ identity: '', freqAlias: '', payloadData: '' });
+  };
+
   return (
     <section id="contact" className="relative w-full py-24 sm:py-32 bg-[#03050a] border-t border-white/5">
       {/* Background Ambience */}
@@ -55,13 +72,16 @@ export const Contact = () => {
 
             {/* Form Side */}
             <div className="bg-white/[0.01] p-12 sm:p-24 border-l border-white/5 relative scanner-surface">
-              <form className="space-y-12 relative z-10">
+              <form onSubmit={handleSubmit} className="space-y-12 relative z-10">
                 <div className="grid sm:grid-cols-2 gap-12">
                   <div className="space-y-4">
                     <label className="text-[9px] font-black uppercase tracking-[0.3em] text-foreground/40 pl-4 border-l border-secondary">Identity</label>
                     <input 
                       type="text" 
                       placeholder="Full Name" 
+                      required
+                      value={formData.identity}
+                      onChange={(e) => setFormData({...formData, identity: e.target.value})}
                       className="w-full bg-white/[0.02] border border-white/10 rounded-[2rem] px-8 py-5 focus:border-secondary/40 focus:bg-white/[0.04] outline-none transition-all text-foreground font-medium placeholder:text-foreground/20" 
                     />
                   </div>
@@ -70,6 +90,9 @@ export const Contact = () => {
                     <input 
                       type="email" 
                       placeholder="Email Address" 
+                      required
+                      value={formData.freqAlias}
+                      onChange={(e) => setFormData({...formData, freqAlias: e.target.value})}
                       className="w-full bg-white/[0.02] border border-white/10 rounded-[2rem] px-8 py-5 focus:border-secondary/40 focus:bg-white/[0.04] outline-none transition-all text-foreground font-medium placeholder:text-foreground/20" 
                     />
                   </div>
@@ -79,11 +102,14 @@ export const Contact = () => {
                   <textarea 
                     rows={5} 
                     placeholder="Brief your technological requirements..." 
+                    required
+                    value={formData.payloadData}
+                    onChange={(e) => setFormData({...formData, payloadData: e.target.value})}
                     className="w-full bg-white/[0.02] border border-white/10 rounded-[3rem] px-8 py-6 focus:border-secondary/40 focus:bg-white/[0.04] outline-none transition-all text-foreground font-medium placeholder:text-foreground/20 resize-none"
                   ></textarea>
                 </div>
                 
-                <button type="button" className="futuristic-button w-full group py-6">
+                <button type="submit" className="futuristic-button w-full group py-6">
                   <span className="relative z-10 flex items-center justify-center gap-6 text-base">
                     TRANSMIT SIGNAL
                     <Send className="w-5 h-5 group-hover:translate-x-3 group-hover:-translate-y-3 transition-transform" />
@@ -98,6 +124,8 @@ export const Contact = () => {
           </div>
         </div>
       </div>
+
+      <ThankYouDialog isOpen={isSubmitted} onClose={() => setIsSubmitted(false)} />
     </section>
   );
 };

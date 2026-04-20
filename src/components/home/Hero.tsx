@@ -93,7 +93,17 @@ export const Hero = () => {
   const navigate = useNavigate();
 
   const handleGetStarted = () => {
-    navigate('/profile');
+    const isLogged = localStorage.getItem('currentUser');
+    if (isLogged) {
+      const contactSection = document.getElementById('contact');
+      if (contactSection) {
+        contactSection.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        navigate('/contact');
+      }
+    } else {
+      navigate('/profile');
+    }
   };
   
   return (

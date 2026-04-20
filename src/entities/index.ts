@@ -31,6 +31,8 @@ export interface Projects {
   userId?: string;
   /** @wixFieldType text - Project status: active, completed, on-hold, etc */
   projectStatus?: string;
+  /** @wixFieldType boolean */
+  isFeatured?: boolean;
 }
 
 
@@ -126,6 +128,8 @@ export interface UserProfiles {
   role?: 'admin' | 'user';
   /** @wixFieldType boolean */
   isAdmin?: boolean;
+  /** @wixFieldType text - Signal Category (e.g. Neural Data, Cyber Security) */
+  signalCategory?: string;
 }
 
 /**

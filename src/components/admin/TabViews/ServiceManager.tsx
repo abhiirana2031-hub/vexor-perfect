@@ -64,9 +64,9 @@ export const ServiceManager = ({ services, onAddNew, onEdit, onDelete }: Service
                       {service.serviceName}
                     </h3>
                     {service.isFeatured && (
-                      <div className="px-3 py-1 rounded-full bg-secondary/10 border border-secondary/20 flex items-center gap-2">
-                        <CheckCircle2 className="w-3 h-3 text-secondary" />
-                        <span className="text-[8px] font-black uppercase text-secondary">Featured Element</span>
+                      <div className="px-3 py-1 rounded-full bg-secondary/20 border border-secondary/40 flex items-center gap-2">
+                        <CheckCircle2 className="w-2.5 h-2.5 text-secondary" />
+                        <span className="text-[8px] font-black uppercase tracking-widest text-secondary">Featured Architecture</span>
                       </div>
                     )}
                   </div>

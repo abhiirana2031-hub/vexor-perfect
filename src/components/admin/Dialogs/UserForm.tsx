@@ -105,7 +105,7 @@ export const UserForm = ({ user, onSave, onCancel, isSaving }: UserFormProps) =>
           )}
         </div>
 
-        <div className="space-y-2 md:col-span-2">
+        <div className="space-y-2">
           <Label className="text-[9px] font-black uppercase tracking-widest text-foreground/40 pl-4 border-l border-secondary">Access Clearance (Role)</Label>
           <select 
             value={formData.role || 'user'}
@@ -115,8 +115,24 @@ export const UserForm = ({ user, onSave, onCancel, isSaving }: UserFormProps) =>
             <option value="user" className="bg-[#03050a]">Standard Operative (User)</option>
             <option value="admin" className="bg-[#03050a]">Strategic Commandant (Admin)</option>
           </select>
-          <p className="text-[10px] text-foreground/40 font-bold uppercase tracking-widest pt-2">Warning: Admins gain full neural bypass over all system collections.</p>
         </div>
+
+        <div className="space-y-2">
+          <Label className="text-[9px] font-black uppercase tracking-widest text-foreground/40 pl-4 border-l border-secondary">Signal Category</Label>
+          <select 
+            value={formData.signalCategory || ''}
+            onChange={(e) => setFormData({...formData, signalCategory: e.target.value})}
+            className="w-full bg-white/[0.02] border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-secondary transition-colors text-sm font-medium appearance-none"
+            required
+          >
+            <option value="" className="bg-[#03050a]">SELECT CATEGORY</option>
+            <option value="Communications" className="bg-[#03050a]">Communications</option>
+            <option value="Neural Data" className="bg-[#03050a]">Neural Data</option>
+            <option value="Cyber Security" className="bg-[#03050a]">Cyber Security</option>
+            <option value="Strategic Intelligence" className="bg-[#03050a]">Strategic Intelligence</option>
+          </select>
+        </div>
+        <p className="text-[10px] text-foreground/40 font-bold uppercase tracking-widest pt-2 md:col-span-2">Warning: Role and Signal Category define the operative's neural footprint in the system.</p>
 
         {/* Project Assignment */}
         <div className="space-y-4 md:col-span-2 pt-4 border-t border-white/5">

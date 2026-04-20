@@ -63,12 +63,18 @@ export const ProjectManager = ({ projects, onAddNew, onEdit, onDelete }: Project
                     </div>
                   )}
                   
-                  {/* Status Badge */}
-                  <div className="absolute top-6 left-6">
+                  {/* Status & Featured Badges */}
+                  <div className="absolute top-6 left-6 flex flex-col gap-2">
                     <div className="px-4 py-1.5 rounded-full glass-effect border-white/10 flex items-center gap-2">
                       <div className={`w-1.5 h-1.5 rounded-full ${project.projectStatus === 'active' ? 'bg-secondary animate-pulse shadow-neon-cyan' : 'bg-foreground/20'}`} />
                       <span className="text-[8px] font-black uppercase tracking-widest text-foreground/60">{project.projectStatus || 'ARCHIVED'}</span>
                     </div>
+                    {project.isFeatured && (
+                      <div className="px-3 py-1 rounded-full bg-secondary/20 border border-secondary/40 flex items-center gap-2">
+                        <Activity className="w-2 h-2 text-secondary" />
+                        <span className="text-[8px] font-black uppercase tracking-widest text-secondary">Featured</span>
+                      </div>
+                    )}
                   </div>
 
                   {/* Quick Actions Hover Overlay */}

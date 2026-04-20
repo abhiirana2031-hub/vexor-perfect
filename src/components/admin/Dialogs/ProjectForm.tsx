@@ -123,6 +123,24 @@ export const ProjectForm = ({ project, onSave, onCancel, isSaving }: ProjectForm
             <option value="on-hold">ON HOLD</option>
           </select>
         </div>
+
+        {/* Featured Toggle */}
+        <div className="space-y-4 md:col-span-2 pt-4">
+           <div 
+             onClick={() => setFormData({...formData, isFeatured: !formData.isFeatured})}
+             className={`p-6 rounded-2xl border flex items-center justify-between cursor-pointer transition-all duration-300 ${
+               formData.isFeatured ? 'bg-secondary/10 border-secondary shadow-neon-cyan' : 'bg-white/[0.02] border-white/10 hover:border-white/20'
+             }`}
+           >
+              <div className="space-y-1">
+                 <p className="text-sm font-bold tracking-tight">FEATURE ON HOMEPAGE</p>
+                 <p className="text-[10px] text-foreground/40 font-bold uppercase tracking-widest">Highlight this deployment in the Featured Projects section.</p>
+              </div>
+              <div className={`w-12 h-6 rounded-full relative transition-colors ${formData.isFeatured ? 'bg-secondary' : 'bg-white/10'}`}>
+                 <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${formData.isFeatured ? 'left-7' : 'left-1'}`} />
+              </div>
+           </div>
+        </div>
       </div>
 
       <div className="flex justify-end gap-6 pt-10 border-t border-white/5">

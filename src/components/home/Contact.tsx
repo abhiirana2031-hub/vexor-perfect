@@ -16,8 +16,11 @@ export const Contact = () => {
     // Simulate API transmission
     console.log('Transmitting signal...', formData);
     setIsSubmitted(true);
-    // Reset form
-    setFormData({ identity: '', freqAlias: '', payloadData: '' });
+    
+    // Reset form after a short delay so the user sees the popup first
+    setTimeout(() => {
+      setFormData({ identity: '', freqAlias: '', payloadData: '' });
+    }, 500);
   };
 
   return (

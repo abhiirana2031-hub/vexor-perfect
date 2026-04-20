@@ -49,6 +49,8 @@ export default function AdminDashboardPage() {
     refreshData,
     member,
     auditLogs,
+    saveItem,
+    deleteItem,
     setActiveAdminUser
   } = useAdminData();
 

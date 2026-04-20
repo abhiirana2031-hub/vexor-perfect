@@ -3,7 +3,7 @@ import { defineConfig } from "astro/config";
 import tailwind from "@astrojs/tailwind";
 import react from "@astrojs/react";
 import customErrorOverlayPlugin from "./vite-error-overlay-plugin.js";
-import node from "@astrojs/node";
+import vercel from "@astrojs/vercel";
 import AstroPWA from "@vite-pwa/astro";
 
 // https://astro.build/config
@@ -96,7 +96,7 @@ export default defineConfig({
     checkOrigin: false
   },
 
-  adapter: node({
-    mode: "standalone"
+  adapter: vercel({
+    webAnalytics: { enabled: true }
   })
 });

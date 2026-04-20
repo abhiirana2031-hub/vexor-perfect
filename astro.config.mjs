@@ -62,19 +62,6 @@ export default defineConfig({
 
   vite: {
     plugins: [customErrorOverlayPlugin()],
-    optimizeDeps: {
-      include: [
-        'react',
-        'react-dom',
-        'zustand',
-        'framer-motion',
-        'date-fns',
-        'clsx',
-        'class-variance-authority',
-        'tailwind-merge',
-        'zod',
-      ],
-    },
   },
 
   devToolbar: {

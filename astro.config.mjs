@@ -62,7 +62,6 @@ export default defineConfig({
 
   vite: {
     plugins: [customErrorOverlayPlugin()],
-    cacheDir: 'node_modules/.cache/.vite',
     optimizeDeps: {
       include: [
         'react',
@@ -73,7 +72,6 @@ export default defineConfig({
         'clsx',
         'class-variance-authority',
         'tailwind-merge',
-        '@radix-ui/*',
         'zod',
       ],
     },

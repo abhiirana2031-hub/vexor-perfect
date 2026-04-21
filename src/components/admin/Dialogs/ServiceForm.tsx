@@ -18,6 +18,7 @@ export const ServiceForm = ({ service, onSave, onCancel, isSaving }: ServiceForm
     serviceDescription: service?.serviceDescription || '',
     serviceIcon: service?.serviceIcon || '',
     serviceDetailedDescription: service?.serviceDetailedDescription || '',
+    isFeatured: service?.isFeatured || false,
   });
 
   const handleSubmit = (e: React.FormEvent) => {

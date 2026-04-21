@@ -28,8 +28,8 @@ export default function HomePage() {
     setIsLoading(true);
     try {
       const [servicesResult, projectsResult, testimonialsResult] = await Promise.all([
-        BaseCrudService.getAll<ServiceType>('services', [], { limit: 6 }),
-        BaseCrudService.getAll<ProjectType>('projects', [], { limit: 4 }),
+        BaseCrudService.getAll<ServiceType>('services', [], { limit: 6, isFeatured: true }),
+        BaseCrudService.getAll<ProjectType>('projects', [], { limit: 4, isFeatured: true }),
         BaseCrudService.getAll<TestimonialType>('testimonials', [], { limit: 3 })
       ]);
       setServices(servicesResult.items);

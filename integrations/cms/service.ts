@@ -6,6 +6,8 @@ export interface PaginationOptions {
   limit?: number;
   /** Number of items to skip (for offset-based pagination) */
   skip?: number;
+  /** Filter by featured status */
+  isFeatured?: boolean;
 }
 
 /**
@@ -95,6 +97,9 @@ export class BaseCrudService {
       limit: String(limit),
       skip: String(skip),
     });
+    if (pagination?.isFeatured !== undefined) {
+      q.append('isFeatured', String(pagination.isFeatured));
+    }
     const res = await fetch(
       `${cmsApiRoot()}/${encodeURIComponent(collectionId)}?${q}`,
     );

@@ -15,9 +15,14 @@ export default function Footer() {
 
   const services = [
     { path: '/services', label: 'Web Development' },
-    { path: '/services', label: 'Mobile Apps' },
-    { path: '/services', label: 'Cloud Solutions' },
-    { path: '/services', label: 'AI & ML' }
+    { path: '/services', label: 'App Development' },
+    { path: '/services', label: 'Custom Software' },
+    { path: '/services', label: 'UI/UX Design' },
+    { path: '/services', label: 'E-Commerce' },
+    { path: '/services', label: 'Automation' },
+    { path: '/services', label: 'ERP Systems' },
+    { path: '/services', label: 'Admin Dashboards' },
+    { path: '/services', label: 'Maintenance' }
   ];
 
   return (
@@ -70,16 +75,16 @@ export default function Footer() {
           </div>
 
           {/* Quick Links */}
-          <div className="space-y-8">
+          <div className="space-y-6 md:space-y-8">
             <h3 className="font-heading text-xs font-bold uppercase tracking-[0.3em] text-secondary">Navigation</h3>
-            <ul className="space-y-4">
+            <ul className="flex flex-wrap gap-x-6 gap-y-3 md:flex-col md:space-y-4">
               {quickLinks.map((link) => (
                 <li key={link.path}>
                   <Link
                     to={link.path}
-                    className="font-paragraph text-sm text-foreground/60 hover:text-secondary transition-all duration-300 flex items-center group"
+                    className="font-paragraph text-[11px] md:text-sm text-foreground/60 hover:text-secondary transition-all duration-300 flex items-center group"
                   >
-                    <span className="w-0 group-hover:w-3 h-[1px] bg-secondary mr-0 group-hover:mr-3 transition-all duration-300" />
+                    <span className="hidden md:block w-0 group-hover:w-3 h-[1px] bg-secondary mr-0 group-hover:mr-3 transition-all duration-300" />
                     {link.label}
                   </Link>
                 </li>
@@ -88,16 +93,16 @@ export default function Footer() {
           </div>
 
           {/* Services */}
-          <div className="space-y-8">
+          <div className="space-y-6 md:space-y-8">
             <h3 className="font-heading text-xs font-bold uppercase tracking-[0.3em] text-secondary">Capabilities</h3>
-            <ul className="space-y-4">
+            <ul className="grid grid-cols-2 md:grid-cols-1 gap-y-3 md:gap-y-4 gap-x-4">
               {services.map((service, idx) => (
                 <li key={idx}>
                   <Link
                     to={service.path}
-                    className="font-paragraph text-sm text-foreground/60 hover:text-secondary transition-all duration-300 flex items-center group"
+                    className="font-paragraph text-[11px] md:text-sm text-foreground/60 hover:text-secondary transition-all duration-300 flex items-center group"
                   >
-                    <span className="w-0 group-hover:w-3 h-[1px] bg-secondary mr-0 group-hover:mr-3 transition-all duration-300" />
+                    <span className="hidden md:block w-0 group-hover:w-3 h-[1px] bg-secondary mr-0 group-hover:mr-3 transition-all duration-300" />
                     {service.label}
                   </Link>
                 </li>
@@ -106,34 +111,34 @@ export default function Footer() {
           </div>
 
           {/* Contact Info */}
-          <div className="space-y-8">
+          <div className="space-y-6 md:space-y-8">
             <h3 className="font-heading text-xs font-bold uppercase tracking-[0.3em] text-secondary">Connect</h3>
-            <ul className="space-y-5">
+            <ul className="space-y-4 md:space-y-5">
               <li className="flex items-start space-x-4 group cursor-pointer">
-                <div className="p-2 rounded-lg bg-secondary/5 border border-secondary/10 group-hover:border-secondary/30 transition-colors">
-                  <Mail className="h-4 w-4 text-secondary" />
+                <div className="p-1.5 md:p-2 rounded-lg bg-secondary/5 border border-secondary/10 group-hover:border-secondary/30 transition-colors">
+                  <Mail className="h-3.5 w-3.5 text-secondary" />
                 </div>
                 <div>
-                  <p className="text-[10px] uppercase tracking-wider text-foreground/40 font-bold mb-1">Email us</p>
-                  <a href="mailto:vexoritsolution@gmail.com" className="font-paragraph text-sm text-foreground/70 hover:text-secondary transition-colors">vexoritsolution@gmail.com</a>
+                  <p className="text-[9px] uppercase tracking-wider text-foreground/40 font-bold mb-0.5 md:mb-1">Email us</p>
+                  <a href="mailto:vexoritsolution@gmail.com" className="font-paragraph text-xs md:text-sm text-foreground/70 hover:text-secondary transition-colors">vexoritsolution@gmail.com</a>
                 </div>
               </li>
               <li className="flex items-start space-x-4 group cursor-pointer">
-                <div className="p-2 rounded-lg bg-secondary/5 border border-secondary/10 group-hover:border-secondary/30 transition-colors">
-                  <Phone className="h-4 w-4 text-secondary" />
+                <div className="p-1.5 md:p-2 rounded-lg bg-secondary/5 border border-secondary/10 group-hover:border-secondary/30 transition-colors">
+                  <Phone className="h-3.5 w-3.5 text-secondary" />
                 </div>
                 <div>
-                  <p className="text-[10px] uppercase tracking-wider text-foreground/40 font-bold mb-1">Call us</p>
-                  <a href="tel:+917599544335" className="font-paragraph text-sm text-foreground/70 hover:text-secondary transition-colors">+91 7599544335</a>
+                  <p className="text-[9px] uppercase tracking-wider text-foreground/40 font-bold mb-0.5 md:mb-1">Call us</p>
+                  <a href="tel:+917599544335" className="font-paragraph text-xs md:text-sm text-foreground/70 hover:text-secondary transition-colors">+91 7599544335</a>
                 </div>
               </li>
               <li className="flex items-start space-x-4 group cursor-pointer">
-                <div className="p-2 rounded-lg bg-secondary/5 border border-secondary/10 group-hover:border-secondary/30 transition-colors">
-                  <MapPin className="h-4 w-4 text-secondary" />
+                <div className="p-1.5 md:p-2 rounded-lg bg-secondary/5 border border-secondary/10 group-hover:border-secondary/30 transition-colors">
+                  <MapPin className="h-3.5 w-3.5 text-secondary" />
                 </div>
                 <div>
-                  <p className="text-[10px] uppercase tracking-wider text-foreground/40 font-bold mb-1">Location</p>
-                  <span className="font-paragraph text-sm text-foreground/70">UP, India</span>
+                  <p className="text-[9px] uppercase tracking-wider text-foreground/40 font-bold mb-0.5 md:mb-1">Location</p>
+                  <span className="font-paragraph text-xs md:text-sm text-foreground/70">UP, India</span>
                 </div>
               </li>
             </ul>

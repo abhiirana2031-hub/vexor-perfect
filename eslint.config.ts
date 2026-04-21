@@ -83,7 +83,7 @@ export default [
         {
           selector: 'CallExpression[callee.name="createBrowserRouter"] JSXElement[openingElement.name.name="div"] JSXText[value="Wix Vibe"]',
           message: 'ROUTER NOT CONNECTED: The placeholder "<div>Wix Vibe</div>" must be replaced with your actual page component. FIX: 1) Import your page component (e.g., import { HomePage } from "./pages/HomePage"), 2) Find the route with element: <div>Wix Vibe</div> and replace it with element: <HomePage />. Users will see blank content until this is fixed!',
-        },
+        },l
         {
           selector:
             'CallExpression[callee.name="createBrowserRouter"] > ArrayExpression.arguments ' +

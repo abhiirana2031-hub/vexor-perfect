@@ -23,7 +23,8 @@ export const ProjectForm = ({ project, onSave, onCancel, isSaving }: ProjectForm
     projectUrl: project?.projectUrl || '',
     repoUrl: project?.repoUrl || '',
     projectStatus: project?.projectStatus || 'active',
-    clientName: project?.clientName || ''
+    clientName: project?.clientName || '',
+    isFeatured: project?.isFeatured || false
   });
 
   const handleSubmit = (e: React.FormEvent) => {

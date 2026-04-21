@@ -11,8 +11,16 @@ export const GET: APIRoute = async ({ params, request }) => {
 
   try {
     const db = await getMongoDb();
-    const items = await db.collection(collection).find({}).skip(skip).limit(limit).toArray();
-    const totalCount = await db.collection(collection).countDocuments();
+    
+    // Build filter
+    const filter: any = {};
+    const isFeatured = url.searchParams.get('isFeatured');
+    if (isFeatured !== null) {
+      filter.isFeatured = isFeatured === 'true';
+    }
+
+    const items = await db.collection(collection).find(filter).skip(skip).limit(limit).toArray();
+    const totalCount = await db.collection(collection).countDocuments(filter);
 
     return new Response(JSON.stringify({
       items,

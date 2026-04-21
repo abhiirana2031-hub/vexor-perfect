@@ -160,26 +160,9 @@ export interface AuditLogs {
  * Collection ID: userTestimonials
  * Interface for User-Submitted Testimonials
  */
-export interface UserTestimonials {
-  _id: string;
-  _createdDate?: Date;
-  _updatedDate?: Date;
-  /** @wixFieldType text */
+export interface UserTestimonials extends Testimonials {
   userId?: string;
-  /** @wixFieldType text */
-  clientName?: string;
-  /** @wixFieldType text */
-  reviewText?: string;
-  /** @wixFieldType text */
-  clientRoleCompany?: string;
-  /** @wixFieldType number */
-  rating?: number;
-  /** @wixFieldType image - Contains image URL, render with <Image> component, NOT as text */
-  clientImage?: string;
-  /** @wixFieldType boolean */
   isApproved?: boolean;
-  /** @wixFieldType date */
-  dateSubmitted?: Date | string;
 }
 
 
@@ -230,4 +213,8 @@ export interface Testimonials {
   clientImage?: string;
   /** @wixFieldType date */
   datePosted?: Date | string;
+  /** @wixFieldType boolean */
+  isApproved?: boolean;
+  /** @wixFieldType text */
+  userId?: string;
 }

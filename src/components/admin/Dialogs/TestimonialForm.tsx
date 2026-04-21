@@ -16,11 +16,10 @@ interface TestimonialFormProps {
 export const TestimonialForm = ({ testimonial, onSave, onCancel, isSaving }: TestimonialFormProps) => {
   const [formData, setFormData] = useState<Partial<TestimonialType>>({
     clientName: testimonial?.clientName || '',
-    clientRole: testimonial?.clientRole || '',
-    clientPhoto: testimonial?.clientPhoto || '',
+    clientRoleCompany: testimonial?.clientRoleCompany || '',
+    clientImage: testimonial?.clientImage || '',
     rating: testimonial?.rating || 5,
-    testimonialText: testimonial?.testimonialText || '',
-    companyName: (testimonial as any)?.companyName || '',
+    reviewText: testimonial?.reviewText || '',
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -42,22 +41,12 @@ export const TestimonialForm = ({ testimonial, onSave, onCancel, isSaving }: Tes
           />
         </div>
 
-        <div className="space-y-2">
-          <Label className="text-[9px] font-black uppercase tracking-widest text-foreground/40 pl-4 border-l border-secondary">Client Designation (Role)</Label>
+        <div className="space-y-2 md:col-span-2">
+          <Label className="text-[9px] font-black uppercase tracking-widest text-foreground/40 pl-4 border-l border-secondary">Client Designation & Company</Label>
           <Input 
-            value={formData.clientRole}
-            onChange={(e) => setFormData({...formData, clientRole: e.target.value})}
-            placeholder="e.g., CEO"
-            className="bg-white/[0.02] border-white/10 rounded-xl"
-          />
-        </div>
-
-        <div className="space-y-2">
-          <Label className="text-[9px] font-black uppercase tracking-widest text-foreground/40 pl-4 border-l border-secondary">Corporate Entity (Company)</Label>
-          <Input 
-            value={formData.companyName}
-            onChange={(e) => setFormData({...formData, companyName: e.target.value})}
-            placeholder="e.g., Nexus Corp"
+            value={formData.clientRoleCompany}
+            onChange={(e) => setFormData({...formData, clientRoleCompany: e.target.value})}
+            placeholder="e.g., CEO at Nexus Corp"
             className="bg-white/[0.02] border-white/10 rounded-xl"
           />
         </div>
@@ -81,16 +70,16 @@ export const TestimonialForm = ({ testimonial, onSave, onCancel, isSaving }: Tes
         <div className="space-y-2 md:col-span-2">
           <Label className="text-[9px] font-black uppercase tracking-widest text-foreground/40 pl-4 border-l border-secondary">Client Avatar (Image URL / Local Upload)</Label>
           <ImageUpload 
-            value={formData.clientPhoto || ''}
-            onChange={(url) => setFormData({...formData, clientPhoto: url})}
+            value={formData.clientImage || ''}
+            onChange={(url) => setFormData({...formData, clientImage: url})}
           />
         </div>
 
         <div className="space-y-2 md:col-span-2">
           <Label className="text-[9px] font-black uppercase tracking-widest text-foreground/40 pl-4 border-l border-secondary">Feedback Transmission (Review)</Label>
           <Textarea 
-            value={formData.testimonialText}
-            onChange={(e) => setFormData({...formData, testimonialText: e.target.value})}
+            value={formData.reviewText}
+            onChange={(e) => setFormData({...formData, reviewText: e.target.value})}
             placeholder="Client's review..."
             className="bg-white/[0.02] border-white/10 rounded-xl min-h-[120px]"
             required

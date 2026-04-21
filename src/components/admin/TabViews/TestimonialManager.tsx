@@ -44,8 +44,8 @@ export const TestimonialManager = ({ testimonials, onAddNew, onEdit, onDelete }:
             >
               <div className="flex justify-between items-start mb-6 border-b border-white/5 pb-6">
                 <div className="flex items-center gap-4">
-                  {item.clientPhoto ? (
-                     <Image src={item.clientPhoto} alt={item.clientName} className="w-14 h-14 rounded-[1rem] object-cover border border-white/10" />
+                  {item.clientImage ? (
+                     <Image src={item.clientImage} alt={item.clientName} className="w-14 h-14 rounded-[1rem] object-cover border border-white/10" />
                   ) : (
                      <div className="w-14 h-14 rounded-[1rem] bg-white/[0.03] border border-white/10 flex items-center justify-center">
                         <Quote className="w-6 h-6 text-secondary/40" />
@@ -53,7 +53,7 @@ export const TestimonialManager = ({ testimonials, onAddNew, onEdit, onDelete }:
                   )}
                   <div>
                      <h3 className="font-heading text-xl font-bold tracking-tight text-foreground">{item.clientName || 'Anonymous Partner'}</h3>
-                     <p className="text-[10px] font-black uppercase tracking-widest text-foreground/40">{item.clientRole || 'Client'}, {(item as any).companyName || 'Corporate Entity'}</p>
+                     <p className="text-[10px] font-black uppercase tracking-widest text-foreground/40">{item.clientRoleCompany || 'Strategic Partner'}</p>
                   </div>
                 </div>
                 
@@ -68,7 +68,7 @@ export const TestimonialManager = ({ testimonials, onAddNew, onEdit, onDelete }:
               <div className="flex-1 relative mb-12">
                  <Quote className="w-10 h-10 absolute -top-2 -left-2 text-white/5 z-0" />
                  <p className="relative z-10 text-foreground/60 text-sm leading-relaxed font-medium italic">
-                    "{item.testimonialText || 'No transmission data.'}"
+                    "{item.reviewText || 'No transmission data.'}"
                  </p>
               </div>
 

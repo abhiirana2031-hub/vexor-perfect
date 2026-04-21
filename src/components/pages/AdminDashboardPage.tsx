@@ -290,8 +290,8 @@ export default function AdminDashboardPage() {
                   {activeTab === 'services' && (
                     <ServiceManager 
                       services={services} 
-                      onAddNew={() => setIsDialogOpen(true)}
-                      onEdit={() => setIsDialogOpen(true)}
+                      onAddNew={handleAddNew}
+                      onEdit={handleEdit}
                       onDelete={(id) => deleteItem(id, 'services')}
                     />
                   )}
@@ -299,8 +299,8 @@ export default function AdminDashboardPage() {
                   {activeTab === 'blogs' && (
                     <BlogManager 
                       blogs={blogs} 
-                      onAddNew={() => setIsDialogOpen(true)}
-                      onEdit={() => setIsDialogOpen(true)}
+                      onAddNew={handleAddNew}
+                      onEdit={handleEdit}
                       onDelete={(id) => deleteItem(id, 'blogs')}
                     />
                   )}

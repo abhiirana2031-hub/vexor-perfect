@@ -375,7 +375,7 @@ export default function UserProfilePage() {
 
     setIsLoading(true);
     try {
-      const testimonial: UserTestimonials = {
+      const testimonial: any = {
         _id: crypto.randomUUID(),
         userId: currentUser._id,
         clientName: currentUser.fullName,
@@ -384,11 +384,11 @@ export default function UserProfilePage() {
         clientRoleCompany: currentUser.jobTitle ? `${currentUser.jobTitle}${currentUser.company ? ' at ' + currentUser.company : ''}` : currentUser.company,
         rating: testimonialForm.rating,
         isApproved: false,
-        dateSubmitted: new Date(),
+        datePosted: new Date(),
         _createdDate: new Date()
       };
 
-      await BaseCrudService.create('userTestimonials', testimonial);
+      await BaseCrudService.create('testimonials', testimonial);
       alert('Testimonial submitted successfully! It will be reviewed by admins.');
       setTestimonialForm({ reviewText: '', rating: 5 });
       setShowTestimonialDialog(false);

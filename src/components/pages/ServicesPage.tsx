@@ -81,28 +81,36 @@ export default function ServicesPage() {
                   transition={{ duration: 0.5, delay: idx * 0.1 }}
                 >
                   <Link to={`/services/${service._id}`}>
-                    <div className="group relative bg-background/80 backdrop-blur-xl border border-secondary/20 rounded-2xl overflow-hidden hover:border-secondary/50 transition-all duration-300 hover:shadow-glow-lg h-full flex flex-col p-6 md:p-8">
+                    <div className="group relative bg-background/80 backdrop-blur-xl border border-secondary/20 rounded-2xl overflow-hidden hover:border-secondary/50 transition-all duration-300 hover:shadow-glow-lg h-full flex flex-col">
                       {/* Hover Gradient Background */}
                       <div className="absolute -inset-[1px] bg-gradient-neon rounded-2xl opacity-0 group-hover:opacity-30 blur transition-all duration-500" />
                       
-                      <div className="relative z-10 flex flex-col h-full">
-                        {/* Icon */}
-                        <div className="w-14 h-14 rounded-xl bg-secondary/10 border border-secondary/30 flex items-center justify-center mb-4 group-hover:bg-secondary/20 transition-all">
-                          {service.icon ? (
-                            <Image src={service.icon} alt="" width={32} height={32} className="w-8 h-8" />
-                          ) : (
-                            <Sparkles className="w-8 h-8 text-secondary" />
-                          )}
-                        </div>
+                      {/* Image Layer */}
+                      <div className="relative h-48 overflow-hidden">
+                        {service.serviceImage ? (
+                          <Image 
+                            src={service.serviceImage} 
+                            alt={service.serviceName || 'Service'} 
+                            width={600} 
+                            className="w-full h-full object-cover opacity-80 group-hover:scale-110 transition-transform duration-700" 
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-secondary/5 flex items-center justify-center">
+                            <Sparkles className="w-12 h-12 text-secondary/20" />
+                          </div>
+                        )}
+                        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
+                      </div>
 
+                      <div className="relative z-10 flex flex-col h-full p-6 md:p-8">
                         {/* Content */}
                         <h3 className="font-heading text-2xl font-bold text-foreground mb-3 group-hover:text-secondary transition-colors duration-300">
                           {service.serviceName}
                         </h3>
                         
-                        {service.serviceDescription && (
+                        {service.shortDescription && (
                           <p className="font-paragraph text-foreground/70 text-sm md:text-base flex-1 mb-4">
-                            {service.serviceDescription.substring(0, 100)}...
+                            {service.shortDescription}
                           </p>
                         )}
 

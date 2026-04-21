@@ -174,12 +174,7 @@ export default function Header() {
                 <button 
                   onClick={() => {
                     setIsMenuOpen(false);
-                    const contactSection = document.getElementById('contact');
-                    if (contactSection) {
-                      contactSection.scrollIntoView({ behavior: 'smooth' });
-                    } else {
-                      navigate('/contact');
-                    }
+                    navigate('/profile');
                   }}
                   className="w-full py-4 rounded-xl bg-secondary text-black text-[10px] font-black uppercase tracking-widest shadow-neon-cyan"
                 >

@@ -204,7 +204,7 @@ export default function AboutPage() {
                 <LoadingSpinner />
               </div>
             ) : teamMembers.length > 0 ? (
-              <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
                 {teamMembers.map((member, idx) => (
                   <motion.div
                     key={member._id}
@@ -233,7 +233,7 @@ export default function AboutPage() {
                           </div>
                         )}
                         <div className="relative z-10 p-6 space-y-3">
-                          <h3 className="font-heading text-base sm:text-xl font-bold text-primary-foreground group-hover:text-secondary transition-colors duration-300">
+                          <h3 className="font-heading text-xl font-bold text-primary-foreground group-hover:text-secondary transition-colors duration-300">
                             {member.fullName}
                           </h3>
                           <p className="font-paragraph text-secondary font-semibold">

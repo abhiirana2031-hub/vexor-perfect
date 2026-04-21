@@ -38,7 +38,7 @@ export const Projects = ({ projects, isLoading }: ProjectsProps) => {
         </div>
 
         {/* Project Cards Grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-2 gap-8 md:gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12">
           {isLoading ? (
             [...Array(4)].map((_, i) => (
               <div key={i} className="aspect-[16/10] glass-effect rounded-[2rem] animate-pulse" />
@@ -85,7 +85,7 @@ export const Projects = ({ projects, isLoading }: ProjectsProps) => {
 
                   {/* Content Area (Bottom Half) */}
                   <div className="p-8 md:p-10 flex flex-col flex-1 bg-gradient-to-b from-white/[0.01] to-transparent">
-                    <h3 className="text-lg sm:text-2xl md:text-3xl font-bold text-foreground mb-3 group-hover:text-secondary transition-colors">
+                    <h3 className="text-2xl md:text-3xl font-bold text-foreground mb-3 group-hover:text-secondary transition-colors">
                       {title}
                     </h3>
                     <p className="text-foreground/50 text-sm leading-relaxed mb-10 line-clamp-2">

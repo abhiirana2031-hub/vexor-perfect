@@ -25,7 +25,7 @@ export const Services = ({ services, isLoading }: ServicesProps) => {
           align="left"
         />
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-12">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-12">
           {isLoading ? (
             [...Array(6)].map((_, i) => (
               <div key={i} className="h-[450px] glass-effect rounded-[2.5rem] animate-pulse" />
@@ -70,7 +70,7 @@ export const Services = ({ services, isLoading }: ServicesProps) => {
                     {/* Content Layer */}
                     <div className="p-10 flex-1 flex flex-col justify-between">
                       <div className="space-y-6">
-                        <h3 className="font-heading text-3xl font-black text-foreground tracking-tighter leading-none group-hover:text-secondary transition-colors">
+                        <h3 className="font-heading text-xl sm:text-2xl md:text-3xl font-black text-foreground tracking-tighter leading-none group-hover:text-secondary transition-colors">
                           {service.serviceName}
                         </h3>
                         <p className="font-paragraph text-sm text-foreground/40 leading-relaxed font-medium">

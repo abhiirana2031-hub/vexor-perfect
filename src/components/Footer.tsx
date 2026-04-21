@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Mail, Phone, MapPin, Linkedin, Twitter, Github } from 'lucide-react';
+import { Mail, Phone, MapPin, Linkedin, Instagram, MessageCircle } from 'lucide-react';
 import { Image } from '@/components/ui/image';
 
 export default function Footer() {
@@ -56,9 +56,9 @@ export default function Footer() {
             </p>
             <div className="flex items-center space-x-4">
               {[
-                { icon: Linkedin, href: "https://linkedin.com", label: "LinkedIn" },
-                { icon: Twitter, href: "https://twitter.com", label: "Twitter" },
-                { icon: Github, href: "https://github.com", label: "GitHub" }
+                { icon: Linkedin, href: "https://www.linkedin.com/company/vexor-it-solutions/", label: "LinkedIn" },
+                { icon: Instagram, href: "https://www.instagram.com/vexor.it/", label: "Instagram" },
+                { icon: MessageCircle, href: "https://wa.me/917599544335", label: "WhatsApp" }
               ].map((social, i) => (
                 <a
                   key={i}

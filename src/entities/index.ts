@@ -49,14 +49,21 @@ export interface Services {
   /** @wixFieldType text */
   shortDescription?: string;
   /** @wixFieldType text */
+  serviceDescription?: string;
+  /** @wixFieldType text */
   detailedDescription?: string;
+  /** @wixFieldType text */
+  serviceDetailedDescription?: string;
   /** @wixFieldType image - Contains image URL, render with <Image> component, NOT as text */
   serviceImage?: string;
+  /** @wixFieldType text */
+  serviceIcon?: string;
   /** @wixFieldType text */
   slug?: string;
   /** @wixFieldType boolean */
   isFeatured?: boolean;
 }
+
 
 
 /**

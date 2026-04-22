@@ -4,11 +4,12 @@ import { motion } from 'framer-motion';
 import { ArrowLeft, CheckCircle } from 'lucide-react';
 import { BaseCrudService } from '@/integrations';
 import { Services } from '@/entities';
-import { Image } from '@/components/ui/image';
+import { DynamicIcon } from '@/components/ui/DynamicIcon';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
 import { Button } from '@/components/ui/button';
+
 
 export default function ServiceDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -100,25 +101,31 @@ export default function ServiceDetailPage() {
                 </p>
               </motion.div>
 
-              {/* Service Image */}
-              {service.serviceImage && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.6, delay: 0.2 }}
-                  className="mb-16"
-                >
-                  <div className="relative h-[500px] rounded-3xl overflow-hidden border border-secondary/20 shadow-2xl shadow-secondary/20">
-                    <Image
-                      src={service.serviceImage}
-                      alt={service.serviceName || 'Service'}
-                      width={1200}
-                      className="w-full h-full object-cover"
+              {/* Service Icon Visual */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="mb-16"
+              >
+                <div className="relative h-[400px] md:h-[500px] rounded-[3rem] overflow-hidden border border-secondary/20 bg-secondary/5 flex items-center justify-center group">
+                  {/* Background Accents */}
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(0,217,255,0.1),transparent_70%)]" />
+                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-secondary/20 blur-[100px] rounded-full animate-pulse" />
+                  
+                  {/* The Icon */}
+                  <div className="relative z-10 p-16 rounded-[2.5rem] bg-background/40 backdrop-blur-xl border border-secondary/20 shadow-glow-sm group-hover:scale-110 group-hover:shadow-glow-md transition-all duration-700">
+                    <DynamicIcon 
+                      name={service.serviceIcon || 'Sparkles'} 
+                      className="w-32 h-32 md:w-48 md:h-48 text-secondary" 
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
                   </div>
-                </motion.div>
-              )}
+
+                  {/* Aesthetic Overlays */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
+                </div>
+              </motion.div>
+
 
               {/* Service Details */}
               <motion.div

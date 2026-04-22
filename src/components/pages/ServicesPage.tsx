@@ -4,10 +4,11 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { BaseCrudService } from '@/integrations';
 import { Services } from '@/entities';
-import { Image } from '@/components/ui/image';
+import { DynamicIcon } from '@/components/ui/DynamicIcon';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
+
 
 export default function ServicesPage() {
   const [services, setServices] = useState<Services[]>([]);
@@ -85,22 +86,19 @@ export default function ServicesPage() {
                       {/* Hover Gradient Background */}
                       <div className="absolute -inset-[1px] bg-gradient-neon rounded-2xl opacity-0 group-hover:opacity-30 blur transition-all duration-500" />
                       
-                      {/* Image Layer */}
-                      <div className="relative h-48 overflow-hidden">
-                        {service.serviceImage ? (
-                          <Image 
-                            src={service.serviceImage} 
-                            alt={service.serviceName || 'Service'} 
-                            width={600} 
-                            className="w-full h-full object-cover opacity-80 group-hover:scale-110 transition-transform duration-700" 
+                      {/* Icon Layer */}
+                      <div className="relative h-48 overflow-hidden bg-secondary/5 flex items-center justify-center">
+                        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-60" />
+                        <div className="relative z-10 p-8 rounded-full bg-secondary/10 border border-secondary/20 group-hover:scale-110 group-hover:shadow-glow-sm transition-all duration-500">
+                          <DynamicIcon 
+                            name={service.serviceIcon || 'Sparkles'} 
+                            className="w-16 h-16 text-secondary" 
                           />
-                        ) : (
-                          <div className="w-full h-full bg-secondary/5 flex items-center justify-center">
-                            <Sparkles className="w-12 h-12 text-secondary/20" />
-                          </div>
-                        )}
-                        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
+                        </div>
+                        {/* Animated background glow */}
+                        <div className="absolute w-32 h-32 bg-secondary/20 blur-[60px] rounded-full group-hover:scale-150 transition-transform duration-700" />
                       </div>
+
 
                       <div className="relative z-10 flex flex-col h-full p-6 md:p-8">
                         {/* Content */}

@@ -3,7 +3,7 @@ import { Services as ServiceType } from '@/entities';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { ImageUpload } from '@/components/admin/ImageUpload';
+import { DynamicIcon } from '@/components/ui/DynamicIcon';
 
 interface ServiceFormProps {
   service?: ServiceType | null;
@@ -15,15 +15,21 @@ interface ServiceFormProps {
 export const ServiceForm = ({ service, onSave, onCancel, isSaving }: ServiceFormProps) => {
   const [formData, setFormData] = useState<Partial<ServiceType>>({
     serviceName: service?.serviceName || '',
-    serviceDescription: service?.serviceDescription || '',
+    serviceDescription: service?.serviceDescription || service?.shortDescription || '',
     serviceIcon: service?.serviceIcon || '',
-    serviceDetailedDescription: service?.serviceDetailedDescription || '',
+    serviceDetailedDescription: service?.serviceDetailedDescription || service?.detailedDescription || '',
     isFeatured: service?.isFeatured || false,
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSave(formData);
+    // Sync descriptions for compatibility
+    const dataToSave = {
+      ...formData,
+      shortDescription: formData.serviceDescription,
+      detailedDescription: formData.serviceDetailedDescription
+    };
+    onSave(dataToSave);
   };
 
   return (
@@ -41,12 +47,20 @@ export const ServiceForm = ({ service, onSave, onCancel, isSaving }: ServiceForm
         </div>
 
         <div className="space-y-2">
-          <Label className="text-[9px] font-black uppercase tracking-widest text-foreground/40 pl-4 border-l border-secondary">Icon/Vector Node (URL or Upload)</Label>
-          <ImageUpload 
-            value={formData.serviceIcon || ''}
-            onChange={(url) => setFormData({...formData, serviceIcon: url})}
-          />
+          <Label className="text-[9px] font-black uppercase tracking-widest text-foreground/40 pl-4 border-l border-secondary">Lucide Icon Name</Label>
+          <div className="flex gap-4 items-center">
+            <Input 
+              value={formData.serviceIcon || ''}
+              onChange={(e) => setFormData({...formData, serviceIcon: e.target.value})}
+              placeholder="e.g., Globe, Smartphone, Cpu"
+              className="bg-white/[0.02] border-white/10 rounded-xl flex-1"
+            />
+            <div className="w-12 h-12 rounded-xl bg-white/[0.05] border border-white/10 flex items-center justify-center shrink-0">
+              <DynamicIcon name={formData.serviceIcon || ''} className="w-6 h-6 text-secondary" />
+            </div>
+          </div>
         </div>
+
 
         <div className="space-y-2 md:col-span-2">
           <Label className="text-[9px] font-black uppercase tracking-widest text-foreground/40 pl-4 border-l border-secondary">Brief Transmission (Short Description)</Label>

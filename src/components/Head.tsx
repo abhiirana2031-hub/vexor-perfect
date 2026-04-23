@@ -3,9 +3,14 @@ export const Head = () => {
     <>
       <meta charSet="UTF-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      {/* Favicon */}
+      <meta name="theme-color" content="#03050a" />
+      
+      {/* Favicon / Branding */}
       <link rel="icon" href="/vexor-logo.svg" type="image/svg+xml" />
+      <link rel="icon" href="/vexor-logo.png" type="image/png" />
       <link rel="apple-touch-icon" href="/vexor-logo.png" />
+      <link rel="shortcut icon" href="/vexor-logo.png" type="image/png" />
+      
       {/* Fonts */}
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />

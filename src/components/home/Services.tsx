@@ -46,18 +46,31 @@ export const Services = ({ services, isLoading }: ServicesProps) => {
                   <div className="relative h-full glass-card border-white/[0.03] p-0 flex flex-col overflow-hidden hover:border-secondary/20 transition-all duration-700">
                     {/* Visual Layer */}
                     <div className="relative h-64 overflow-hidden bg-white/[0.01] flex items-center justify-center">
-                      <div className="relative z-10 p-10 rounded-full bg-secondary/5 border border-secondary/10 group-hover:bg-secondary/10 group-hover:border-secondary/30 transition-all duration-500">
-                        <DynamicIcon 
-                          name={service.serviceIcon || 'Sparkles'} 
-                          className="w-16 h-16 text-secondary/60 group-hover:text-secondary group-hover:scale-110 transition-all duration-500" 
-                        />
-                      </div>
+                      {service.serviceImage ? (
+                        <div className="absolute inset-0 w-full h-full">
+                          <img 
+                            src={service.serviceImage} 
+                            alt={service.serviceName}
+                            className="w-full h-full object-cover opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all duration-[1.5s]"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-[#03050a] via-transparent to-transparent" />
+                        </div>
+                      ) : (
+                        <div className="relative z-10 p-10 rounded-full bg-secondary/5 border border-secondary/10 group-hover:bg-secondary/10 group-hover:border-secondary/30 transition-all duration-500">
+                          <DynamicIcon 
+                            name={service.serviceIcon || 'Sparkles'} 
+                            className="w-16 h-16 text-secondary/60 group-hover:text-secondary group-hover:scale-110 transition-all duration-500" 
+                          />
+                        </div>
+                      )}
                       
                       {/* Gradient Overlay for Depth */}
                       <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-40" />
                       
                       {/* Animated background glow */}
-                      <div className="absolute w-40 h-40 bg-secondary/10 blur-[80px] rounded-full group-hover:scale-150 transition-transform duration-1000" />
+                      {!service.serviceImage && (
+                        <div className="absolute w-40 h-40 bg-secondary/10 blur-[80px] rounded-full group-hover:scale-150 transition-transform duration-1000" />
+                      )}
                       
                       {/* Badge in image for "Floating" Look */}
                       <div className="absolute top-8 left-8">

@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { DynamicIcon } from '@/components/ui/DynamicIcon';
+import { ImageUpload } from '../ImageUpload';
 
 interface ServiceFormProps {
   service?: ServiceType | null;
@@ -17,6 +18,7 @@ export const ServiceForm = ({ service, onSave, onCancel, isSaving }: ServiceForm
     serviceName: service?.serviceName || '',
     serviceDescription: service?.serviceDescription || service?.shortDescription || '',
     serviceIcon: service?.serviceIcon || '',
+    serviceImage: service?.serviceImage || '',
     serviceDetailedDescription: service?.serviceDetailedDescription || service?.detailedDescription || '',
     isFeatured: service?.isFeatured || false,
   });
@@ -61,6 +63,13 @@ export const ServiceForm = ({ service, onSave, onCancel, isSaving }: ServiceForm
           </div>
         </div>
 
+        <div className="space-y-2 md:col-span-2">
+          <Label className="text-[9px] font-black uppercase tracking-widest text-foreground/40 pl-4 border-l border-secondary">Service Media (Cover Image)</Label>
+          <ImageUpload 
+            value={formData.serviceImage || ''} 
+            onChange={(url) => setFormData({...formData, serviceImage: url})} 
+          />
+        </div>
 
         <div className="space-y-2 md:col-span-2">
           <Label className="text-[9px] font-black uppercase tracking-widest text-foreground/40 pl-4 border-l border-secondary">Brief Transmission (Short Description)</Label>

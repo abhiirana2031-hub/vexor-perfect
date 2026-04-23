@@ -88,15 +88,28 @@ export default function ServicesPage() {
                       
                       {/* Icon Layer */}
                       <div className="relative h-48 overflow-hidden bg-secondary/5 flex items-center justify-center">
-                        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-60" />
-                        <div className="relative z-10 p-8 rounded-full bg-secondary/10 border border-secondary/20 group-hover:scale-110 group-hover:shadow-glow-sm transition-all duration-500">
-                          <DynamicIcon 
-                            name={service.serviceIcon || 'Sparkles'} 
-                            className="w-16 h-16 text-secondary" 
-                          />
-                        </div>
-                        {/* Animated background glow */}
-                        <div className="absolute w-32 h-32 bg-secondary/20 blur-[60px] rounded-full group-hover:scale-150 transition-transform duration-700" />
+                        {service.serviceImage ? (
+                          <div className="absolute inset-0 w-full h-full">
+                            <img 
+                              src={service.serviceImage} 
+                              alt={service.serviceName}
+                              className="w-full h-full object-cover opacity-50 group-hover:opacity-100 group-hover:scale-110 transition-all duration-[1s]"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
+                          </div>
+                        ) : (
+                          <>
+                            <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent opacity-60" />
+                            <div className="relative z-10 p-8 rounded-full bg-secondary/10 border border-secondary/20 group-hover:scale-110 group-hover:shadow-glow-sm transition-all duration-500">
+                              <DynamicIcon 
+                                name={service.serviceIcon || 'Sparkles'} 
+                                className="w-16 h-16 text-secondary" 
+                              />
+                            </div>
+                            {/* Animated background glow */}
+                            <div className="absolute w-32 h-32 bg-secondary/20 blur-[60px] rounded-full group-hover:scale-150 transition-transform duration-700" />
+                          </>
+                        )}
                       </div>
 
 

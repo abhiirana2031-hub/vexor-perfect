@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import { Html5QrcodeScanner } from 'html5-qrcode';
-import { Shield, User, Mail, Building2, Briefcase, Phone, Globe, Activity, Search, X } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Html5Qrcode } from 'html5-qrcode';
+import { Shield, User, Mail, Building2, Briefcase, Phone, Globe, Activity, Search, X, Camera, Zap } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BaseCrudService } from '@/integrations';
 import { UserProfiles } from '@/entities';
@@ -11,64 +11,75 @@ import { Image } from '@/components/ui/image';
 export default function ScannerView() {
   const [scannedResult, setScannedResult] = useState<string | null>(null);
   const [scannedUser, setScannedUser] = useState<UserProfiles | null>(null);
-  const [isScanning, setIsScanning] = useState(false);
   const [isCameraActive, setIsCameraActive] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [permissionState, setPermissionState] = useState<'idle' | 'requesting' | 'granted' | 'denied'>('idle');
+  
+  const scannerRef = useRef<Html5Qrcode | null>(null);
 
   useEffect(() => {
-    let scanner: Html5QrcodeScanner | null = null;
-
-    if (isCameraActive && !scannedUser) {
-      scanner = new Html5QrcodeScanner(
-        "reader",
-        { 
-          fps: 10, 
-          qrbox: { width: 280, height: 280 },
-          aspectRatio: 1.0,
-          videoConstraints: {
-            facingMode: "environment"
-          }
-        },
-        /* verbose= */ false
-      );
-
-      scanner.render(onScanSuccess, onScanFailure);
-    }
-
     return () => {
-      if (scanner) {
-        scanner.clear().catch(error => console.error("Failed to clear scanner", error));
+      if (scannerRef.current) {
+        scannerRef.current.stop().catch(err => console.error("Scanner stop error", err));
       }
     };
-  }, [isCameraActive, scannedUser]);
+  }, []);
+
+  const startScanner = async () => {
+    setPermissionState('requesting');
+    setError(null);
+    
+    try {
+      const html5QrCode = new Html5Qrcode("reader");
+      scannerRef.current = html5QrCode;
+      
+      const config = { 
+        fps: 20, 
+        qrbox: { width: 280, height: 280 },
+        aspectRatio: 1.0,
+      };
+
+      await html5QrCode.start(
+        { facingMode: "environment" },
+        config,
+        onScanSuccess,
+        onScanFailure
+      );
+      
+      setPermissionState('granted');
+      setIsCameraActive(true);
+    } catch (err: any) {
+      console.error("Camera access error:", err);
+      setPermissionState('denied');
+      setError("Camera permission denied or not available. Please allow access in browser settings.");
+    }
+  };
 
   async function onScanSuccess(decodedText: string) {
-    if (!isCameraActive) return; // Prevent double scans
+    if (scannerRef.current) {
+      await scannerRef.current.stop();
+    }
+    
+    setIsCameraActive(false);
+    setPermissionState('idle');
     console.log("Neural Scanned Token:", decodedText);
-    setIsCameraActive(false); // Immediate camera shutdown
     
     try {
       const data = JSON.parse(decodedText);
-      console.log("Decoded Neural Data:", data);
       if (data.type === 'user_id' && data.id) {
         setScannedResult(data.id);
         fetchUserProfile(data.id);
       } else {
-        console.warn("Invalid protocol structure:", data);
         setError("Invalid QR Code protocol. Only Vexora Neural IDs are supported.");
-        setIsCameraActive(true); // Restart if invalid
       }
     } catch (e) {
-      console.error("Neural Decryption Error:", e);
       setError("Failed to decrypt neural token. Ensure you're scanning a valid Digital ID.");
-      setIsCameraActive(true); // Restart if failed
     }
   }
 
   function onScanFailure(error: any) {
-    // We don't want to spam the console with scan failures
-    // console.warn(`Code scan error = ${error}`);
+    // Standard fail loop
   }
 
   const fetchUserProfile = async (userId: string) => {
@@ -138,15 +149,43 @@ export default function ScannerView() {
                     <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-secondary/40 shadow-[0_0_15px_rgba(var(--secondary),0.5)] animate-scan-line" />
                  </>
               ) : (
-                 <div className="w-full h-full flex flex-col items-center justify-center space-y-6">
-                    <div className="p-8 rounded-full bg-secondary/5 border border-secondary/20 border-dashed">
-                       <Shield className="w-16 h-16 text-secondary/40" />
-                    </div>
-                    <Button 
-                       onClick={() => setIsCameraActive(true)}
-                       className="bg-secondary text-secondary-foreground font-black uppercase tracking-[0.2em] px-10 h-16 rounded-2xl shadow-neon-cyan"
+                 <div className="w-full h-full flex flex-col items-center justify-center space-y-8 p-12 text-center">
+                    <motion.div 
+                      animate={{ 
+                        scale: permissionState === 'requesting' ? [1, 1.1, 1] : 1,
+                        rotate: permissionState === 'requesting' ? [0, 5, -5, 0] : 0
+                      }}
+                      transition={{ repeat: permissionState === 'requesting' ? Infinity : 0, duration: 0.5 }}
+                      className="p-8 rounded-full bg-secondary/5 border border-secondary/20 border-dashed relative"
                     >
-                       Initialize Lens
+                       <Camera className={`w-16 h-16 ${permissionState === 'requesting' ? 'text-secondary' : 'text-secondary/40'}`} />
+                       {permissionState === 'requesting' && (
+                         <div className="absolute inset-0 rounded-full border-2 border-secondary animate-ping" />
+                       )}
+                    </motion.div>
+
+                    <div className="space-y-4">
+                      <h3 className="text-xl font-black uppercase tracking-widest">Camera Authorization</h3>
+                      <p className="text-[10px] text-foreground/40 font-bold uppercase tracking-[0.2em] max-w-[200px] mx-auto">
+                        We require neural optics access to synchronize with physical identification tokens.
+                      </p>
+                    </div>
+
+                    <Button 
+                       onClick={startScanner}
+                       disabled={permissionState === 'requesting'}
+                       className="bg-secondary text-secondary-foreground font-black uppercase tracking-[0.2em] px-10 h-16 rounded-2xl shadow-neon-cyan group relative overflow-hidden"
+                    >
+                       <span className="relative z-10 flex items-center gap-3">
+                         {permissionState === 'requesting' ? 'Requesting Access...' : 'Initialize Lens'}
+                         <Zap className={`w-4 h-4 group-hover:scale-125 transition-transform ${permissionState === 'requesting' ? 'animate-pulse' : ''}`} />
+                       </span>
+                       <motion.div 
+                         className="absolute inset-0 bg-white/20"
+                         initial={{ x: '-100%' }}
+                         whileHover={{ x: '100%' }}
+                         transition={{ duration: 0.5 }}
+                       />
                     </Button>
                  </div>
               )}

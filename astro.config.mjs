@@ -53,7 +53,7 @@ export default defineConfig({
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,ico,txt,webp}'],
         navigateFallback: '/',
-        maximumFileSizeToCacheInBytes: 5000000, // 5MB limit
+        maximumFileSizeToCacheInBytes: 15000000, // 15MB limit
       },
       devOptions: {
         enabled: true,
@@ -63,15 +63,6 @@ export default defineConfig({
 
   vite: {
     plugins: [customErrorOverlayPlugin()],
-    build: {
-      rollupOptions: {
-        output: {
-          manualChunks: {
-            'three-vendor': ['three', '@react-three/fiber', '@react-three/drei'],
-          },
-        },
-      },
-    },
   },
 
   devToolbar: {

@@ -2,11 +2,34 @@ import React, { useRef, useState, useEffect, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight, Rocket, Shield, Activity, Terminal as TerminalIcon, Sparkles } from 'lucide-react';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { Float, MeshDistortMaterial, MeshWobbleMaterial, PerspectiveCamera, OrbitControls, Text, Html } from '@react-three/drei';
 import * as THREE from 'three';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { Float, PerspectiveCamera, OrbitControls, Html } from '@react-three/drei';
 
 // --- 3D Components ---
+
+const WebGLDetector = ({ children }: { children: React.ReactNode }) => {
+  const [hasWebGL, setHasWebGL] = useState(true);
+
+  useEffect(() => {
+    const canvas = document.createElement('canvas');
+    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+    if (!gl) setHasWebGL(false);
+  }, []);
+
+  if (!hasWebGL) {
+    return (
+      <div className="flex items-center justify-center h-full bg-secondary/5 rounded-3xl border border-white/5">
+        <div className="text-center p-8">
+          <Activity className="w-12 h-12 text-secondary/40 mx-auto mb-4" />
+          <p className="text-[10px] font-black uppercase tracking-widest text-foreground/40">Core Visualization Offline</p>
+        </div>
+      </div>
+    );
+  }
+
+  return <>{children}</>;
+};
 
 const CoreLayer = ({ position, rotationSpeed, color, label, index }: { position: [number, number, number], rotationSpeed: number, color: string, label: string, index: number }) => {
   const meshRef = useRef<THREE.Mesh>(null);
@@ -265,30 +288,32 @@ export const Hero = () => {
 
           {/* Right Side: 3D Scene */}
           <div className="relative h-[600px] lg:h-[800px] w-full">
-            <Canvas camera={{ position: [0, 0, 10], fov: 50 }} dpr={[1, 2]}>
-              <OrbitControls 
-                enableZoom={false} 
-                enablePan={false} 
-                autoRotate 
-                autoRotateSpeed={0.5}
-                minPolarAngle={Math.PI / 3}
-                maxPolarAngle={Math.PI / 1.5}
-              />
-              <ambientLight intensity={0.5} />
-              <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} />
-              
-              <Suspense fallback={null}>
-                <FuturisticCore />
-              </Suspense>
+            <WebGLDetector>
+              <Canvas camera={{ position: [0, 0, 10], fov: 50 }} dpr={[1, 2]}>
+                <OrbitControls 
+                  enableZoom={false} 
+                  enablePan={false} 
+                  autoRotate 
+                  autoRotateSpeed={0.5}
+                  minPolarAngle={Math.PI / 3}
+                  maxPolarAngle={Math.PI / 1.5}
+                />
+                <ambientLight intensity={0.5} />
+                <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} />
+                
+                <Suspense fallback={null}>
+                  <FuturisticCore />
+                </Suspense>
 
-              {/* Background Bokeh */}
-              <Float speed={2} rotationIntensity={1} floatIntensity={2}>
-                <mesh position={[-5, 2, -5]}>
-                  <sphereGeometry args={[0.5, 32, 32]} />
-                  <meshBasicMaterial color="#00d9ff" transparent opacity={0.1} />
-                </mesh>
-              </Float>
-            </Canvas>
+                {/* Background Bokeh */}
+                <Float speed={2} rotationIntensity={1} floatIntensity={2}>
+                  <mesh position={[-5, 2, -5]}>
+                    <sphereGeometry args={[0.5, 32, 32]} />
+                    <meshBasicMaterial color="#00d9ff" transparent opacity={0.1} />
+                  </mesh>
+                </Float>
+              </Canvas>
+            </WebGLDetector>
 
             {/* Overlay UI Cards */}
             <FloatingCard 

@@ -131,9 +131,9 @@ export const Philosophy = () => {
                          cx="50%" cy="50%" r="42%" 
                          className="stroke-secondary fill-none" 
                          strokeWidth="8"
-                         strokeDasharray="100 100"
-                         initial={{ strokeDashoffset: 100 }}
-                         whileInView={{ strokeDashoffset: 25 }}
+                         strokeDasharray="264"
+                         initial={{ strokeDashoffset: 264 }}
+                         whileInView={{ strokeDashoffset: 0 }}
                          viewport={{ once: true }}
                          transition={{ duration: 2, ease: "easeOut", delay: 0.5 }}
                          strokeLinecap="round"

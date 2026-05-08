@@ -15,6 +15,12 @@ export default function ErrorPage() {
       <div className="mx-auto max-w-4xl rounded-xl border border-destructive/30 bg-soft-shadow-gray/30 p-6">
         <h1 className="text-2xl font-bold text-destructive">Route Error</h1>
         <p className="mt-3 text-sm md:text-base">{message}</p>
+        <p className="mt-4 text-xs md:text-sm text-foreground/60">
+          If you continue to experience this issue, please contact our support team at{" "}
+          <a href="mailto:support@vexoritsolutions.site" className="text-secondary hover:underline">
+            support@vexoritsolutions.site
+          </a>
+        </p>
         {stack && (
           <pre className="mt-4 overflow-auto rounded bg-background/70 p-4 text-xs whitespace-pre-wrap">
             {stack}

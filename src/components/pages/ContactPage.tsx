@@ -9,6 +9,7 @@ import { Mail, MapPin, Phone, Send, Sparkles } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import emailjs from '@emailjs/browser';
 import { BaseCrudService } from '@/integrations';
+import { ThankYouDialog } from '@/components/ThankYouDialog';
 
 export default function ContactPage() {
   const { toast } = useToast();
@@ -19,6 +20,8 @@ export default function ContactPage() {
     subject: '',
     message: ''
   });
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submittedName, setSubmittedName] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -110,18 +113,16 @@ export default function ContactPage() {
           from_name: formData.name,
           name: formData.name,          // added alias
           subject: formData.subject,
-          reply_to: 'vexoritsolutions@gmail.com'
+          reply_to: 'hello@vexoritsolutions.site'
         });
       } catch (autoReplyError) {
         console.error('Auto-reply failed to send:', autoReplyError);
         // Do not throw here so that the "Thank You" dialog can still appear!
       }
 
-      // Show success toast
-      toast({
-        title: 'Success',
-        description: 'Message sent successfully! We\'ll get back to you soon.',
-      });
+      // Show success state
+      setSubmittedName(formData.name);
+      setIsSubmitted(true);
 
       // Reset form
       setFormData({
@@ -134,7 +135,7 @@ export default function ContactPage() {
     } catch (error) {
       toast({
         title: 'Error',
-        description: 'Failed to send message. Please try again.',
+        description: 'Failed to send message. Please try again or contact support@vexoritsolutions.site',
         variant: 'destructive'
       });
       console.error('Contact API Error:', error);
@@ -147,8 +148,8 @@ export default function ContactPage() {
     {
       icon: Mail,
       title: 'Email',
-      content: 'vexoritsolution@gmail.com',
-      link: 'mailto:info@vexor-it.com'
+      content: 'hello@vexoritsolutions.site',
+      link: 'mailto:hello@vexoritsolutions.site'
     },
     {
       icon: Phone,
@@ -380,6 +381,11 @@ export default function ContactPage() {
       </section>
 
       <Footer />
+      <ThankYouDialog 
+        isOpen={isSubmitted} 
+        onClose={() => setIsSubmitted(false)} 
+        name={submittedName}
+      />
     </div>
   );
 }

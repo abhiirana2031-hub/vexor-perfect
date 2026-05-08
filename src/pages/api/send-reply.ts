@@ -25,14 +25,14 @@ export const POST: APIRoute = async ({ request }) => {
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: 'vexoritsolutions@gmail.com',
+        user: 'hello@vexoritsolutions.site',
         // Remove spaces cleanly just in case
         pass: appPassword.replace(/\s+/g, '')
       }
     });
 
     await transporter.sendMail({
-      from: '"Vexora IT Solutions" <vexoritsolutions@gmail.com>',
+      from: '"Vexora IT Solutions" <hello@vexoritsolutions.site>',
       to: to,
       subject: subject || 'Reply from Vexora IT Solutions',
       text: message,
@@ -42,7 +42,7 @@ export const POST: APIRoute = async ({ request }) => {
           <hr style="border: none; border-top: 1px solid #eaeaea; margin: 30px 0;"/>
           <p style="font-size: 0.85em; color: #777;">
             <strong>Vexora IT Solutions</strong><br/>
-            Contact: vexoritsolution@gmail.com<br/>
+            Contact: hello@vexoritsolutions.site<br/>
             Phone: +91 75995 44335
           </p>
         </div>

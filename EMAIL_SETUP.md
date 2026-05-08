@@ -9,7 +9,7 @@ Your contact form is now set up to send emails. Follow these steps to enable ema
 Since Gmail doesn't allow third-party apps to use your main password, you need to create an "App Password":
 
 1. Go to [myaccount.google.com/security](https://myaccount.google.com/security)
-2. Sign in with **vexoritsolutions@gmail.com**
+2. Sign in with **hello@vexoritsolutions.site**
 3. Look for "2-Step Verification" on the left sidebar
    - If not enabled, you'll need to enable it first (follow Google's prompts)
 4. Once 2-Step Verification is enabled, scroll down and look for "App passwords"
@@ -42,14 +42,14 @@ Since Gmail doesn't allow third-party apps to use your main password, you need t
 3. Click "Send Message"
 4. You should see:
    - A "Thank You" popup appear
-   - An email received at vexoritsolutions@gmail.com (admin notification)
+   - An email received at hello@vexoritsolutions.site (admin notification)
    - A confirmation email sent to the user's email address
 
 ## What Happens on Form Submission
 
 **When user submits the contact form:**
 
-1. **Admin Email** → Sent to vexoritsolutions@gmail.com with all user details
+1. **Admin Email** → Sent to hello@vexoritsolutions.site with all user details
    - Contains: Name, Email, Phone, Subject, Message, Submission Time
 
 2. **Confirmation Email** → Sent to the user's email address
@@ -81,7 +81,7 @@ The emails use professional HTML templates with:
 **Getting "Failed to send email" error?**
 - Verify the Gmail app password is correct
 - Make sure development server was restarted after adding password
-- Check that vexoritsolutions@gmail.com account has 2-Step Verification enabled
+- Check that hello@vexoritsolutions.site account has 2-Step Verification enabled
 
 **Test Email Not Arriving?**
 - Check spam/promotions folder in Gmail

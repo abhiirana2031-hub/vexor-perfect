@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Zap, Send, Mail, Phone, Globe } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 import { ThankYouDialog } from '@/components/ThankYouDialog';
 
 export const Contact = () => {
+  const { toast } = useToast();
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submittedName, setSubmittedName] = useState('');
   const [formData, setFormData] = useState({
     identity: '',
     freqAlias: '',
@@ -13,14 +17,16 @@ export const Contact = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
+    setSubmittedName(formData.identity);
     // Simulate API transmission
     console.log('Transmitting signal...', formData);
-    setIsSubmitted(true);
     
-    // Reset form after a short delay so the user sees the popup first
     setTimeout(() => {
+      setIsSubmitting(false);
+      setIsSubmitted(true);
       setFormData({ identity: '', freqAlias: '', payloadData: '' });
-    }, 500);
+    }, 1500);
   };
 
   return (
@@ -67,7 +73,7 @@ export const Contact = () => {
                   </div>
                   <div>
                     <p className="text-[9px] font-black uppercase tracking-widest text-foreground/20 mb-1">Data Transmission</p>
-                    <p className="text-xl font-black text-foreground">vexoritsolution@gmail.com</p>
+                    <p className="text-xl font-black text-foreground">hello@vexoritsolutions.site</p>
                   </div>
                 </div>
               </div>
@@ -114,8 +120,8 @@ export const Contact = () => {
                 
                 <button type="submit" className="futuristic-button w-full group py-6">
                   <span className="relative z-10 flex items-center justify-center gap-6 text-base">
-                    TRANSMIT SIGNAL
-                    <Send className="w-5 h-5 group-hover:translate-x-3 group-hover:-translate-y-3 transition-transform" />
+                    {isSubmitting ? 'TRANSMITTING...' : 'TRANSMIT SIGNAL'}
+                    <Send className={`w-5 h-5 transition-transform ${isSubmitting ? 'translate-x-12 -translate-y-12 opacity-0' : 'group-hover:translate-x-3 group-hover:-translate-y-3'}`} />
                   </span>
                   <div className="btn-glow" />
                 </button>
@@ -128,7 +134,12 @@ export const Contact = () => {
         </div>
       </div>
 
-      <ThankYouDialog isOpen={isSubmitted} onClose={() => setIsSubmitted(false)} />
+
+      <ThankYouDialog 
+        isOpen={isSubmitted} 
+        onClose={() => setIsSubmitted(false)} 
+        name={submittedName}
+      />
     </section>
   );
 };

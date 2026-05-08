@@ -120,7 +120,7 @@ export default function Footer() {
                 </div>
                 <div>
                   <p className="text-[9px] uppercase tracking-wider text-foreground/40 font-bold mb-0.5 md:mb-1">Email us</p>
-                  <a href="mailto:vexoritsolution@gmail.com" className="font-paragraph text-xs md:text-sm text-foreground/70 hover:text-secondary transition-colors">vexoritsolution@gmail.com</a>
+                  <a href="mailto:hello@vexoritsolutions.site" className="font-paragraph text-xs md:text-sm text-foreground/70 hover:text-secondary transition-colors">hello@vexoritsolutions.site</a>
                 </div>
               </li>
               <li className="flex items-start space-x-4 group cursor-pointer">

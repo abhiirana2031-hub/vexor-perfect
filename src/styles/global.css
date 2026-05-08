@@ -82,6 +82,14 @@
   .shadow-soft-depth {
     box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.6), 0 0 20px rgba(0, 217, 255, 0.05);
   }
+
+  .bg-gradient-neon {
+    @apply bg-gradient-to-r from-secondary via-white to-secondary;
+  }
+
+  .shadow-neon-cyan {
+    box-shadow: 0 0 20px rgba(0, 217, 255, 0.3), 0 0 40px rgba(0, 217, 255, 0.1);
+  }
 }
 
 /* Custom Scrollbar - Cyber Style */
@@ -133,4 +141,13 @@ body {
 
 .preserve-3d {
   transform-style: preserve-3d;
+}
+
+@keyframes glow-pulse {
+  0%, 100% { opacity: 1; filter: drop-shadow(0 0 10px rgba(0, 217, 255, 0.5)); }
+  50% { opacity: 0.8; filter: drop-shadow(0 0 20px rgba(0, 217, 255, 0.8)); }
+}
+
+.animate-glow-pulse {
+  animation: glow-pulse 3s ease-in-out infinite;
 }

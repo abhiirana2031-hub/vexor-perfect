@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, LogOut, User } from 'lucide-react';
+import { Menu, X, LogOut, User, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Image } from '@/components/ui/image';
@@ -86,7 +86,7 @@ export default function Header() {
             <img src="/vexor-logo.png" alt="Vexor Logo" className="w-5 h-5 object-contain" />
           </div>
           <span className="font-heading text-lg md:text-xl font-black tracking-tighter text-foreground group-hover:text-secondary transition-colors whitespace-nowrap">
-            VEXOR <span className="text-secondary opacity-60 font-medium hidden sm:inline">IT SOLUTIONS</span>
+            VEXOR <span className="text-secondary font-black">IT SOLUTIONS</span>
           </span>
         </Link>
 
@@ -129,9 +129,10 @@ export default function Header() {
           ) : (
             <button 
               onClick={() => navigate('/profile')}
-              className="px-6 py-2 rounded-full bg-secondary text-black text-[10px] font-black uppercase tracking-widest hover:bg-white hover:shadow-neon-cyan transition-all duration-500"
+              className="px-8 py-3 rounded-full bg-secondary text-black text-[11px] font-black uppercase tracking-widest hover:bg-white hover:shadow-neon-cyan transition-all duration-500 flex items-center gap-3 group"
             >
               Get Started
+              <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </button>
           )}
         </div>

@@ -8,7 +8,6 @@ export const Contact = () => {
   const { toast } = useToast();
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submittedName, setSubmittedName] = useState('');
   const [formData, setFormData] = useState({
     identity: '',
     freqAlias: '',
@@ -18,7 +17,6 @@ export const Contact = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    setSubmittedName(formData.identity);
     // Simulate API transmission
     console.log('Transmitting signal...', formData);
     
@@ -138,7 +136,6 @@ export const Contact = () => {
       <ThankYouDialog 
         isOpen={isSubmitted} 
         onClose={() => setIsSubmitted(false)} 
-        name={submittedName}
       />
     </section>
   );

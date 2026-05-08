@@ -13,10 +13,9 @@ import { Button } from "@/components/ui/button";
 interface ThankYouDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  name?: string;
 }
 
-export const ThankYouDialog: React.FC<ThankYouDialogProps> = ({ isOpen, onClose, name }) => {
+export const ThankYouDialog: React.FC<ThankYouDialogProps> = ({ isOpen, onClose }) => {
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md bg-[#03050a]/90 backdrop-blur-2xl border-white/10 p-0 overflow-hidden rounded-[2.5rem]">
@@ -63,7 +62,7 @@ export const ThankYouDialog: React.FC<ThankYouDialogProps> = ({ isOpen, onClose,
               transition={{ delay: 0.3 }}
             >
               <h2 className="font-heading text-3xl sm:text-4xl font-black tracking-tighter text-foreground">
-                SIGNAL <span className="text-secondary">RECEIVED</span>
+                THANK <span className="text-secondary">YOU!</span>
               </h2>
             </motion.div>
             
@@ -73,7 +72,7 @@ export const ThankYouDialog: React.FC<ThankYouDialogProps> = ({ isOpen, onClose,
               transition={{ delay: 0.4 }}
               className="font-paragraph text-sm sm:text-base text-foreground leading-relaxed"
             >
-              Thank you{name ? `, ${name}` : ''}. Your technological requirements have been decrypted and transmitted to our core architects. We will initiate contact shortly.
+              We have received your message. Our team will get back to you as soon as possible.
             </motion.p>
           </div>
 
@@ -87,7 +86,7 @@ export const ThankYouDialog: React.FC<ThankYouDialogProps> = ({ isOpen, onClose,
               className="w-full h-14 bg-white/5 hover:bg-secondary hover:text-secondary-foreground border border-white/10 hover:border-secondary transition-all duration-500 rounded-2xl font-black uppercase tracking-widest text-xs group"
             >
               <span className="flex items-center gap-3">
-                Acknowledge Transmission
+                Got It
                 <Sparkles className="w-4 h-4 group-hover:animate-spin" />
               </span>
             </Button>

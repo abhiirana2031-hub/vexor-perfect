@@ -21,7 +21,6 @@ export default function ContactPage() {
     message: ''
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [submittedName, setSubmittedName] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
@@ -121,7 +120,6 @@ export default function ContactPage() {
       }
 
       // Show success state
-      setSubmittedName(formData.name);
       setIsSubmitted(true);
 
       // Reset form
@@ -384,7 +382,6 @@ export default function ContactPage() {
       <ThankYouDialog 
         isOpen={isSubmitted} 
         onClose={() => setIsSubmitted(false)} 
-        name={submittedName}
       />
     </div>
   );

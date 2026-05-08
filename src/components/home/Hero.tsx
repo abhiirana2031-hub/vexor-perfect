@@ -1,359 +1,323 @@
-import React, { useRef, useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronRight, Rocket, Shield, Activity, Terminal as TerminalIcon, Sparkles } from 'lucide-react';
-import * as THREE from 'three';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Float, PerspectiveCamera, OrbitControls, Html } from '@react-three/drei';
+import { motion } from 'framer-motion';
+import { ChevronRight, Rocket, Shield, Activity, Sparkles, Zap, Crown, TrendingUp } from 'lucide-react';
 
-// --- 3D Components ---
+/* ─── Isometric Server Stack ─────────────────────────────────────────────── */
+const LAYERS = [
+  { label: 'AI INTEGRATION',     color: '#00d9ff' },
+  { label: 'WEB SOLUTIONS',      color: '#00c8ef' },
+  { label: 'CLOUD ARCHITECTURE', color: '#00b5dc' },
+  { label: 'DIGITAL EXPERIENCE', color: '#009ec8' },
+];
 
-const WebGLDetector = ({ children }: { children: React.ReactNode }) => {
-  const [hasWebGL, setHasWebGL] = useState(true);
-
-  useEffect(() => {
-    const canvas = document.createElement('canvas');
-    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-    if (!gl) setHasWebGL(false);
-  }, []);
-
-  if (!hasWebGL) {
-    return (
-      <div className="flex items-center justify-center h-full bg-secondary/5 rounded-3xl border border-white/5">
-        <div className="text-center p-8">
-          <Activity className="w-12 h-12 text-secondary/40 mx-auto mb-4" />
-          <p className="text-[10px] font-black uppercase tracking-widest text-foreground/40">Core Visualization Offline</p>
+const ServerStack = () => (
+  <motion.div
+    animate={{ y: [0, -14, 0] }}
+    transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+    style={{ transformStyle: 'preserve-3d' }}
+    className="relative mx-auto"
+  >
+    <div
+      style={{
+        transform: 'perspective(900px) rotateX(22deg) rotateY(-20deg)',
+        transformStyle: 'preserve-3d',
+        width: 'fit-content',
+        margin: '0 auto',
+      }}
+    >
+      {/* ── Top Cap ── */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}
+        className="relative flex items-center justify-center mx-auto mb-[6px]"
+        style={{
+          width: 220, height: 62,
+          background: 'linear-gradient(160deg,#0f2242 0%,#091730 100%)',
+          border: '1px solid rgba(0,217,255,0.55)',
+          borderRadius: 10,
+          boxShadow: '0 0 40px rgba(0,217,255,0.22), inset 0 0 30px rgba(0,217,255,0.06)',
+        }}
+      >
+        <div className="absolute inset-x-0 top-0 h-px" style={{ background: 'linear-gradient(90deg,transparent,#00d9ff,transparent)' }} />
+        <div className="absolute inset-x-0 bottom-0 h-px" style={{ background: 'linear-gradient(90deg,transparent,rgba(0,217,255,0.3),transparent)' }} />
+        <div style={{ width: 42, height: 42, borderRadius: 11, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,217,255,0.1)', border: '1px solid rgba(0,217,255,0.5)', boxShadow: '0 0 18px rgba(0,217,255,0.35)' }}>
+          <Crown style={{ width: 20, height: 20, color: '#00d9ff' }} />
         </div>
-      </div>
-    );
-  }
+        {/* right-face illusion */}
+        <div className="absolute" style={{ right: -18, top: 4, bottom: -4, width: 18, background: 'linear-gradient(90deg,rgba(0,217,255,0.12),transparent)', borderTop: '1px solid rgba(0,217,255,0.25)', borderRight: '1px solid rgba(0,217,255,0.1)', skewY: '0deg', clipPath: 'polygon(0 0,100% 8px,100% 100%,0 100%)' }} />
+      </motion.div>
 
-  return <>{children}</>;
-};
-
-const CoreLayer = ({ position, rotationSpeed, color, label, index }: { position: [number, number, number], rotationSpeed: number, color: string, label: string, index: number }) => {
-  const meshRef = useRef<THREE.Mesh>(null);
-  
-  useFrame((state) => {
-    if (meshRef.current) {
-      meshRef.current.rotation.y += rotationSpeed;
-      meshRef.current.position.y = position[1] + Math.sin(state.clock.elapsedTime + index) * 0.1;
-    }
-  });
-
-  return (
-    <group position={position}>
-      <mesh ref={meshRef}>
-        <cylinderGeometry args={[2.5, 2.5, 0.4, 32]} />
-        <meshStandardMaterial 
-          color="#0a0a0f" 
-          emissive={color} 
-          emissiveIntensity={0.5} 
-          metalness={0.9} 
-          roughness={0.1} 
-        />
-        {/* Glow Ring */}
-        <mesh position={[0, 0, 0]} rotation={[Math.PI/2, 0, 0]}>
-          <ringGeometry args={[2.55, 2.6, 64]} />
-          <meshBasicMaterial color={color} transparent opacity={0.8} />
-        </mesh>
-      </mesh>
-      
-      {/* Label on the layer */}
-      <Html position={[2.8, 0, 0]} center distanceFactor={10}>
-        <div className="whitespace-nowrap px-3 py-1 bg-black/40 backdrop-blur-md border border-white/10 rounded-md">
-          <p className="text-[10px] font-black uppercase tracking-widest text-white/60">{label}</p>
-        </div>
-      </Html>
-    </group>
-  );
-};
-
-const FuturisticCore = () => {
-  const groupRef = useRef<THREE.Group>(null);
-
-  useFrame((state) => {
-    if (groupRef.current) {
-      groupRef.current.rotation.y = state.clock.elapsedTime * 0.1;
-    }
-  });
-
-  const layers = [
-    { label: 'AI INTEGRATION', color: '#00d9ff', speed: 0.01 },
-    { label: 'WEB SOLUTIONS', color: '#00d9ff', speed: -0.015 },
-    { label: 'CLOUD ARCHITECTURE', color: '#00d9ff', speed: 0.012 },
-    { label: 'DIGITAL EXPERIENCE', color: '#00d9ff', speed: -0.008 }
-  ];
-
-  return (
-    <group ref={groupRef} scale={1.2}>
-      {/* Central Core Glow */}
-      <pointLight position={[0, 0, 0]} color="#00d9ff" intensity={2} distance={10} />
-      
-      {/* Top Cap */}
-      <mesh position={[0, 1.8, 0]}>
-        <cylinderGeometry args={[2.5, 2.5, 0.6, 32]} />
-        <meshStandardMaterial color="#050505" metalness={1} roughness={0} />
-        <Html position={[0, 0.4, 0]} center>
-          <div className="w-12 h-12 bg-secondary/10 border border-secondary/30 rounded-xl flex items-center justify-center">
-            <Sparkles className="w-6 h-6 text-secondary" />
-          </div>
-        </Html>
-      </mesh>
-
-      {/* Layers */}
-      {layers.map((layer, i) => (
-        <CoreLayer 
-          key={i} 
-          index={i}
-          position={[0, 1 - (i * 0.7), 0]} 
-          rotationSpeed={layer.speed} 
-          color={layer.color} 
-          label={layer.label} 
-        />
+      {/* ── Server Layers ── */}
+      {LAYERS.map((l, i) => (
+        <motion.div key={i}
+          initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 + i * 0.13 }}
+          className="relative mb-[5px]"
+          style={{
+            width: 240 + i * 2,
+            height: 48,
+            background: `linear-gradient(135deg,#0b1a2e 0%,#070f1c 100%)`,
+            border: `1px solid ${l.color}50`,
+            borderTop: `1px solid ${l.color}90`,
+            borderRadius: 4,
+            boxShadow: `0 0 12px ${l.color}18, inset 0 0 16px rgba(0,217,255,0.03)`,
+            display: 'flex', alignItems: 'center', paddingLeft: 16, gap: 10,
+            overflow: 'hidden',
+          }}
+        >
+          {/* Scan line */}
+          <motion.div
+            animate={{ x: ['-110%', '210%'] }}
+            transition={{ duration: 2.5 + i * 0.4, repeat: Infinity, ease: 'linear', delay: i * 0.6 }}
+            className="absolute inset-y-0 w-1/4 pointer-events-none"
+            style={{ background: `linear-gradient(90deg,transparent,${l.color}28,transparent)` }}
+          />
+          <motion.div animate={{ opacity: [0.5, 1, 0.5] }} transition={{ duration: 2, repeat: Infinity, delay: i * 0.3 }}
+            style={{ width: 7, height: 7, borderRadius: '50%', background: l.color, boxShadow: `0 0 8px ${l.color}`, flexShrink: 0 }} />
+          <span style={{ fontSize: 9, fontWeight: 900, letterSpacing: '0.22em', textTransform: 'uppercase', color: 'rgba(190,220,255,0.72)', zIndex: 1 }}>
+            {l.label}
+          </span>
+          {/* right-face shadow */}
+          <div className="absolute" style={{ right: -14, top: 2, bottom: -2, width: 14, background: `linear-gradient(90deg,${l.color}18,transparent)`, borderTop: `1px solid ${l.color}30`, clipPath: 'polygon(0 0,100% 4px,100% 100%,0 100%)' }} />
+        </motion.div>
       ))}
 
-      {/* Base */}
-      <mesh position={[0, -1.8, 0]}>
-        <cylinderGeometry args={[3, 3.5, 0.8, 32]} />
-        <meshStandardMaterial color="#050505" metalness={1} roughness={0} />
-      </mesh>
+      {/* ── Base ── */}
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.9 }}
+        style={{ width: 268, height: 22, background: 'linear-gradient(180deg,#070e1c,#040910)', border: '1px solid rgba(0,217,255,0.2)', borderRadius: 6, overflow: 'hidden', position: 'relative' }}
+      >
+        <motion.div animate={{ x: ['-100%', '200%'] }} transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
+          className="absolute inset-y-0 w-1/3" style={{ background: 'linear-gradient(90deg,transparent,rgba(0,217,255,0.22),transparent)' }} />
+      </motion.div>
 
-      {/* Floor Glow */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -2.2, 0]}>
-        <planeGeometry args={[15, 15]} />
-        <meshStandardMaterial 
-          color="#00d9ff" 
-          transparent 
-          opacity={0.1} 
-          metalness={1}
-          roughness={0}
-        />
-      </mesh>
-    </group>
+      {/* ── Platform ── */}
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }}
+        className="relative mx-auto mt-1"
+        style={{ width: 310, height: 14, background: 'linear-gradient(180deg,#050810,transparent)', border: '1px solid rgba(255,255,255,0.05)', borderRadius: 10, marginLeft: -21 }}
+      />
+
+      {/* ── Glow beneath ── */}
+      <div className="mx-auto" style={{ width: 280, height: 14, background: 'rgba(0,217,255,0.18)', filter: 'blur(16px)', borderRadius: '50%', marginTop: 4 }} />
+    </div>
+
+    {/* ── Decorative floating cubes ── */}
+    {[
+      { dx: -170, dy: -60, size: 22 },
+      { dx: 165,  dy: -90, size: 16 },
+      { dx: -150, dy:  50, size: 12 },
+    ].map((c, i) => (
+      <motion.div key={i}
+        animate={{ y: [0, -10, 0], rotate: [0, 15, 0] }}
+        transition={{ duration: 3.5 + i, repeat: Infinity, delay: i * 0.8 }}
+        style={{
+          position: 'absolute', top: '50%', left: '50%',
+          width: c.size, height: c.size,
+          transform: `translate(calc(-50% + ${c.dx}px), calc(-50% + ${c.dy}px))`,
+          background: 'rgba(0,217,255,0.06)',
+          border: '1px solid rgba(0,217,255,0.22)',
+          borderRadius: 4,
+        }}
+      />
+    ))}
+  </motion.div>
+);
+
+/* ─── Mini Chart ─────────────────────────────────────────────────────────── */
+const MiniChart = () => {
+  const pts = [8, 14, 10, 20, 16, 24, 19, 28, 22, 30];
+  const W = 72, H = 28, max = Math.max(...pts);
+  const d = pts.map((v, i) => `${i === 0 ? 'M' : 'L'}${(i / (pts.length - 1)) * W},${H - (v / max) * H}`).join(' ');
+  return (
+    <svg width={W} height={H} style={{ display: 'block', marginTop: 4 }}>
+      <defs><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stopColor="#00d9ff" stopOpacity="0.35" />
+        <stop offset="100%" stopColor="#00d9ff" stopOpacity="0" />
+      </linearGradient></defs>
+      <path d={`${d} L${W},${H} L0,${H} Z`} fill="url(#cg)" />
+      <path d={d} fill="none" stroke="#00d9ff" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
   );
 };
 
-// --- UI Components ---
-
-const FloatingCard = ({ icon: Icon, title, value, position, delay }: any) => (
+/* ─── Floating Card ──────────────────────────────────────────────────────── */
+const Card = ({ icon: Icon, title, value, sub, style }: { icon: any; title: string; value: string; sub?: React.ReactNode; style?: React.CSSProperties }) => (
   <motion.div
-    initial={{ opacity: 0, x: position.includes('right') ? 50 : -50 }}
-    animate={{ opacity: 1, x: 0 }}
-    transition={{ duration: 1, delay }}
-    className={`absolute ${position} z-20 glass-effect p-4 md:p-6 !rounded-2xl border-white/10 shadow-glow-cyan/5 flex items-center gap-4 group`}
+    initial={{ opacity: 0, scale: 0.85 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6, delay: 1.1 }}
+    style={{
+      position: 'absolute', zIndex: 20,
+      padding: '12px 14px',
+      background: 'rgba(6,11,22,0.82)',
+      backdropFilter: 'blur(18px)',
+      border: '1px solid rgba(0,217,255,0.2)',
+      borderRadius: 14,
+      boxShadow: '0 12px 40px rgba(0,0,0,0.55)',
+      display: 'flex', alignItems: 'flex-start', gap: 10,
+      ...style,
+    }}
   >
-    <div className="w-10 h-10 rounded-xl bg-secondary/10 flex items-center justify-center border border-secondary/20 group-hover:border-secondary transition-colors">
-      <Icon className="w-5 h-5 text-secondary" />
+    <div style={{ width: 34, height: 34, borderRadius: 9, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,217,255,0.09)', border: '1px solid rgba(0,217,255,0.3)', flexShrink: 0 }}>
+      <Icon style={{ width: 15, height: 15, color: '#00d9ff' }} />
     </div>
     <div>
-      <p className="text-[8px] font-black uppercase tracking-widest text-foreground/40 mb-0.5">{title}</p>
-      <p className="text-sm font-black text-foreground">{value}</p>
+      <p style={{ fontSize: 8, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.2em', color: 'rgba(255,255,255,0.38)', marginBottom: 2 }}>{title}</p>
+      <p style={{ fontSize: 13, fontWeight: 900, color: '#fff', lineHeight: 1 }}>{value}</p>
+      {sub && <div style={{ marginTop: 4 }}>{sub}</div>}
     </div>
   </motion.div>
 );
 
+/* ─── Terminal ───────────────────────────────────────────────────────────── */
 const Terminal = () => {
   const [lines, setLines] = useState<string[]>([]);
-  const fullLines = [
-    '> init_vexor',
-    'Loading modules...',
-    'System ready.'
-  ];
-
+  const full = ['> init_vexor', 'Loading modules...', 'System ready.'];
   useEffect(() => {
-    let currentLine = 0;
-    const interval = setInterval(() => {
-      if (currentLine < fullLines.length) {
-        setLines(prev => [...prev, fullLines[currentLine]]);
-        currentLine++;
-      } else {
-        clearInterval(interval);
-      }
-    }, 1500);
-    return () => clearInterval(interval);
+    let i = 0;
+    const id = setInterval(() => { if (i < full.length) { setLines(p => [...p, full[i]]); i++; } else clearInterval(id); }, 1500);
+    return () => clearInterval(id);
   }, []);
-
   return (
-    <motion.div 
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 1, delay: 1 }}
-      className="absolute bottom-[-10%] right-[10%] w-full max-w-[280px] glass-effect !rounded-2xl border-white/5 p-5 shadow-soft-depth z-30"
+    <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 1.5 }}
+      style={{
+        position: 'absolute', bottom: '-2%', right: '4%', zIndex: 30,
+        width: 230, padding: '14px 16px',
+        background: 'rgba(4,8,18,0.88)', backdropFilter: 'blur(20px)',
+        border: '1px solid rgba(255,255,255,0.07)', borderRadius: 13,
+        boxShadow: '0 20px 50px rgba(0,0,0,0.6)',
+      }}
     >
-      <div className="flex gap-1.5 mb-4">
-        <div className="w-2 h-2 rounded-full bg-red-500/50" />
-        <div className="w-2 h-2 rounded-full bg-yellow-500/50" />
-        <div className="w-2 h-2 rounded-full bg-green-500/50" />
+      <div style={{ display: 'flex', gap: 5, marginBottom: 10 }}>
+        {['#f87171', '#fbbf24', '#4ade80'].map((c, i) => <div key={i} style={{ width: 8, height: 8, borderRadius: '50%', background: c, opacity: 0.7 }} />)}
       </div>
-      <div className="font-mono text-[10px] space-y-2">
-        {lines.map((line, i) => (
-          <div key={i} className={i === 0 ? 'text-secondary' : 'text-foreground/40'}>
-            <span className="mr-2">$</span>
-            {line}
+      <div style={{ fontFamily: 'monospace', fontSize: 10.5, lineHeight: 1.9 }}>
+        {lines.map((l, i) => (
+          <div key={i} style={{ color: i === 0 ? '#00d9ff' : 'rgba(255,255,255,0.45)' }}>
+            <span style={{ marginRight: 5 }}>$</span>{l}
           </div>
         ))}
-        <motion.div 
-          animate={{ opacity: [0, 1, 0] }}
-          transition={{ duration: 0.8, repeat: Infinity }}
-          className="w-1.5 h-3 bg-secondary inline-block align-middle ml-1"
-        />
+        <motion.span animate={{ opacity: [0, 1, 0] }} transition={{ duration: 0.8, repeat: Infinity }}
+          style={{ display: 'inline-block', width: 6, height: 11, background: '#00d9ff', verticalAlign: 'middle' }} />
       </div>
     </motion.div>
   );
 };
 
-const StatItem = ({ label, value, icon: Icon }: any) => (
-  <div className="flex items-center gap-4 px-8 border-r border-white/5 last:border-none">
-    <div className="w-10 h-10 rounded-xl bg-secondary/10 flex items-center justify-center border border-secondary/20">
-      <Icon className="w-5 h-5 text-secondary" />
+/* ─── Stat Item ──────────────────────────────────────────────────────────── */
+const Stat = ({ icon: Icon, value, label }: any) => (
+  <div className="flex items-center gap-3 px-4 sm:px-6 border-r border-white/5 last:border-none">
+    <div style={{ width: 36, height: 36, borderRadius: 9, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,217,255,0.07)', border: '1px solid rgba(0,217,255,0.2)', flexShrink: 0 }}>
+      <Icon style={{ width: 15, height: 15, color: '#00d9ff' }} />
     </div>
     <div>
-      <p className="text-xl font-black text-foreground tracking-tighter">{value}</p>
-      <p className="text-[9px] font-black uppercase tracking-widest text-foreground/40">{label}</p>
+      <p className="text-base sm:text-lg font-black text-white" style={{ letterSpacing: '-0.04em', lineHeight: 1 }}>{value}</p>
+      <p className="text-[8px] sm:text-[9px] font-black uppercase tracking-widest whitespace-nowrap" style={{ color: 'rgba(255,255,255,0.35)' }}>{label}</p>
     </div>
   </div>
 );
 
+/* ─── Hero ───────────────────────────────────────────────────────────────── */
 export const Hero = () => {
   const navigate = useNavigate();
 
   return (
-    <section className="relative min-h-screen flex items-center bg-[#03050a] pt-32 pb-40 overflow-hidden">
-      {/* Background Ambience */}
+    <section className="relative overflow-hidden" style={{ background: '#03050a', paddingTop: 'clamp(100px,14vw,140px)', paddingBottom: 'clamp(140px,18vw,200px)', minHeight: '100vh', display: 'flex', alignItems: 'center' }}>
+
+      {/* Ambient background */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle_at_50%_50%,rgba(0,217,255,0.03)_0%,transparent_70%)]" />
+        <div className="absolute inset-0" style={{ background: 'radial-gradient(ellipse at 68% 42%, rgba(0,217,255,0.06) 0%, transparent 55%)' }} />
         <div className="absolute inset-0 cyber-grid opacity-[0.03]" />
       </div>
 
-      <div className="max-w-[100rem] mx-auto px-6 lg:px-12 w-full relative z-10">
-        <div className="grid lg:grid-cols-2 gap-20 items-center">
-          
-          {/* Left Side: Content */}
-          <div className="space-y-10">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full border border-white/10 bg-white/[0.02] backdrop-blur-xl"
+      <div className="w-full max-w-[100rem] mx-auto px-5 sm:px-8 lg:px-12 relative z-10">
+
+        {/* ── Main 2-col grid ── */}
+        <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+
+          {/* ── LEFT: Text content ── */}
+          <div className="space-y-7 sm:space-y-9 text-center lg:text-left order-2 lg:order-1">
+
+            {/* Badge */}
+            <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full"
+              style={{ border: '1px solid rgba(0,217,255,0.25)', background: 'rgba(0,217,255,0.05)', backdropFilter: 'blur(12px)' }}
             >
-              <Sparkles className="w-3 h-3 text-secondary" />
-              <span className="text-[10px] font-black tracking-[0.3em] uppercase text-secondary">Next-Gen IT Transformation</span>
+              <Sparkles style={{ width: 11, height: 11, color: '#00d9ff' }} />
+              <span style={{ fontSize: 10, fontWeight: 900, letterSpacing: '0.28em', textTransform: 'uppercase', color: '#00d9ff' }}>Next-Gen IT Transformation</span>
             </motion.div>
 
-            <div className="space-y-8">
-              <motion.h1 
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1 }}
-                className="font-heading text-6xl md:text-8xl lg:text-[6.5rem] font-black text-foreground leading-[0.9] tracking-tighter"
-              >
-                Building <br />
-                <span className="bg-gradient-neon bg-clip-text text-transparent animate-glow-pulse">Intelligent</span><br />
-                Digital Solutions
-              </motion.h1>
-              
-              <motion.p 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 1, delay: 0.2 }}
-                className="font-paragraph text-lg text-foreground/50 max-w-xl leading-relaxed"
-              >
-                Empowering businesses with cutting-edge AI, high-performance web systems, and futuristic digital experiences.
-              </motion.p>
-            </div>
-
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, delay: 0.4 }}
-              className="flex flex-wrap gap-6 pt-4"
+            {/* Headline */}
+            <motion.h1 initial={{ opacity: 0, y: 28 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1 }}
+              className="font-heading font-black text-white"
+              style={{ fontSize: 'clamp(2.6rem,6vw,5.8rem)', lineHeight: 0.92, letterSpacing: '-0.03em' }}
             >
-              <button 
-                onClick={() => navigate('/services')}
-                className="px-10 py-5 rounded-2xl bg-secondary text-black text-[11px] font-black uppercase tracking-widest hover:bg-white hover:shadow-neon-cyan transition-all duration-500 flex items-center gap-3 group"
+              Building <br />
+              <span className="bg-gradient-neon bg-clip-text text-transparent animate-glow-pulse">Intelligent</span><br />
+              Digital Solutions
+            </motion.h1>
+
+            {/* Sub */}
+            <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.2 }}
+              className="text-base sm:text-lg leading-relaxed mx-auto lg:mx-0"
+              style={{ color: 'rgba(255,255,255,0.48)', maxWidth: 420 }}
+            >
+              Empowering businesses with cutting-edge AI, high-performance web systems, and futuristic digital experiences.
+            </motion.p>
+
+            {/* Buttons */}
+            <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.38 }}
+              className="flex flex-wrap gap-4 justify-center lg:justify-start"
+            >
+              <button onClick={() => navigate('/services')}
+                className="flex items-center gap-2 font-black uppercase text-black transition-all duration-300"
+                style={{ padding: 'clamp(14px,2vw,18px) clamp(28px,4vw,38px)', borderRadius: 12, background: '#00d9ff', fontSize: 11, letterSpacing: '0.2em', boxShadow: '0 0 28px rgba(0,217,255,0.35)', border: 'none', cursor: 'pointer' }}
+                onMouseEnter={e => (e.currentTarget.style.boxShadow = '0 0 50px rgba(0,217,255,0.6)')}
+                onMouseLeave={e => (e.currentTarget.style.boxShadow = '0 0 28px rgba(0,217,255,0.35)')}
               >
-                Explore Services
-                <Rocket className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+                Explore Services <Rocket style={{ width: 14, height: 14 }} />
               </button>
-              
-              <button 
-                onClick={() => navigate('/projects')}
-                className="px-10 py-5 rounded-2xl border border-white/10 glass-effect text-foreground/60 text-[11px] font-black uppercase tracking-widest hover:border-white/30 transition-all duration-500 flex items-center gap-3 group"
+              <button onClick={() => navigate('/projects')}
+                className="flex items-center gap-2 font-black uppercase transition-all duration-300"
+                style={{ padding: 'clamp(14px,2vw,18px) clamp(28px,4vw,38px)', borderRadius: 12, border: '1px solid rgba(255,255,255,0.13)', background: 'rgba(255,255,255,0.03)', color: 'rgba(255,255,255,0.65)', fontSize: 11, letterSpacing: '0.2em', cursor: 'pointer', backdropFilter: 'blur(12px)' }}
+                onMouseEnter={e => (e.currentTarget.style.borderColor = 'rgba(0,217,255,0.4)')}
+                onMouseLeave={e => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.13)')}
               >
-                View Projects
-                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                View Projects <ChevronRight style={{ width: 14, height: 14 }} />
               </button>
             </motion.div>
           </div>
 
-          {/* Right Side: 3D Scene */}
-          <div className="relative h-[600px] lg:h-[800px] w-full">
-            <WebGLDetector>
-              <Canvas camera={{ position: [0, 0, 10], fov: 50 }} dpr={[1, 2]}>
-                <OrbitControls 
-                  enableZoom={false} 
-                  enablePan={false} 
-                  autoRotate 
-                  autoRotateSpeed={0.5}
-                  minPolarAngle={Math.PI / 3}
-                  maxPolarAngle={Math.PI / 1.5}
-                />
-                <ambientLight intensity={0.5} />
-                <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} />
-                
-                <Suspense fallback={null}>
-                  <FuturisticCore />
-                </Suspense>
+          {/* ── RIGHT: Server visual ── */}
+          <div className="relative order-1 lg:order-2 flex items-center justify-center"
+            style={{ height: 'clamp(340px,50vw,580px)' }}
+          >
+            <ServerStack />
 
-                {/* Background Bokeh */}
-                <Float speed={2} rotationIntensity={1} floatIntensity={2}>
-                  <mesh position={[-5, 2, -5]}>
-                    <sphereGeometry args={[0.5, 32, 32]} />
-                    <meshBasicMaterial color="#00d9ff" transparent opacity={0.1} />
-                  </mesh>
-                </Float>
-              </Canvas>
-            </WebGLDetector>
-
-            {/* Overlay UI Cards */}
-            <FloatingCard 
-              icon={Activity} 
-              title="Performance" 
-              value="Optimized" 
-              position="top-10 left-10" 
-              delay={0.8} 
-            />
-            <FloatingCard 
-              icon={Shield} 
-              title="Security" 
-              value="Advanced" 
-              position="top-[40%] right-10" 
-              delay={1.2} 
-            />
-            <Terminal />
+            {/* Floating cards – hidden on very small screens */}
+            <div className="hidden sm:block">
+              <Card icon={TrendingUp} title="Performance" value="Optimized" sub={<MiniChart />} style={{ top: '8%', left: '2%' }} />
+              <Card icon={Shield} title="Security" value="Advanced" sub={<span style={{ fontSize: 11, fontWeight: 900, color: '#00d9ff' }}>100%</span>} style={{ top: '40%', right: '2%' }} />
+              <Terminal />
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Bottom Stats Bar */}
-      <div className="absolute bottom-10 left-0 right-0 z-20">
-        <div className="max-w-[100rem] mx-auto px-6 lg:px-12">
-          <motion.div 
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 1.5 }}
-            className="glass-effect !rounded-[2.5rem] border-white/5 py-8 flex flex-wrap justify-between items-center bg-[#05050a]/50"
+      {/* ── Stats bar ── */}
+      <div className="absolute bottom-0 left-0 right-0 z-20">
+        <div className="max-w-[100rem] mx-auto px-5 sm:px-8 lg:px-12 pb-5">
+          <motion.div initial={{ opacity: 0, y: 36 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 1, delay: 1.8 }}
+            className="flex flex-wrap justify-around sm:justify-between items-center gap-y-4 py-5 sm:py-6 px-4 sm:px-6 rounded-[1.4rem] sm:rounded-[2rem]"
+            style={{ background: 'rgba(4,6,14,0.78)', backdropFilter: 'blur(24px)', border: '1px solid rgba(255,255,255,0.06)', boxShadow: '0 -4px 40px rgba(0,0,0,0.3)' }}
           >
-            <StatItem icon={Rocket} value="50+" label="Projects Delivered" />
-            <StatItem icon={Activity} value="30+" label="Happy Clients" />
-            <StatItem icon={Sparkles} value="99.9%" label="Uptime & Reliability" />
-            <StatItem icon={Activity} value="24/7" label="Support" />
+            <Stat icon={Rocket}   value="50+"   label="Projects Delivered" />
+            <Stat icon={Activity} value="30+"   label="Happy Clients" />
+            <Stat icon={Sparkles} value="99.9%" label="Uptime" />
+            <Stat icon={Zap}      value="24/7"  label="Support" />
           </motion.div>
         </div>
       </div>
 
-      {/* Background Large Logo Text */}
-      <div className="absolute bottom-[-10%] left-[-5%] text-[30rem] font-black text-white/[0.01] pointer-events-none select-none tracking-tighter">
+      {/* Watermark */}
+      <div className="hidden lg:block absolute bottom-[-6%] left-[-3%] font-black pointer-events-none select-none" style={{ fontSize: '24rem', color: 'rgba(255,255,255,0.007)', letterSpacing: '-0.05em' }}>
         VEXOR
       </div>
     </section>

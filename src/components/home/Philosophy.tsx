@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { Shield, Zap, Cpu, BarChart3, Globe, Rocket, UserCheck, Timer, Award, CheckCircle2, Activity, Layers } from 'lucide-react';
+import { Shield, Zap, Cpu, BarChart3, Globe, CheckCircle2, Layers } from 'lucide-react';
 
 /* ── Feature Card (2x2 grid left side – close to reference) ─────────────── */
 const FeatureCard = ({ icon: Icon, title, tag, desc, delay }: any) => (
@@ -205,16 +205,7 @@ export const Philosophy = () => (
         </div>
       </div>
 
-      {/* Stats bar */}
-      <motion.div initial={{ opacity:0, y:40 }} whileInView={{ opacity:1, y:0 }} viewport={{ once:true }} transition={{ duration:0.9, delay:0.3 }}
-        style={{ marginTop:72, display:'flex', flexWrap:'wrap', justifyContent:'space-between', alignItems:'center', padding:'32px 24px', borderRadius:28, background:'rgba(4,6,14,0.7)', backdropFilter:'blur(24px)', border:'1px solid rgba(255,255,255,0.05)', boxShadow:'0 20px 60px rgba(0,0,0,0.3)' }}
-      >
-        <StatBar icon={UserCheck} value="500+" label="Happy Clients" />
-        <StatBar icon={Cpu}       value="2M+"  label="Lines of Code" />
-        <StatBar icon={Shield}    value="99.9%" label="System Uptime" />
-        <StatBar icon={Timer}     value="24/7" label="Expert Support" />
-        <StatBar icon={Award}     value="100%" label="Client Satisfaction" />
-      </motion.div>
+
     </div>
 
     {/* BG watermark */}

@@ -7,7 +7,7 @@ import { useRef, useMemo, Suspense } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
-interface Props { mouseX?: number; mouseY?: number; }
+interface Props { mouseX?: number; mouseY?: number; isMobile?: boolean; }
 
 /* ── Dark reflective main sphere ────────────────────────────────────────── */
 function MainOrb() {
@@ -163,13 +163,15 @@ function Dust({ count = 300, mouse = { x: 0, y: 0 } }: { count?: number; mouse?:
 }
 
 /* ── Full scene ──────────────────────────────────────────────────────────── */
-function Scene({ mouseX = 0, mouseY = 0 }: Props) {
+function Scene({ mouseX = 0, mouseY = 0, isMobile = false }: Props) {
+  const stars   = isMobile ? 1200 : 2500;
+  const dust    = isMobile ? 120  : 300;
   return (
     <>
       {/* Ambient */}
       <ambientLight intensity={0.15} />
 
-      {/* Key lights — create the reflective sphere look */}
+      {/* Key lights */}
       <pointLight position={[-4, 6, 4]}  intensity={4}   color="#3B82F6" />
       <pointLight position={[6,  -2, 2]} intensity={2.5} color="#7C3AED" />
       <pointLight position={[0,  4, -4]} intensity={2}   color="#06B6D4" />
@@ -181,31 +183,31 @@ function Scene({ mouseX = 0, mouseY = 0 }: Props) {
       {/* Satellite */}
       <SatelliteOrb />
 
-      {/* Orbital rings — large, tilted like planet orbits */}
+      {/* Orbital rings */}
       <OrbitalRing radius={3.6} tube={0.018} tilt={[1.25, 0,    0.15]} speed={0.12}  color="#3B82F6" opacity={0.75} />
       <OrbitalRing radius={4.4} tube={0.012} tilt={[0.35, 0.55, 0]}    speed={-0.08} color="#06B6D4" opacity={0.55} />
       <OrbitalRing radius={5.2} tube={0.008} tilt={[0.7,  1.3,  0.5]}  speed={0.06}  color="#22d3ee" opacity={0.35} />
 
-      {/* Stars */}
-      <Stars count={2500} />
+      {/* Stars — halved on mobile */}
+      <Stars count={stars} />
 
-      {/* Blue dust particles */}
-      <Dust count={300} mouse={{ x: mouseX, y: mouseY }} />
+      {/* Dust particles — halved on mobile */}
+      <Dust count={dust} mouse={{ x: mouseX, y: mouseY }} />
     </>
   );
 }
 
 /* ── Canvas export ───────────────────────────────────────────────────────── */
-export default function HeroCanvas({ mouseX = 0, mouseY = 0 }: Props) {
+export default function HeroCanvas({ mouseX = 0, mouseY = 0, isMobile = false }: Props) {
   return (
     <Canvas
       camera={{ position: [0, 1, 7], fov: 58 }}
-      gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
-      dpr={[1, 1.5]}
+      gl={{ antialias: !isMobile, alpha: true, powerPreference: isMobile ? 'default' : 'high-performance' }}
+      dpr={isMobile ? [1, 1] : [1, 1.5]}
       style={{ width: '100%', height: '100%' }}
     >
       <Suspense fallback={null}>
-        <Scene mouseX={mouseX} mouseY={mouseY} />
+        <Scene mouseX={mouseX} mouseY={mouseY} isMobile={isMobile} />
       </Suspense>
     </Canvas>
   );

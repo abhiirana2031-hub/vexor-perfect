@@ -112,30 +112,35 @@
 /* Global Layout Modernization */
 html {
   scroll-behavior: smooth;
-  font-size: 80%; /* Updated global scaling to 80% as requested */
+  /* Fluid base font — scales smoothly from 320px to 1440px */
+  font-size: clamp(68%, 5vw + 0.5rem, 85%);
   overflow-x: hidden;
 }
 
 body {
   overflow-x: hidden;
-  height: 100%;
+  min-height: 100dvh; /* dvh = dynamic viewport height, no mobile browser bar jump */
 }
 
-@media (min-width: 1024px) {
-  html {
-    font-size: 80%; 
-  }
+/* Fluid container padding — never lets content touch edges on any screen */
+.fluid-container {
+  padding-left:  clamp(1.25rem, 4vw, 5rem);
+  padding-right: clamp(1.25rem, 4vw, 5rem);
 }
 
-@media (max-width: 768px) {
-  html {
-    font-size: 80%; 
-  }
-}
+/* Prevent any single element from overflow on narrow screens */
+* { max-width: 100%; box-sizing: border-box; }
 
-/* Ensure no sliding on mobile and desktop */
+/* Prevent horizontal overflow on mobile */
 .overflow-x-hidden {
   overflow-x: hidden !important;
+}
+
+/* Mobile: keep 3D sections from becoming too tall */
+@media (max-width: 640px) {
+  .hero-canvas-wrap { height: 100dvh; }
+  /* Reduce blur cost on low-power devices */
+  .glass-effect { backdrop-filter: blur(8px); }
 }
 
 /* Animations Helper */

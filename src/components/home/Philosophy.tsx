@@ -8,17 +8,17 @@ const FeatureCard = ({ icon: Icon, title, tag, desc, delay }: any) => (
     initial={{ opacity:0, y:24 }} whileInView={{ opacity:1, y:0 }}
     viewport={{ once:true }} transition={{ duration:0.65, delay }}
     whileHover={{ y:-4, borderColor:'rgba(0,217,255,0.3)' }}
-    style={{ padding:28, borderRadius:20, background:'linear-gradient(145deg,#090f1e,#060b16)', border:'1px solid rgba(0,217,255,0.1)', boxShadow:'0 8px 32px rgba(0,0,0,0.35)', position:'relative', overflow:'hidden', cursor:'default', transition:'border-color 0.3s, transform 0.3s' }}
+    style={{ padding:'clamp(14px,2.5vw,28px)', borderRadius:20, background:'linear-gradient(145deg,#090f1e,#060b16)', border:'1px solid rgba(0,217,255,0.1)', boxShadow:'0 8px 32px rgba(0,0,0,0.35)', position:'relative', overflow:'hidden', cursor:'default', transition:'border-color 0.3s, transform 0.3s' }}
   >
     {/* Icon */}
-    <div style={{ width:52, height:52, borderRadius:14, display:'flex', alignItems:'center', justifyContent:'center', background:'rgba(0,217,255,0.08)', border:'1px solid rgba(0,217,255,0.2)', marginBottom:18 }}>
-      <Icon style={{ width:24, height:24, color:'#00d9ff' }} />
+    <div style={{ width:'clamp(36px,5vw,52px)', height:'clamp(36px,5vw,52px)', borderRadius:14, display:'flex', alignItems:'center', justifyContent:'center', background:'rgba(0,217,255,0.08)', border:'1px solid rgba(0,217,255,0.2)', marginBottom:'clamp(10px,2vw,18px)' }}>
+      <Icon style={{ width:'clamp(16px,2.2vw,24px)', height:'clamp(16px,2.2vw,24px)', color:'#00d9ff' }} />
     </div>
-    <h3 style={{ fontSize:11, fontWeight:900, textTransform:'uppercase', letterSpacing:'0.22em', color:'#fff', marginBottom:10 }}>{title}</h3>
-    <p style={{ fontSize:13, lineHeight:1.65, color:'rgba(255,255,255,0.42)', marginBottom:16 }}>{desc}</p>
+    <h3 style={{ fontSize:'clamp(0.55rem,1.2vw,0.72rem)', fontWeight:900, textTransform:'uppercase', letterSpacing:'0.22em', color:'#fff', marginBottom:'clamp(6px,1vw,10px)' }}>{title}</h3>
+    <p style={{ fontSize:'clamp(0.7rem,1.4vw,0.82rem)', lineHeight:1.65, color:'rgba(255,255,255,0.42)', marginBottom:'clamp(10px,1.5vw,16px)' }}>{desc}</p>
     <div style={{ display:'flex', alignItems:'center', gap:8 }}>
-      <div style={{ width:24, height:1, background:'#00d9ff' }} />
-      <span style={{ fontSize:9, fontWeight:900, textTransform:'uppercase', letterSpacing:'0.3em', color:'#00d9ff' }}>{tag}</span>
+      <div style={{ width:20, height:1, background:'#00d9ff', flexShrink:0 }} />
+      <span style={{ fontSize:'clamp(0.45rem,0.9vw,0.58rem)', fontWeight:900, textTransform:'uppercase', letterSpacing:'0.28em', color:'#00d9ff' }}>{tag}</span>
     </div>
     {/* Corner glow */}
     <div style={{ position:'absolute', top:-20, right:-20, width:80, height:80, borderRadius:'50%', background:'rgba(0,217,255,0.06)', filter:'blur(25px)', pointerEvents:'none' }} />
@@ -168,39 +168,39 @@ const FEATURES = [
 ];
 
 export const Philosophy = () => (
-  <section id="philosophy" style={{ position:'relative', width:'100%', padding:'96px 0 112px', background:'#03050a', borderTop:'1px solid rgba(255,255,255,0.05)', overflow:'hidden' }}>
+  <section id="philosophy" style={{ position:'relative', width:'100%', padding:'clamp(56px,8vw,96px) 0 clamp(64px,10vw,112px)', background:'#03050a', borderTop:'1px solid rgba(255,255,255,0.05)', overflow:'hidden' }}>
 
     {/* Ambient */}
     <div style={{ position:'absolute', top:'50%', left:'30%', transform:'translate(-50%,-50%)', width:600, height:600, borderRadius:'50%', background:'radial-gradient(circle,rgba(0,217,255,0.04) 0%,transparent 70%)', pointerEvents:'none' }} />
 
-    <div className="max-w-[100rem] mx-auto px-6 lg:px-12 relative z-10">
+    <div className="max-w-[100rem] mx-auto relative z-10" style={{ paddingLeft:'clamp(1.25rem,5vw,4rem)', paddingRight:'clamp(1.25rem,5vw,4rem)' }}>
 
       {/* Header */}
-      <div style={{ marginBottom:72 }}>
-        <div style={{ display:'flex', alignItems:'center', gap:14, marginBottom:20 }}>
-          <div style={{ width:48, height:1, background:'#00d9ff' }} />
-          <span style={{ fontSize:10, fontWeight:900, textTransform:'uppercase', letterSpacing:'0.5em', color:'#00d9ff' }}>Our Standard</span>
+      <div style={{ marginBottom:'clamp(36px,6vw,72px)' }}>
+        <div style={{ display:'flex', alignItems:'center', gap:14, marginBottom:16 }}>
+          <div style={{ width:36, height:1, background:'#00d9ff' }} />
+          <span style={{ fontSize:'clamp(0.55rem,1.3vw,0.65rem)', fontWeight:900, textTransform:'uppercase', letterSpacing:'0.5em', color:'#00d9ff' }}>Our Standard</span>
         </div>
-        <div className="grid lg:grid-cols-2 gap-8 items-end">
-          <h2 className="font-heading font-black tracking-tighter text-white" style={{ fontSize:'clamp(2.2rem,4.5vw,4.5rem)', lineHeight:0.92 }}>
+        <div className="grid lg:grid-cols-2 gap-6 lg:gap-8 items-end">
+          <h2 className="font-heading font-black tracking-tighter text-white" style={{ fontSize:'clamp(1.9rem,4.5vw,4.5rem)', lineHeight:0.92 }}>
             Built for Performance.<br />
             Engineered for <span style={{ color:'#00d9ff' }}>Excellence.</span>
           </h2>
-          <p style={{ fontSize:17, lineHeight:1.7, color:'rgba(255,255,255,0.4)', maxWidth:440 }}>
+          <p style={{ fontSize:'clamp(0.82rem,1.8vw,1.06rem)', lineHeight:1.7, color:'rgba(255,255,255,0.4)', maxWidth:440 }}>
             We don't just build digital products — we build robust, scalable, and future-ready solutions that drive real business impact.
           </p>
         </div>
       </div>
 
-      {/* Main grid */}
-      <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-        {/* Left: 2×2 cards */}
-        <div className="grid sm:grid-cols-2 gap-5">
+      {/* Main grid — 2-col on lg, fluid single col below */}
+      <div className="grid lg:grid-cols-2 items-center" style={{ gap:'clamp(24px,5vw,64px)' }}>
+        {/* Left: 2×2 cards — becomes 2-col even on mobile (scaled down) */}
+        <div className="grid grid-cols-2" style={{ gap:'clamp(10px,2vw,20px)' }}>
           {FEATURES.map((f,i) => <FeatureCard key={i} {...f} />)}
         </div>
 
-        {/* Right: Hex ecosystem */}
-        <div style={{ position:'relative', paddingTop:32, paddingBottom:32 }}>
+        {/* Right: Hex ecosystem — scaled via SVG viewBox, always fits */}
+        <div style={{ position:'relative', padding:'clamp(16px,3vw,32px) 0' }}>
           <TechEcosystem />
         </div>
       </div>

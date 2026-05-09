@@ -42,8 +42,8 @@ function Ring({ radius, tube, rotation, speed, color, opacity = 0.6 }: RingProps
 export function FloatingRings() {
   return (
     <group>
-      <Ring radius={2.2} tube={0.015} rotation={[0.3, 0, 0]}   speed={0.3}   color="#00d9ff" opacity={0.7} />
-      <Ring radius={2.8} tube={0.01}  rotation={[1.1, 0.4, 0]} speed={-0.2}  color="#7C3AED" opacity={0.5} />
+      <Ring radius={2.2} tube={0.015} rotation={[0.3, 0, 0]}    speed={0.3}   color="#3B82F6" opacity={0.7} />
+      <Ring radius={2.8} tube={0.01}  rotation={[1.1, 0.4, 0]}  speed={-0.2}  color="#7C3AED" opacity={0.5} />
       <Ring radius={3.5} tube={0.008} rotation={[0.6, 1.2, 0.5]} speed={0.15} color="#06B6D4" opacity={0.3} />
     </group>
   );

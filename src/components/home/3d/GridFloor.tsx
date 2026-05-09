@@ -18,10 +18,10 @@ export function GridFloor() {
         args={[20, 20]}
         cellSize={1}
         cellThickness={0.5}
-        cellColor="#0a1628"
+        cellColor="#1F2937"
         sectionSize={5}
         sectionThickness={1}
-        sectionColor="#0d2040"
+        sectionColor="#374151"
         fadeDistance={18}
         fadeStrength={1}
         followCamera={false}

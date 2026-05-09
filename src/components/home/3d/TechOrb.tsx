@@ -16,7 +16,7 @@ export function TechOrb({
   scale = 1,
   speed = 1,
   distort = 0.4,
-  color = '#00d9ff',
+  color = '#3B82F6',
 }: TechOrbProps) {
   const meshRef = useRef<THREE.Mesh>(null);
 

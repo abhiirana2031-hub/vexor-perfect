@@ -8,16 +8,16 @@ interface ParticleFieldProps {
   mouse?: { x: number; y: number };
 }
 
-export function ParticleField({ count = 600, radius = 5, mouse = { x: 0, y: 0 } }: ParticleFieldProps) {
+export function ParticleField({ count = 800, radius = 6, mouse = { x: 0, y: 0 } }: ParticleFieldProps) {
   const meshRef = useRef<THREE.Points>(null);
 
   const [positions, colors] = useMemo(() => {
     const pos = new Float32Array(count * 3);
     const col = new Float32Array(count * 3);
 
-    const colorA = new THREE.Color('#00d9ff'); // cyan  – brand primary
-    const colorB = new THREE.Color('#7C3AED'); // purple
-    const colorC = new THREE.Color('#06B6D4'); // sky blue
+    const colorA = new THREE.Color('#3B82F6');
+    const colorB = new THREE.Color('#7C3AED');
+    const colorC = new THREE.Color('#06B6D4');
 
     for (let i = 0; i < count; i++) {
       const theta = Math.random() * Math.PI * 2;
@@ -29,7 +29,11 @@ export function ParticleField({ count = 600, radius = 5, mouse = { x: 0, y: 0 } 
       pos[i * 3 + 2] = r * Math.cos(phi);
 
       const t = Math.random();
-      const c = t < 0.33 ? colorA : t < 0.66 ? colorB : colorC;
+      let c: THREE.Color;
+      if (t < 0.33)      c = colorA;
+      else if (t < 0.66) c = colorB;
+      else               c = colorC;
+
       col[i * 3]     = c.r;
       col[i * 3 + 1] = c.g;
       col[i * 3 + 2] = c.b;

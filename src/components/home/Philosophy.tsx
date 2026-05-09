@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
-import { Shield, Zap, Cpu, BarChart3, Globe, CheckCircle2, Layers } from 'lucide-react';
+import { Shield, Zap, Cpu, BarChart3, Globe, Rocket, Award, CheckCircle2, Layers } from 'lucide-react';
 
 /* ── Feature Card (2x2 grid left side – close to reference) ─────────────── */
 const FeatureCard = ({ icon: Icon, title, tag, desc, delay }: any) => (

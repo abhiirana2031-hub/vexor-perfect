@@ -1,156 +1,72 @@
 /**
- * HeroCanvas.tsx
- * This file is LAZY-LOADED by Hero.tsx via React.lazy().
- * All Three.js / react-three-fiber imports live here so they never
- * block the initial render and any failure is caught by ThreeBoundary.
+ * HeroCanvas.tsx — Lazy-loaded 3D scene.
+ * Exact same animation as vexor-it-solutions, ported for Astro/React.
+ * Loaded via React.lazy() in Hero.tsx so it never blocks initial render.
  */
-import React, { useRef } from 'react';
-import { Sparkles as LucideSparkles } from 'lucide-react';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Float, Html } from '@react-three/drei';
-import * as THREE from 'three';
+import { Suspense } from 'react';
+import { Canvas } from '@react-three/fiber';
+import { Environment, Stars, AdaptiveDpr, OrbitControls } from '@react-three/drei';
+import { TechOrb }       from './3d/TechOrb';
+import { FloatingRings } from './3d/FloatingRings';
+import { ParticleField } from './3d/ParticleField';
+import { GridFloor }     from './3d/GridFloor';
 
-// ── Single Ring Layer ────────────────────────────────────────────────────────
-const CoreLayer = ({
-  position,
-  rotationSpeed,
-  color,
-  label,
-  index,
-}: {
-  position: [number, number, number];
-  rotationSpeed: number;
-  color: string;
-  label: string;
-  index: number;
-}) => {
-  const meshRef = useRef<THREE.Mesh>(null);
+interface Props { mouseX?: number; mouseY?: number; }
 
-  useFrame((state) => {
-    if (!meshRef.current) return;
-    meshRef.current.rotation.y += rotationSpeed;
-    meshRef.current.position.y =
-      position[1] + Math.sin(state.clock.elapsedTime + index) * 0.1;
-  });
-
+function SceneContent({ mouseX = 0, mouseY = 0 }: Props) {
   return (
-    <group position={position}>
-      <mesh ref={meshRef}>
-        <cylinderGeometry args={[2.5, 2.5, 0.4, 32]} />
-        <meshStandardMaterial
-          color="#0a0a0f"
-          emissive={color}
-          emissiveIntensity={0.5}
-          metalness={0.9}
-          roughness={0.1}
-        />
-        {/* Glow ring */}
-        <mesh position={[0, 0, 0]} rotation={[Math.PI / 2, 0, 0]}>
-          <ringGeometry args={[2.55, 2.6, 64]} />
-          <meshBasicMaterial color={color} transparent opacity={0.8} />
-        </mesh>
-      </mesh>
+    <>
+      {/* Lighting */}
+      <ambientLight intensity={0.2} />
+      <pointLight position={[5,  5,  5]}  intensity={2}   color="#00d9ff" />
+      <pointLight position={[-5,-3, -5]}  intensity={1.5} color="#7C3AED" />
+      <pointLight position={[0,  3, -3]}  intensity={1}   color="#06B6D4" />
 
-      {/* HTML label */}
-      <Html position={[2.8, 0, 0]} center distanceFactor={10}>
-        <div className="whitespace-nowrap px-3 py-1 bg-black/40 backdrop-blur-md border border-white/10 rounded-md">
-          <p className="text-[10px] font-black uppercase tracking-widest text-white/60">
-            {label}
-          </p>
-        </div>
-      </Html>
-    </group>
+      {/* Main distorted orb */}
+      <TechOrb position={[0, 0, 0]}   scale={1.2} speed={0.8} distort={0.5} color="#00d9ff" />
+
+      {/* Smaller orbiting orbs */}
+      <TechOrb position={[2.5, 1, -1]}    scale={0.3} speed={1.5} color="#7C3AED" />
+      <TechOrb position={[-2, -0.5, 0.5]} scale={0.2} speed={2}   color="#06B6D4" />
+
+      {/* Rotating rings */}
+      <FloatingRings />
+
+      {/* Particle field — reacts to mouse */}
+      <ParticleField count={600} radius={5} mouse={{ x: mouseX, y: mouseY }} />
+
+      {/* Background stars */}
+      <Stars radius={100} depth={50} count={2000} factor={3} saturation={0} fade speed={0.5} />
+
+      {/* Moving grid floor */}
+      <GridFloor />
+
+      {/* Environment reflections */}
+      <Environment preset="night" />
+
+      {/* Auto-quality DPR */}
+      <AdaptiveDpr pixelated />
+    </>
   );
-};
+}
 
-// ── Full Core Group ──────────────────────────────────────────────────────────
-const FuturisticCore = () => {
-  const groupRef = useRef<THREE.Group>(null);
-
-  useFrame((state) => {
-    if (groupRef.current) {
-      groupRef.current.rotation.y = state.clock.elapsedTime * 0.1;
-    }
-  });
-
-  const layers = [
-    { label: 'AI INTEGRATION', color: '#00d9ff', speed: 0.01 },
-    { label: 'WEB SOLUTIONS', color: '#00d9ff', speed: -0.015 },
-    { label: 'CLOUD ARCH', color: '#00d9ff', speed: 0.012 },
-    { label: 'DIGITAL EXP', color: '#00d9ff', speed: -0.008 },
-  ];
-
+export default function HeroCanvas({ mouseX = 0, mouseY = 0 }: Props) {
   return (
-    <group ref={groupRef} scale={1.2}>
-      <pointLight position={[0, 0, 0]} color="#00d9ff" intensity={2} distance={10} />
-
-      {/* Top Cap */}
-      <mesh position={[0, 1.8, 0]}>
-        <cylinderGeometry args={[2.5, 2.5, 0.6, 32]} />
-        <meshStandardMaterial color="#050505" metalness={1} roughness={0} />
-        <Html position={[0, 0.4, 0]} center>
-          <div className="w-12 h-12 bg-cyan-500/10 border border-cyan-400/30 rounded-xl flex items-center justify-center">
-            <LucideSparkles className="w-6 h-6 text-cyan-400" />
-          </div>
-        </Html>
-      </mesh>
-
-      {/* Layers */}
-      {layers.map((layer, i) => (
-        <CoreLayer
-          key={i}
-          index={i}
-          position={[0, 1 - i * 0.7, 0]}
-          rotationSpeed={layer.speed}
-          color={layer.color}
-          label={layer.label}
-        />
-      ))}
-
-      {/* Base */}
-      <mesh position={[0, -1.8, 0]}>
-        <cylinderGeometry args={[3, 3.5, 0.8, 32]} />
-        <meshStandardMaterial color="#050505" metalness={1} roughness={0} />
-      </mesh>
-
-      {/* Floor glow */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -2.2, 0]}>
-        <planeGeometry args={[15, 15]} />
-        <meshStandardMaterial
-          color="#00d9ff"
-          transparent
-          opacity={0.05}
-          metalness={1}
-          roughness={0}
-        />
-      </mesh>
-    </group>
-  );
-};
-
-// ── Default Export: The Canvas ────────────────────────────────────────────────
-export default function HeroCanvas() {
-  return (
-    <div className="w-full h-full">
-      <Canvas camera={{ position: [0, 0, 10], fov: 50 }} dpr={[1, 1.5]}>
-        <ambientLight intensity={0.4} />
-        <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} />
-        <OrbitControls
-          enableZoom={false}
-          enablePan={false}
-          autoRotate
-          autoRotateSpeed={0.5}
-          minPolarAngle={Math.PI / 3}
-          maxPolarAngle={Math.PI / 1.5}
-        />
-        <FuturisticCore />
-        <Float speed={2} rotationIntensity={1} floatIntensity={2}>
-          <mesh position={[-5, 2, -5]}>
-            <sphereGeometry args={[0.5, 16, 16]} />
-            <meshBasicMaterial color="#00d9ff" transparent opacity={0.08} />
-          </mesh>
-        </Float>
-      </Canvas>
-    </div>
+    <Canvas
+      camera={{ position: [0, 0, 6], fov: 60 }}
+      gl={{
+        antialias: true,
+        alpha: true,
+        powerPreference: 'high-performance',
+        toneMapping: 4,       // ACESFilmicToneMapping
+        toneMappingExposure: 1.2,
+      }}
+      dpr={[1, 1.5]}
+      style={{ width: '100%', height: '100%' }}
+    >
+      <Suspense fallback={null}>
+        <SceneContent mouseX={mouseX} mouseY={mouseY} />
+      </Suspense>
+    </Canvas>
   );
 }

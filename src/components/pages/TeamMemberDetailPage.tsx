@@ -7,7 +7,7 @@ import { BaseCrudService } from '@/integrations';
 import { motion } from 'framer-motion';
 import { Mail, Linkedin, ArrowLeft } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router';
 
 export default function TeamMemberDetailPage() {
   const { id } = useParams<{ id: string }>();

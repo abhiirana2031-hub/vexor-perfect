@@ -1,17 +1,15 @@
-import { useRef } from 'react';
-import { useFrame } from '@react-three/fiber';
-import { Grid } from '@react-three/drei';
-import * as THREE from 'three';
-
+"use client";
+import { useRef } from "react";
+import { useFrame } from "@react-three/fiber";
+import { Grid } from "@react-three/drei";
+import * as THREE from "three";
 export function GridFloor() {
   const groupRef = useRef<THREE.Group>(null);
-
   useFrame((state) => {
     if (!groupRef.current) return;
     const t = state.clock.getElapsedTime();
     groupRef.current.position.z = (t * 0.3) % 1;
   });
-
   return (
     <group ref={groupRef} rotation={[-Math.PI / 2, 0, 0]} position={[0, -3, 0]}>
       <Grid

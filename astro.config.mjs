@@ -63,6 +63,9 @@ export default defineConfig({
 
   vite: {
     plugins: [customErrorOverlayPlugin()],
+    resolve: {
+      dedupe: ['react', 'react-dom', 'three', '@react-three/fiber']
+    }
   },
 
   devToolbar: {

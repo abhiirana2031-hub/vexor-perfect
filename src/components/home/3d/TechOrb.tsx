@@ -1,8 +1,8 @@
-import { useRef } from 'react';
-import { useFrame } from '@react-three/fiber';
-import { Sphere, MeshDistortMaterial } from '@react-three/drei';
-import * as THREE from 'three';
-
+"use client";
+import { useRef } from "react";
+import { useFrame } from "@react-three/fiber";
+import { Sphere, MeshDistortMaterial } from "@react-three/drei";
+import * as THREE from "three";
 interface TechOrbProps {
   position?: [number, number, number];
   scale?: number;
@@ -10,16 +10,14 @@ interface TechOrbProps {
   distort?: number;
   color?: string;
 }
-
 export function TechOrb({
   position = [0, 0, 0],
   scale = 1,
   speed = 1,
   distort = 0.4,
-  color = '#3B82F6',
+  color = "#3B82F6",
 }: TechOrbProps) {
   const meshRef = useRef<THREE.Mesh>(null);
-
   useFrame((state) => {
     if (!meshRef.current) return;
     const time = state.clock.getElapsedTime();
@@ -27,7 +25,6 @@ export function TechOrb({
     meshRef.current.rotation.y += 0.005 * speed;
     meshRef.current.position.y = position[1] + Math.sin(time * speed * 0.7) * 0.15;
   });
-
   return (
     <Sphere ref={meshRef} args={[1, 64, 64]} position={position} scale={scale}>
       <MeshDistortMaterial

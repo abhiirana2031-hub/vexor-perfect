@@ -1,0 +1,9 @@
+{
+  "name": "vexora-perfect",
+  "version": "1.0.0",
+  "scripts": {
+    "install": "cd vexora-tech-main && npm install",
+    "build": "cd vexora-tech-main && npm run build",
+    "start": "cd vexora-tech-main && npm run start"
+  }
+}

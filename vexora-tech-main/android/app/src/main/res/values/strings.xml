@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Vexor</string>
+    <string name="title_activity_main">Vexor</string>
+    <string name="package_name">com.vexor.tech</string>
+    <string name="custom_url_scheme">com.vexor.tech</string>
+</resources>

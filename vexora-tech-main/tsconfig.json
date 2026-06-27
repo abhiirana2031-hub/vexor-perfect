@@ -1,0 +1,46 @@
+{
+  "extends": "astro/tsconfigs/base",
+  "compilerOptions": {
+    "ignoreDeprecations": "5.0",
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
+    "rootDir": ".",
+    "baseUrl": ".",
+    "incremental": true,
+    "moduleResolution": "bundler",
+    "tsBuildInfoFile": "node_modules/.cache/tsbuildinfo",
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noImplicitReturns": false,
+    "noImplicitAny": false,
+    "strict": false,
+    "allowUnusedLabels": true,
+    "allowUnreachableCode": true,
+    "verbatimModuleSyntax": false,
+    "skipLibCheck": true,
+    "noUncheckedIndexedAccess": false,
+    "exactOptionalPropertyTypes": false,
+    "paths": {
+      "@/*": [
+        "src/*"
+      ],
+      "@/components/*": [
+        "src/components/*"
+      ],
+      "@/integrations/*": [
+        "integrations/*"
+      ],
+      "@/integrations": [
+        "integrations"
+      ],
+      "@wix/codegen-framework-packages": [
+        "integrations"
+      ]
+    }
+  },
+  "include": [
+    "src",
+    "integrations",
+    ".astro/types.d.ts"
+  ]
+}

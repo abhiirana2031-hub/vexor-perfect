@@ -47,10 +47,12 @@ export default function AdminDashboardPage() {
     enquiries,
     refreshData,
     member,
+    activeAdminUser,
     auditLogs,
     saveItem,
     deleteItem,
-    setActiveAdminUser
+    setActiveAdminUser,
+    isDbConnected
   } = useAdminData();
 
   const [activeTab, setActiveTab] = useState('stats');
@@ -60,6 +62,24 @@ export default function AdminDashboardPage() {
   const [adminLoginForm, setAdminLoginForm] = useState({ email: '', password: '' });
   const [loginError, setLoginError] = useState('');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const [adminName, setAdminName] = useState(() => 
+    localStorage.getItem('adminProfileName') || 'Administrator'
+  );
+  const [adminAvatar, setAdminAvatar] = useState<string | null>(() => 
+    localStorage.getItem('adminProfileAvatar') || null
+  );
+
+  const handleUpdateAdminProfile = (name: string, avatar: string | null) => {
+    setAdminName(name);
+    setAdminAvatar(avatar);
+    localStorage.setItem('adminProfileName', name);
+    if (avatar) {
+      localStorage.setItem('adminProfileAvatar', avatar);
+    } else {
+      localStorage.removeItem('adminProfileAvatar');
+    }
+  };
 
   const handleEdit = (item: any) => {
     setSelectedItem(item);
@@ -122,15 +142,39 @@ export default function AdminDashboardPage() {
     const ADMIN_EMAIL = import.meta.env.PUBLIC_ADMIN_EMAIL || 'abhayrana8272@gmail.com';
     const ADMIN_PASSWORD = import.meta.env.PUBLIC_ADMIN_PASSWORD || 'vexor@#005';
     
+    // Check root admin credentials first (no blocking database call required)
     if (adminLoginForm.email === ADMIN_EMAIL && adminLoginForm.password === ADMIN_PASSWORD) {
-      setIsAdminLoggedIn(true);
-      setActiveAdminUser({
-        _id: 'root-admin',
-        fullName: 'Root Administrator',
-        email: ADMIN_EMAIL,
-        role: 'admin'
-      } as any);
-      return;
+       setIsAdminLoggedIn(true);
+       setIsSaving(true);
+       
+       let adminProfile: any = null;
+       try {
+          const userRes = await BaseCrudService.getAll<UserProfiles>('userprofiles');
+          adminProfile = userRes.items.find(u => u.email === adminLoginForm.email);
+       } catch (dbErr) {
+          console.warn('Database offline, proceeding with default root admin profile:', dbErr);
+       }
+
+       const rootAdminUser = {
+         _id: adminProfile?._id || 'root-admin',
+         fullName: adminProfile?.fullName || 'Root Administrator',
+         email: ADMIN_EMAIL,
+         role: 'admin',
+         profilePhoto: adminProfile?.profilePhoto
+       };
+       setActiveAdminUser(rootAdminUser as any);
+        const finalName = adminProfile?.fullName || localStorage.getItem('adminProfileName') || 'Root Administrator';
+        const finalAvatar = adminProfile?.profilePhoto || localStorage.getItem('adminProfileAvatar') || null;
+        setAdminName(finalName);
+        setAdminAvatar(finalAvatar);
+        localStorage.setItem('adminProfileName', finalName);
+        if (finalAvatar) {
+          localStorage.setItem('adminProfileAvatar', finalAvatar);
+        } else {
+          localStorage.removeItem('adminProfileAvatar');
+        }
+       setIsSaving(false);
+       return;
     } 
 
     setIsSaving(true);
@@ -141,6 +185,16 @@ export default function AdminDashboardPage() {
        if (user && user.role === 'admin') {
           setIsAdminLoggedIn(true);
           setActiveAdminUser(user);
+           const finalName = user.fullName || localStorage.getItem('adminProfileName') || 'Administrator';
+           const finalAvatar = user.profilePhoto || localStorage.getItem('adminProfileAvatar') || null;
+           setAdminName(finalName);
+           setAdminAvatar(finalAvatar);
+           localStorage.setItem('adminProfileName', finalName);
+           if (finalAvatar) {
+             localStorage.setItem('adminProfileAvatar', finalAvatar);
+           } else {
+             localStorage.removeItem('adminProfileAvatar');
+           }
        } else if (user) {
           setLoginError('Insufficient neural clearance. Admin role required.');
        } else {
@@ -148,10 +202,10 @@ export default function AdminDashboardPage() {
        }
     } catch (err) {
        console.error('Login synchronization error:', err);
-       setLoginError('Neural link failure. Try again.');
+       setLoginError('Neural link failure. Database may be offline.');
     } finally {
        setIsSaving(false);
-     }
+    }
   };
 
   if (!isAdmin) {
@@ -224,7 +278,7 @@ export default function AdminDashboardPage() {
 
       {/* LEFT SIDEBAR - Desktop */}
       <aside className="w-80 flex-shrink-0 hidden lg:block z-40 relative">
-        <Sidebar onSetActiveTab={setActiveTab} activeTab={activeTab} />
+        <Sidebar onSetActiveTab={setActiveTab} activeTab={activeTab} adminName={adminName} adminAvatar={adminAvatar} onUpdateAdminProfile={handleUpdateAdminProfile} />
       </aside>
 
       {/* LEFT SIDEBAR - Mobile (Drawer) */}
@@ -240,7 +294,7 @@ export default function AdminDashboardPage() {
                initial={{ x: '-100%' }} animate={{ x: 0 }} exit={{ x: '-100%' }} transition={{ type: "spring", damping: 25, stiffness: 200 }}
                className="fixed inset-y-0 left-0 w-80 z-50 lg:hidden border-r border-white/5 bg-black"
             >
-               <Sidebar onSetActiveTab={(tab) => { setActiveTab(tab); setIsMobileMenuOpen(false); }} activeTab={activeTab} />
+               <Sidebar onSetActiveTab={(tab) => { setActiveTab(tab); setIsMobileMenuOpen(false); }} activeTab={activeTab} adminName={adminName} adminAvatar={adminAvatar} onUpdateAdminProfile={handleUpdateAdminProfile} />
             </motion.aside>
           </>
         )}
@@ -249,7 +303,7 @@ export default function AdminDashboardPage() {
       {/* MAIN CONTENT AREA */}
       <main className="flex-1 flex flex-col min-w-0 relative h-full w-full bg-black">
         {/* TOPBAR */}
-        <Topbar member={member} onToggleSidebar={() => setIsMobileMenuOpen(true)} />
+        <Topbar member={member} adminName={adminName} adminAvatar={adminAvatar} isDbConnected={isDbConnected} onToggleSidebar={() => setIsMobileMenuOpen(true)} />
 
         <div className="flex-1 overflow-y-auto p-8 lg:p-12 no-scrollbar admin-dark-panel">
           <div className="lg:max-w-[80vw] mx-auto space-y-12 pb-24">
@@ -370,7 +424,7 @@ export default function AdminDashboardPage() {
         setIsDialogOpen(open);
         if (!open) setSelectedItem(null);
       }}>
-        <DialogContent className="liquid-glass border-white/5 bg-black/95 w-[95vw] md:w-full md:max-w-2xl max-h-[90vh] overflow-y-auto no-scrollbar mx-auto p-8 rounded-[2rem]">
+        <DialogContent className="liquid-glass border-white/5 bg-black/95 w-[95vw] md:w-full md:max-w-2xl max-h-[85vh] !overflow-y-auto no-scrollbar mx-auto p-8 rounded-[2rem]">
           <DialogHeader>
             <DialogTitle className="text-2xl text-white font-medium uppercase italic" style={SERIF}>
               {selectedItem ? 'Update Node' : 'Initialize Node'}

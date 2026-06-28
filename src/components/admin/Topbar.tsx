@@ -4,10 +4,13 @@ import { GLASS_STYLES } from '@/lib/design';
 
 interface TopbarProps {
   member: any;
+  adminName?: string;
+  adminAvatar?: string | null;
+  isDbConnected?: boolean;
   onToggleSidebar?: () => void;
 }
 
-export const Topbar = ({ member, onToggleSidebar }: TopbarProps) => {
+export const Topbar = ({ member, adminName, adminAvatar, isDbConnected = true, onToggleSidebar }: TopbarProps) => {
   return (
     <div className="h-20 bg-black/40 backdrop-blur-xl border-b border-white/5 px-6 lg:px-10 flex items-center justify-between relative z-20 gap-4">
       <style>{GLASS_STYLES}</style>
@@ -40,6 +43,14 @@ export const Topbar = ({ member, onToggleSidebar }: TopbarProps) => {
 
       {/* Right Actions */}
       <div className="flex items-center gap-6">
+        {/* Database Status Indicator */}
+        <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full border transition-colors ${isDbConnected ? 'border-emerald-500/10 bg-emerald-500/[0.01]' : 'border-red-500/10 bg-red-500/[0.01]'}`}>
+          <span className={`w-1.5 h-1.5 rounded-full ${isDbConnected ? 'bg-emerald-400 shadow-[0_0_8px_#34d399]' : 'bg-red-400 shadow-[0_0_8px_#f87171]'} animate-pulse`} />
+          <span className={`text-[8px] font-black uppercase tracking-widest ${isDbConnected ? 'text-emerald-500/60' : 'text-red-500/60'}`}>
+            DB {isDbConnected ? 'Online' : 'Offline'}
+          </span>
+        </div>
+
         {/* Notifications */}
         <button className="relative p-2.5 rounded-xl hover:bg-white/5 text-white/40 hover:text-white transition-all group">
           <Bell className="w-4.5 h-4.5" />
@@ -50,13 +61,21 @@ export const Topbar = ({ member, onToggleSidebar }: TopbarProps) => {
         <div className="flex items-center gap-3.5 pl-6 border-l border-white/5 group cursor-pointer">
           <div className="text-right">
             <p className="text-[10px] font-medium tracking-widest text-white uppercase font-body-barlow">
-              {member?.profile?.nickname || 'ADMIN'}
+              {adminName || member?.profile?.nickname || 'ADMIN'}
             </p>
             <p className="text-[8px] font-light text-white/30 uppercase tracking-[0.2em] font-body-barlow">Operator</p>
           </div>
           <div className="w-9 h-9 rounded-xl border border-white/10 p-0.5 group-hover:border-white/20 transition-colors">
-            <div className="w-full h-full rounded-[0.5rem] bg-white/10 flex items-center justify-center">
-              <User className="w-5 h-5 text-white/70" />
+            <div className="w-full h-full rounded-[0.5rem] bg-white/10 flex items-center justify-center overflow-hidden">
+              {adminAvatar || member?.profile?.photo?.url ? (
+                <img 
+                  src={adminAvatar || member?.profile?.photo?.url} 
+                  alt="Admin Avatar" 
+                  className="w-full h-full object-cover rounded-[0.4rem]" 
+                />
+              ) : (
+                <User className="w-5 h-5 text-white/70" />
+              )}
             </div>
           </div>
         </div>

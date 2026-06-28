@@ -33,9 +33,9 @@ export default {
                 'neon-blue': '#2563EB',
                 'electric-pink': '#8B5CF6',
                 'soft-shadow-gray': '#E2E8F0',
-                background: '#F8FAFC',
+                background: '#080808',
                 secondary: '#06B6D4',
-                foreground: '#0F172A',
+                foreground: '#FFFFFF',
                 'secondary-foreground': '#F8FAFC',
                 'primary-foreground': '#F8FAFC',
                 primary: '#2563EB'

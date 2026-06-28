@@ -9,8 +9,52 @@ import emailjs from '@emailjs/browser';
  */
 export const useAdminData = () => {
   const { member, isAuthenticated } = useMember();
-  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
-  const [activeAdminUser, setActiveAdminUser] = useState<UserProfiles | null>(null);
+  const [isAdminLoggedIn, setIsAdminLoggedInInternal] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('isAdminLoggedIn') === 'true';
+    }
+    return false;
+  });
+
+  const [activeAdminUser, setActiveAdminUserInternal] = useState<UserProfiles | null>(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('activeAdminUser');
+      if (saved) {
+        try {
+          return JSON.parse(saved);
+        } catch (e) {
+          return null;
+        }
+      }
+    }
+    return null;
+  });
+
+  const setIsAdminLoggedIn = (val: boolean) => {
+    setIsAdminLoggedInInternal(val);
+    if (typeof window !== 'undefined') {
+      if (val) {
+        localStorage.setItem('isAdminLoggedIn', 'true');
+      } else {
+        localStorage.removeItem('isAdminLoggedIn');
+        localStorage.removeItem('activeAdminUser');
+        localStorage.removeItem('adminProfileName');
+        localStorage.removeItem('adminProfileAvatar');
+      }
+    }
+  };
+
+  const setActiveAdminUser = (user: UserProfiles | null) => {
+    setActiveAdminUserInternal(user);
+    if (typeof window !== 'undefined') {
+      if (user) {
+        localStorage.setItem('activeAdminUser', JSON.stringify(user));
+      } else {
+        localStorage.removeItem('activeAdminUser');
+      }
+    }
+  };
+
   const [isLoading, setIsLoading] = useState(true);
 
   // Data State
@@ -23,6 +67,7 @@ export const useAdminData = () => {
   const [enquiries, setEnquiries] = useState<any[]>([]);
   const [auditLogs, setAuditLogs] = useState<AuditLogs[]>([]);
   const [siteStats, setSiteStats] = useState<any>({});
+  const [isDbConnected, setIsDbConnected] = useState(true);
 
   const isAdmin = isAdminLoggedIn || (isAuthenticated && member?.profile?.nickname === 'admin') || (activeAdminUser?.role === 'admin');
 
@@ -32,18 +77,21 @@ export const useAdminData = () => {
 
   const loadAllData = async () => {
     setIsLoading(true);
+    let dbOffline = false;
     try {
       const [pRes, sRes, tRes, testRes, eRes, statRes, bRes, uRes, aRes] = await Promise.all([
-        BaseCrudService.getAll<Projects>('projects'),
-        BaseCrudService.getAll<Services>('services'),
-        BaseCrudService.getAll<TeamMembers>('teammembers'),
-        BaseCrudService.getAll<Testimonials>('testimonials'),
+        BaseCrudService.getAll<Projects>('projects').catch(() => { dbOffline = true; return { items: [] }; }),
+        BaseCrudService.getAll<Services>('services').catch(() => { dbOffline = true; return { items: [] }; }),
+        BaseCrudService.getAll<TeamMembers>('teammembers').catch(() => { dbOffline = true; return { items: [] }; }),
+        BaseCrudService.getAll<Testimonials>('testimonials').catch(() => { dbOffline = true; return { items: [] }; }),
         BaseCrudService.getAll<any>('enquiries').catch(() => ({ items: [] })),
         fetch('/api/sitestats').then(r => r.json()).catch(() => ({})),
         BaseCrudService.getAll<Blogs>('blogs').catch(() => ({ items: [] })),
         BaseCrudService.getAll<UserProfiles>('userprofiles').catch(() => ({ items: [] })),
         BaseCrudService.getAll<AuditLogs>('auditlogs').catch(() => ({ items: [] }))
       ]);
+
+      setIsDbConnected(!dbOffline);
 
       setProjects(pRes.items);
       setServices(sRes.items);
@@ -139,6 +187,8 @@ export const useAdminData = () => {
     saveItem,
     refreshData,
     member,
-    setActiveAdminUser
+    activeAdminUser,
+    setActiveAdminUser,
+    isDbConnected
   };
 };

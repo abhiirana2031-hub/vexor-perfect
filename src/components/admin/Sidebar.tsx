@@ -23,6 +23,9 @@ import { GLASS_STYLES, SERIF } from '@/lib/design';
 interface SidebarProps {
   onSetActiveTab: (tab: string) => void;
   activeTab: string;
+  adminName: string;
+  adminAvatar: string | null;
+  onUpdateAdminProfile: (name: string, avatar: string | null) => void;
 }
 
 const menuItems = [
@@ -38,22 +41,21 @@ const menuItems = [
   { id: 'logs', label: 'Neural Logs', icon: Shield },
 ];
 
-export const Sidebar = ({ onSetActiveTab, activeTab }: SidebarProps) => {
+export const Sidebar = ({ 
+  onSetActiveTab, 
+  activeTab, 
+  adminName, 
+  adminAvatar, 
+  onUpdateAdminProfile 
+}: SidebarProps) => {
   const [profileOpen, setProfileOpen] = useState(false);
-  const [adminName, setAdminName] = useState(() => 
-    localStorage.getItem('adminProfileName') || 'Administrator'
-  );
-  const [adminAvatar, setAdminAvatar] = useState<string | null>(() => 
-    localStorage.getItem('adminProfileAvatar') || null
-  );
   const [editName, setEditName] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSaveName = () => {
     if (editName.trim()) {
-      setAdminName(editName.trim());
-      localStorage.setItem('adminProfileName', editName.trim());
+      onUpdateAdminProfile(editName.trim(), adminAvatar);
     }
     setIsEditing(false);
   };
@@ -64,8 +66,7 @@ export const Sidebar = ({ onSetActiveTab, activeTab }: SidebarProps) => {
     const reader = new FileReader();
     reader.onload = () => {
       const dataUrl = reader.result as string;
-      setAdminAvatar(dataUrl);
-      localStorage.setItem('adminProfileAvatar', dataUrl);
+      onUpdateAdminProfile(adminName, dataUrl);
     };
     reader.readAsDataURL(file);
   };

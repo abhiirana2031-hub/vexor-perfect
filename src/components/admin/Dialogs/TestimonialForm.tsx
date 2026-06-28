@@ -5,6 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Star } from 'lucide-react';
 import { ImageUpload } from '@/components/admin/ImageUpload';
+import { Switch } from '@/components/ui/switch';
 
 interface TestimonialFormProps {
   testimonial?: TestimonialType | null;
@@ -20,6 +21,7 @@ export const TestimonialForm = ({ testimonial, onSave, onCancel, isSaving }: Tes
     clientImage: testimonial?.clientImage || '',
     rating: testimonial?.rating || 5,
     reviewText: testimonial?.reviewText || '',
+    isApproved: testimonial?.isApproved ?? false,
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -83,6 +85,17 @@ export const TestimonialForm = ({ testimonial, onSave, onCancel, isSaving }: Tes
             placeholder="Client's review..."
             className="bg-white/[0.02] border-white/10 rounded-xl min-h-[120px]"
             required
+          />
+        </div>
+
+        <div className="space-y-2 md:col-span-2 flex items-center justify-between border border-white/5 bg-white/[0.01] rounded-2xl p-4">
+          <div className="space-y-0.5">
+            <Label className="text-[10px] font-black uppercase tracking-widest text-foreground/70">Approve Testimonial</Label>
+            <p className="text-[9px] text-foreground/40 font-medium">Make this testimonial visible on the main site</p>
+          </div>
+          <Switch 
+            checked={formData.isApproved || false}
+            onCheckedChange={(checked) => setFormData({...formData, isApproved: checked})}
           />
         </div>
       </div>

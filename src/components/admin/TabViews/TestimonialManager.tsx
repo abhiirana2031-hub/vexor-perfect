@@ -57,11 +57,16 @@ export const TestimonialManager = ({ testimonials, onAddNew, onEdit, onDelete }:
                   </div>
                 </div>
                 
-                {/* Rating Display */}
-                <div className="flex gap-1">
-                   {[...Array(5)].map((_, i) => (
-                      <Star key={i} className={`w-3 h-3 ${i < (item.rating || 5) ? 'text-[#e9f243] fill-[#e9f243]' : 'text-foreground/20'}`} />
-                   ))}
+                {/* Rating & Status Display */}
+                <div className="flex flex-col items-end gap-2">
+                  <div className="flex gap-1">
+                     {[...Array(5)].map((_, i) => (
+                        <Star key={i} className={`w-3 h-3 ${i < (item.rating || 5) ? 'text-[#e9f243] fill-[#e9f243]' : 'text-foreground/20'}`} />
+                     ))}
+                  </div>
+                  <div className={`px-2.5 py-0.5 rounded-full border text-[7px] font-black uppercase tracking-widest ${item.isApproved ? 'bg-green-500/10 border-green-500/20 text-green-500' : 'bg-yellow-500/10 border-yellow-500/20 text-yellow-500'}`}>
+                    {item.isApproved ? 'Approved' : 'Pending'}
+                  </div>
                 </div>
               </div>
 

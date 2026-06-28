@@ -50,11 +50,66 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   useCalendly();
 
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [newRating, setNewRating] = useState(5);
+  const [newRoleCompany, setNewRoleCompany] = useState('');
+  const [newReviewText, setNewReviewText] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [submitError, setSubmitError] = useState('');
+
+  useEffect(() => {
+    const checkUser = () => {
+      const userStr = localStorage.getItem('currentUser');
+      if (userStr) {
+        try {
+          setCurrentUser(JSON.parse(userStr));
+        } catch (e) {
+          setCurrentUser(null);
+        }
+      } else {
+        setCurrentUser(null);
+      }
+    };
+    checkUser();
+    window.addEventListener('userUpdated', checkUser);
+    return () => window.removeEventListener('userUpdated', checkUser);
+  }, []);
+
+  const handleTestimonialSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!currentUser) return;
+    setSubmitting(true);
+    setSubmitError('');
+    try {
+      await BaseCrudService.create('testimonials', {
+        _id: crypto.randomUUID(),
+        clientName: currentUser.fullName,
+        clientRoleCompany: newRoleCompany,
+        reviewText: newReviewText,
+        rating: newRating,
+        datePosted: new Date(),
+        isApproved: false, // Pending admin approval
+        userId: currentUser._id,
+        clientImage: currentUser.profilePhoto || undefined
+      });
+      setSubmitSuccess(true);
+      setNewRoleCompany('');
+      setNewReviewText('');
+      setNewRating(5);
+    } catch (err) {
+      console.error('Testimonial submission failed:', err);
+      setSubmitError('Failed to transmit testimonial. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   useEffect(() => {
     Promise.all([
       BaseCrudService.getAll<ServiceType>('services', [], { limit: 6, isFeatured: true }),
       BaseCrudService.getAll<ProjectType>('projects', [], { limit: 4, isFeatured: true }),
-      BaseCrudService.getAll<TestimonialType>('testimonials', [], { limit: 3 }),
+      BaseCrudService.getAll<TestimonialType>('testimonials', [], { limit: 3, isApproved: true }),
     ]).then(([s, p, t]) => {
       setServices(s.items); setProjects(p.items); setTestimonials(t.items);
     }).finally(() => setLoading(false));
@@ -233,16 +288,16 @@ export default function HomePage() {
       </section>
 
       {/* ── Testimonials ── */}
-      {testimonials.length > 0 && (
-        <section className="py-28 px-6 border-b border-white/5">
-          <div className="max-w-5xl mx-auto">
-            <FadeUp>
-              <SectionLabel text="Client Stories" />
-              <h2 className="text-4xl md:text-5xl text-white tracking-tight mb-14" style={SERIF}>
-                Trusted by<br /><span className="italic text-white/50">Visionaries</span>
-              </h2>
-            </FadeUp>
+      <section className="py-28 px-6 border-b border-white/5">
+        <div className="max-w-5xl mx-auto">
+          <FadeUp>
+            <SectionLabel text="Client Stories" />
+            <h2 className="text-4xl md:text-5xl text-white tracking-tight mb-14" style={SERIF}>
+              Trusted by<br /><span className="italic text-white/50">Visionaries</span>
+            </h2>
+          </FadeUp>
 
+          {testimonials.length > 0 && (
             <div className="grid md:grid-cols-3 gap-5">
               {testimonials.map((t, i) => (
                 <FadeUp key={t._id} delay={i * 0.08}>
@@ -263,9 +318,118 @@ export default function HomePage() {
                 </FadeUp>
               ))}
             </div>
+          )}
+
+          {/* Testimonial Submission Form */}
+          <div className="mt-20 max-w-2xl mx-auto">
+            {currentUser ? (
+              <div className="liquid-glass rounded-3xl p-8 space-y-6 relative overflow-hidden">
+                <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+                
+                <div className="text-center">
+                  <h3 className="text-2xl font-medium tracking-tight text-white mb-2" style={SERIF}>
+                    Share Your Experience
+                  </h3>
+                  <p className="text-white/40 text-xs uppercase tracking-wider">
+                    Transmitting feedback as {currentUser.fullName}
+                  </p>
+                </div>
+
+                {submitSuccess ? (
+                  <div className="text-center py-8 space-y-4">
+                    <div className="w-12 h-12 bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 rounded-full flex items-center justify-center mx-auto">
+                      <CheckCircle2 size={24} />
+                    </div>
+                    <h4 className="text-lg font-medium text-white">Transmission Successful</h4>
+                    <p className="text-white/55 text-sm max-w-md mx-auto">
+                      Your testimonial has been submitted successfully and is pending review by Vexor administrators.
+                    </p>
+                    <button
+                      onClick={() => setSubmitSuccess(false)}
+                      className="text-xs uppercase tracking-widest text-white/40 hover:text-white underline mt-2"
+                    >
+                      Submit another
+                    </button>
+                  </div>
+                ) : (
+                  <form onSubmit={handleTestimonialSubmit} className="space-y-5">
+                    {/* Rating Selector */}
+                    <div className="flex flex-col gap-2 items-center">
+                      <label className="text-[10px] uppercase tracking-widest font-semibold text-white/40">Performance Rating</label>
+                      <div className="flex gap-2 p-2.5 bg-white/[0.02] border border-white/10 rounded-xl">
+                        {[1, 2, 3, 4, 5].map((num) => (
+                          <button
+                            key={num}
+                            type="button"
+                            onClick={() => setNewRating(num)}
+                            className="focus:outline-none transition-transform hover:scale-110"
+                          >
+                            <Star className={`w-6 h-6 ${num <= newRating ? 'text-[#e9f243] fill-[#e9f243]' : 'text-white/10 fill-white/10'}`} />
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Role & Company Input */}
+                    <div className="flex flex-col gap-2">
+                      <label className="text-[10px] uppercase tracking-widest font-semibold text-white/40 pl-1">Designation & Company</label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="e.g., CEO at Acme Corp"
+                        value={newRoleCompany}
+                        onChange={(e) => setNewRoleCompany(e.target.value)}
+                        className="w-full bg-white/5 border border-transparent rounded-2xl h-12 px-5 text-white placeholder:text-white/20 focus:border-white/20 focus:bg-white/[0.08] outline-none transition-all text-sm"
+                      />
+                    </div>
+
+                    {/* Feedback Textarea */}
+                    <div className="flex flex-col gap-2">
+                      <label className="text-[10px] uppercase tracking-widest font-semibold text-white/40 pl-1">Feedback Transmission</label>
+                      <textarea
+                        required
+                        rows={4}
+                        placeholder="Tell us about your experience working with Vexor..."
+                        value={newReviewText}
+                        onChange={(e) => setNewReviewText(e.target.value)}
+                        className="w-full bg-white/5 border border-transparent rounded-2xl p-5 text-white placeholder:text-white/20 focus:border-white/20 focus:bg-white/[0.08] outline-none transition-all text-sm resize-none"
+                      />
+                    </div>
+
+                    {submitError && (
+                      <p className="text-red-400 text-xs text-center">{submitError}</p>
+                    )}
+
+                    <button
+                      type="submit"
+                      disabled={submitting}
+                      className="w-full h-12 bg-white text-black font-semibold rounded-2xl hover:bg-white/90 active:scale-[0.98] transition-all text-xs uppercase tracking-widest cursor-pointer flex items-center justify-center gap-2"
+                    >
+                      {submitting ? 'Transmitting...' : 'Submit Testimonial'}
+                    </button>
+                  </form>
+                )}
+              </div>
+            ) : (
+              <div className="liquid-glass rounded-3xl p-8 text-center space-y-4 border border-white/5 relative overflow-hidden">
+                <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+                <h3 className="text-xl font-medium tracking-tight text-white" style={SERIF}>
+                  Share Your Experience
+                </h3>
+                <p className="text-white/40 text-sm max-w-md mx-auto">
+                  We value feedback from our visionaries. To maintain database security and prevent spam, account authentication is required to submit reviews.
+                </p>
+                <button
+                  onClick={() => navigate('/profile')}
+                  className="inline-flex h-12 px-8 items-center bg-white text-black font-semibold rounded-2xl hover:bg-white/90 active:scale-[0.98] transition-all text-xs uppercase tracking-widest cursor-pointer"
+                >
+                  Authenticate Session
+                </button>
+              </div>
+            )}
           </div>
-        </section>
-      )}
+        </div>
+      </section>
 
       {/* ── Booking CTA ── */}
       <section className="py-28 px-6 border-b border-white/5">

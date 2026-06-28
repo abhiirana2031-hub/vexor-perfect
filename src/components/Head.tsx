@@ -71,10 +71,9 @@ export const Head = () => {
       <meta name="twitter:image" content="https://vexoritsolutions.site/vexor-logo.png" />
 
       {/* Favicon / Branding */}
-      <link rel="icon" href="/vexor-logo.svg" type="image/svg+xml" />
-      <link rel="icon" href="/vexor-logo.png" type="image/png" />
-      <link rel="apple-touch-icon" href="/vexor-logo.png" />
-      <link rel="shortcut icon" href="/vexor-logo.png" type="image/png" />
+      <link rel="icon" href="/favicon.png" type="image/png" />
+      <link rel="apple-touch-icon" href="/favicon.png" />
+      <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
       
       {/* Fonts */}
       <link rel="preconnect" href="https://fonts.googleapis.com" />

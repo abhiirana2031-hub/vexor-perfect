@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { ImageUpload } from '@/components/admin/ImageUpload';
+import { Switch } from '@/components/ui/switch';
 
 interface BlogFormProps {
   blog?: BlogType | null;
@@ -16,9 +17,11 @@ export const BlogForm = ({ blog, onSave, onCancel, isSaving }: BlogFormProps) =>
   const [formData, setFormData] = useState<Partial<BlogType>>({
     title: blog?.title || '',
     category: blog?.category || '',
-    thumbnailImage: blog?.thumbnailImage || '',
+    thumbnailImage: blog?.thumbnailImage || blog?.featuredImage || '',
+    featuredImage: blog?.featuredImage || blog?.thumbnailImage || '',
     excerpt: blog?.excerpt || '',
     content: blog?.content || '',
+    isPublished: blog?.isPublished ?? false,
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -54,7 +57,7 @@ export const BlogForm = ({ blog, onSave, onCancel, isSaving }: BlogFormProps) =>
           <Label className="text-[9px] font-black uppercase tracking-widest text-foreground/40 pl-4 border-l border-secondary">Visual Header (Image URL / Local Upload)</Label>
           <ImageUpload 
             value={formData.thumbnailImage || ''}
-            onChange={(url) => setFormData({...formData, thumbnailImage: url})}
+            onChange={(url) => setFormData({...formData, thumbnailImage: url, featuredImage: url})}
           />
         </div>
 
@@ -76,6 +79,17 @@ export const BlogForm = ({ blog, onSave, onCancel, isSaving }: BlogFormProps) =>
             placeholder="Full log data..."
             className="bg-white/[0.02] border-white/10 rounded-xl min-h-[200px]"
             required
+          />
+        </div>
+
+        <div className="space-y-2 md:col-span-2 flex items-center justify-between border border-white/5 bg-white/[0.01] rounded-2xl p-4">
+          <div className="space-y-0.5">
+            <Label className="text-[10px] font-black uppercase tracking-widest text-foreground/70">Publish Transmission</Label>
+            <p className="text-[9px] text-foreground/40 font-medium">Make this log post visible on the main website</p>
+          </div>
+          <Switch 
+            checked={formData.isPublished || false}
+            onCheckedChange={(checked) => setFormData({...formData, isPublished: checked})}
           />
         </div>
       </div>
